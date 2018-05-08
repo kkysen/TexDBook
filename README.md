@@ -14,7 +14,7 @@
 ## How to Compile
 
 To compile and bundle (using Webpack) the TypeScript and any other JavaScript,
-you need [```node```](https://nodejs.org/en/download/current/) and ```npm```.<br>
+you need <a href="https://nodejs.org/en/download/current/" target="_blank">```node```</a> and ```npm```.<br>
 Once ```npm``` is installed, run ```make compile-install``` to install ```npm``` dependencies.<br>
 Then run ```make js``` or ```npm run watch```,
 which makes Webpack watch all the files and recompile them if anything changes.
