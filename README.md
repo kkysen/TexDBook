@@ -4,7 +4,7 @@
 
 ## How To Run
 
-  1. Clone this repository: ```git clone https://github.com/kkysen/r3d3.git```.
+  1. Clone this repository: ```git clone https://github.com/kkysen/TexDBook.git```.
   2. Create a virtual environment using ```virtualenv``` or activate an existing one.
   3. In the virtual environment, cd into the repository
      and run ```make install``` to install dependencies
