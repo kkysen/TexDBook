@@ -1,0 +1,38 @@
+{
+  "name": "TexDBook",
+  "version": "1.0.0",
+  "description": "Buying and Selling Textbooks",
+  "author": "Khyber Sen",
+  "contributors": [
+    "Khyber Sen",
+    "Adam Abbas",
+    "Naotaka Kinoshita",
+    "Vivien Lee"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kkysen/TexDBook.git"
+  },
+  "homepage": "https://github.com/kkysen/TexDBook#readme",
+  "bugs": {
+    "url": "https://github.com/kkysen/TexDBook/issues"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^2.8.3",
+    "ts-loader": "^4.3.0",
+    "webpack": "^4.8.1",
+    "webpack-cli": "^2.1.3",
+    "webpack-dev-server": "^3.1.4",
+    "html-webpack-plugin": "^3.2.0",
+    "html-minifier": "^3.5.15"
+  },
+  "main": "dist/TexDBook.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "start": "webpack-dev-server --hot --inline --no-info"
+  }
+}
