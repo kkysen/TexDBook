@@ -2,11 +2,8 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-    node: {
-        fs: "empty",
-    },
     entry: {
-        index: "./src/ts/main.js",
+        client: "./src/ts/client/client.js",
     },
     output: {
         filename: "[name].js",
@@ -30,5 +27,5 @@ module.exports = {
             template: "./src/html/index.html",
         }),
     ],
-    mode: "development",
+    mode: "production",
 };

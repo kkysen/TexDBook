@@ -9,7 +9,8 @@
   3. In the virtual environment, cd into the repository
      and run ```make install``` to install dependencies
      and then ```make run``` to start the Flask server.
-  4. With the flask app now running, navigate to [```localhost:5000```](http://localhost:5000) in your browser.
+     If you don't have ```make```, run ```sudo apt-get install make```.
+  4. With the Flask app now running, navigate to [```localhost:5000```](http://localhost:5000) in your browser.
 
 ## How to Compile
 

@@ -18,7 +18,6 @@
   "bugs": {
     "url": "https://github.com/kkysen/TexDBook/issues"
   },
-  "dependencies": {},
   "devDependencies": {
     "typescript": "^2.8.3",
     "ts-loader": "^4.3.0",
@@ -28,11 +27,20 @@
     "html-webpack-plugin": "^3.2.0",
     "html-minifier": "^3.5.15"
   },
+  "dependencies": {
+    "@types/express": "^4.11.1",
+    "@types/mongoose": "^5.0.13",
+    "@types/node": "^10.0.6",
+    "express": "^4.16.3",
+    "mongoose": "^5.0.17",
+    "node-isbn": "^1.4.0"
+  },
   "main": "dist/TexDBook.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
     "watch": "webpack --watch",
-    "start": "webpack-dev-server --hot --inline --no-info"
+    "start": "webpack-dev-server --hot --inline --no-info",
+    "server": "node src/ts/server/server.js"
   }
 }

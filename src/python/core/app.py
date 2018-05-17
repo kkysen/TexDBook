@@ -36,6 +36,7 @@ def make_file_data_route(filename, dir, prefix=""):
         "wasm": "application/wasm",
         "svg": "image/svg+xml",
         "json": "application/json",
+        "ico": "image/vnd.microsoft.icon",
     }[extension]
     path = dir + "/" + filename
     if prefix:
@@ -43,8 +44,19 @@ def make_file_data_route(filename, dir, prefix=""):
     make_data_route(app, route, path, mime_type)
 
 
-app.secret_key = os.urandom(32)
-app.debug = True
+def make_favicon():
+    # type: () -> None
+    link = "../data/favicon.ico"
+    if os.path.lexists(link):
+        os.remove(link)
+    os.symlink("../data/CLRS.jpg", "../data/favicon.ico")
+    make_file_data_route("favicon.ico", "data")
 
-if __name__ == '__main__':
+
+def run():
+    app.secret_key = os.urandom(32)
+    app.debug = True
+    
+    make_favicon()
+    
     app.run()
