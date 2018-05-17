@@ -27,7 +27,7 @@ Setup up repo for Flask and TypeScript + Webpack
 and added old util files for both.
 
 ============================================================
-khyberS -- 2018-05-17 13:49:00
+khyberS -- 2018-05-17 12:49:00
 
 Added /favicon.ico route in app.py.
 
@@ -37,5 +37,10 @@ Wrote Isbn class for parsing ISBNs
 and IsbnBook for extra ISBN metadata fetched from Google (using node-isbn).
 
 Started TextBook and User classes/interfaces.
+
+============================================================
+khyberS -- 2018-05-17 13:09:00
+
+Changed directory structure for WSGI and Apache2.
 
 ============================================================
