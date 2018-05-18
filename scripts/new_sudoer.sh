@@ -10,6 +10,8 @@ function new_sudoer() {
     chmod 0700 ${ssh}
     if [ $2 = "ssh" ]; then
         cp -Rfv /root/.ssh ${home}
+    else
+        touch ${ssh}/authorized_keys
     fi
     chown -Rfv ${username}.${username} ${ssh}
     chown -R ${username}:${username} ${home}

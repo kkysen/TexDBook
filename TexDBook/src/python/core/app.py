@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import os
 import shutil
+import time
 
 from flask import Flask, Response, render_template, send_file
 from typing import Tuple, List
@@ -73,6 +74,19 @@ def make_favicon():
     # type: () -> None
     shutil.copyfile(resolve_path("data", "CLRS.jpg"), resolve_path("data", "favicon.ico"))
     make_file_data_route("favicon.ico", "data")
+
+
+@app.route("/long")
+def long_request():
+    # type: () -> str
+    time.sleep(10)
+    return "Long"
+
+
+@app.route("/short")
+def long_request():
+    # type: () -> str
+    return "Short"
 
 
 def create_app():
