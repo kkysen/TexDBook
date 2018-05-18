@@ -2,10 +2,10 @@
 
 function check_and_install() {
     package = $1
-    if apt list --installed | grep --quiet $(package); then
+    if apt list --installed | grep --quiet $package; then
         :
     else
-        apt-get install $(package)
+        apt-get install $package
     fi
 }
 function install_python2_and_pip() {
@@ -45,4 +45,3 @@ function install_TexDBook() {
     service apache2 restart
 }
 
-install_TexDBook
