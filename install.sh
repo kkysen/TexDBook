@@ -44,6 +44,7 @@ function install_deployment() {
         cd ${name}
     else
         cd ${name}
+        cd ${name}
         git pull
     fi
 
