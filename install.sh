@@ -35,10 +35,14 @@ function install_deployment() {
     cd /var/www/
     mkdir ${name}
     cd ${name}
-    git clone https://github.com/${githubUserName}/${name}.git ${name}
+    local repo=https://github.com/${githubUserName}/${name}.git
+    echo ${repo}
+    git clone ${repo} ${name}
     cd ${name}
 
-    make install
+    if [-f Makefile]; then
+        make install
+    fi
 
     # TODO setup virtualenv
 
