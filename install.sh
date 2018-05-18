@@ -36,16 +36,16 @@ function install_deployment() {
 
     cd /var/www/
     if [ -d ${name} ]; then
+        cd ${name}
+        cd ${name}
+        git pull
+    else
         mkdir ${name}
         cd ${name}
         local repo=https://github.com/${githubUserName}/${name}.git
         echo ${repo}
         git clone ${repo} ${name}
         cd ${name}
-    else
-        cd ${name}
-        cd ${name}
-        git pull
     fi
 
     if [ -f Makefile ]; then
