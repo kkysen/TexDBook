@@ -8,7 +8,9 @@ function new_sudoer() {
     adduser --system --group ${username}
     mkdir ${ssh}
     chmod 0700 ${ssh}
-#    cp -Rfv /root/.ssh ${home}
+    if [ $2 = "ssh" ]; then
+        cp -Rfv /root/.ssh ${home}
+    fi
     chown -Rfv ${username}.${username} ${ssh}
     chown -R ${username}:${username} ${home}
     gpasswd -a ${username} sudo
