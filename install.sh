@@ -11,7 +11,7 @@ function check_and_install() {
 
 function install_python2_and_pip() {
     check_and_install python2
-    check_and_install python-pip
+#    check_and_install python-pip
 }
 
 function install_apache2_wsgi() {
@@ -41,7 +41,9 @@ function install_TexDBook() {
 
     # TODO setup virtualenv
 
-    ln -s ${name}.conf /etc/apache2/sites-available/${name}.conf
+    local link=/etc/apache2/sites-available/${name}.conf
+    rm -f ${link}
+    ln -s ${name}.conf ${link}
     a2ensite ${name}
     service apache2 restart
 }
