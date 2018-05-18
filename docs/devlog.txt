@@ -44,3 +44,13 @@ khyberS -- 2018-05-17 13:09:00
 Changed directory structure for WSGI and Apache2.
 
 ============================================================
+khyberS -- 2018-05-18 0:42:00
+
+Setup everything for initial deployment,
+including an install script (install.sh).
+
+All the other necessary .conf, .wsgi, etc. files are there now, too.
+
+Will test on VM now.
+
+============================================================

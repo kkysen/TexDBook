@@ -1,7 +1,7 @@
 from flask import Flask
 from typing import Tuple
 
-from core import app
+from src.python import app
 
 
 def create_app():

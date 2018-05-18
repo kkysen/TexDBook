@@ -1,4 +1,4 @@
 flask
 typing
-mongo
-mongothon
+sqlite3
+shutil

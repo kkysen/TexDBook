@@ -1,10 +1,35 @@
 from __future__ import print_function
 
 import os
+import shutil
 
 from flask import Flask, Response, render_template, send_file
+from typing import Tuple, List
 
-app = Flask(__name__, root_path=os.path.abspath("../../dist"), template_folder="", static_folder="", static_url_path="")
+NAME = "TexDBook"
+
+app = Flask(
+    import_name=__name__,
+    root_path=os.path.abspath("../../dist"),
+    template_folder="",
+    static_folder="",
+    static_url_path=""
+)  # type: Flask
+
+
+def get_relative_dir():
+    # type: () -> List[str]
+    cwd = os.getcwd()
+    parts = cwd.split(os.sep)
+    return parts[:parts.index(NAME)] + ["TexDBook", "TexDBook", "src"]
+
+
+RELATIVE_DIR = get_relative_dir()  # type: List[str]
+
+
+def resolve_path(*path_components):
+    # type: (Tuple[str]) -> str
+    return os.sep.join(RELATIVE_DIR + list(path_components))
 
 
 @app.route("/")
@@ -46,17 +71,15 @@ def make_file_data_route(filename, dir, prefix=""):
 
 def make_favicon():
     # type: () -> None
-    link = "../data/favicon.ico"
-    if os.path.lexists(link):
-        os.remove(link)
-    os.symlink("../data/CLRS.jpg", "../data/favicon.ico")
+    shutil.copyfile(resolve_path("data", "CLRS.jpg"), resolve_path("data", "favicon.ico"))
     make_file_data_route("favicon.ico", "data")
 
 
-def run():
+def create_app():
+    # type: () -> Tuple[Flask, str]
     app.secret_key = os.urandom(32)
     app.debug = True
     
     make_favicon()
     
-    app.run()
+    return app, NAME
