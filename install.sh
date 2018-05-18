@@ -8,6 +8,7 @@ function check_and_install() {
         apt-get install ${package}
     fi
 }
+
 function install_python2_and_pip() {
     check_and_install python2
     check_and_install python-pip
@@ -28,20 +29,20 @@ function install_TexDBook() {
     check_and_install git
     check_and_install make
 
-    local NAME="TexDBook"
+    local name="TexDBook"
 
     cd /var/www/
-    mkdir ${NAME}
-    cd ${NAME}
-    git clone https://github.com/kkysen/TexDBook.git ${NAME}
-    cd ${NAME}
+    mkdir ${name}
+    cd ${name}
+    git clone https://github.com/kkysen/TexDBook.git ${name}
+    cd ${name}
 
     make install
 
     # TODO setup virtualenv
 
-    ln -s ${NAME}.conf /etc/apache2/sites-available/${NAME}.conf
-    a2ensite ${NAME}
+    ln -s ${name}.conf /etc/apache2/sites-available/${name}.conf
+    a2ensite ${name}
     service apache2 restart
 }
 
