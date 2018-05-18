@@ -2,7 +2,7 @@
 
 function check_and_install() {
     local package=$1
-    if apt list --installed | grep --quiet ${package}; then
+    if apt list --installed 2> /dev/null | grep --quiet ${package}; then
         :
     else
         apt-get install ${package}
@@ -37,12 +37,10 @@ function install_deployment() {
     cd /var/www/
     if [ -d ${name} ]; then
         cd ${name}
-        cd ${name}
         git pull
     else
-        mkdir ${name}
-        cd ${name}
-        local repo=https://github.com/${githubUserName}/${name}.git
+#        local repo=https://github.com/${githubUserName}/${name}.git
+        local repo=git@githup.com:${githubUserName}/${name}.git
         echo ${repo}
         git clone ${repo} ${name}
         cd ${name}
@@ -56,7 +54,7 @@ function install_deployment() {
 
     local link=/etc/apache2/sites-available/${name}.conf
     rm -f ${link}
-    mv ${name}.conf ${link}
+    cp ${name}.conf ${link}
     a2ensite ${name}
     service apache2 reload
 }
