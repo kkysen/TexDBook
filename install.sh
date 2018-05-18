@@ -35,7 +35,7 @@ function install_deployment() {
     echo ${githubUserName}
 
     cd /var/www/
-    if [-d ${name}]; then
+    if [ -d ${name} ]; then
         mkdir ${name}
         cd ${name}
         local repo=https://github.com/${githubUserName}/${name}.git
@@ -48,7 +48,7 @@ function install_deployment() {
         git pull
     fi
 
-    if [-f Makefile]; then
+    if [ -f Makefile ]; then
         make install
     fi
 
