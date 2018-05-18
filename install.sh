@@ -38,6 +38,8 @@ function install_TexDBook() {
 
     make install
 
+    # TODO setup virtualenv
+
     ln -s $(NAME).conf /etc/apache2/sites-available/$(NAME).conf
     a2ensite $(NAME)
     service apache2 restart
