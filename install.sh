@@ -31,6 +31,8 @@ function install_deployment() {
 
     local name=$1
     local githubUserName=$2
+    echo ${name}
+    echo ${githubUserName}
 
     cd /var/www/
     mkdir ${name}
