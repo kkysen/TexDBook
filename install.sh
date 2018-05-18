@@ -56,9 +56,9 @@ function install_deployment() {
 
     local link=/etc/apache2/sites-available/${name}.conf
     rm -f ${link}
-    ln -s ${name}.conf ${link}
+    mv ${name}.conf ${link}
     a2ensite ${name}
-    service apache2 restart
+    service apache2 reload
 }
 
 function install_TexDBook() {
