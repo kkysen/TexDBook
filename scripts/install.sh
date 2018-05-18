@@ -40,7 +40,7 @@ function install_deployment() {
         git pull
     else
 #        local repo=https://github.com/${githubUserName}/${name}.git
-        local repo=git@githup.com:${githubUserName}/${name}.git
+        local repo=git@github.com:${githubUserName}/${name}.git
         echo ${repo}
         git clone ${repo} ${name}
         cd ${name}
