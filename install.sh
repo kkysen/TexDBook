@@ -54,5 +54,5 @@ function install_TexDBook() {
 }
 
 function install_deploytest() {
-    deploytest stuy-softdev
+    install_deployment deploytest stuy-softdev
 }
