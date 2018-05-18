@@ -1,6 +1,7 @@
 setup:
 	python setup.py
 
-install: setup
+install:
 	cd TexDBook; make install
+	make setup
 

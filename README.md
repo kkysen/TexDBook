@@ -5,7 +5,7 @@
 ## How To Run
 
 ### For Deployment
-Run `wget -q0- https://raw.githubusercontent.com/kkysen/TexDBook/master/install.sh | bash`.
+Run `wget -qO- https://raw.githubusercontent.com/kkysen/TexDBook/master/install.sh | bash`.
 
 ### For Development
 
