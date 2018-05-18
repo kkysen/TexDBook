@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 function check_and_install() {
-    package = $1
-    if apt list --installed | grep --quiet $package; then
+    local package=$1
+    if apt list --installed | grep --quiet ${package}; then
         :
     else
-        apt-get install $package
+        apt-get install ${package}
     fi
 }
 function install_python2_and_pip() {
@@ -28,20 +28,20 @@ function install_TexDBook() {
     check_and_install git
     check_and_install make
 
-    NAME = "TexDBook"
+    local NAME="TexDBook"
 
     cd /var/www/
-    mkdir $(NAME)
-    cd $(NAME)
-    git clone https://github.com/kkysen/TexDBook.git $(NAME)
-    cd $(NAME)
+    mkdir ${NAME}
+    cd ${NAME}
+    git clone https://github.com/kkysen/TexDBook.git ${NAME}
+    cd ${NAME}
 
     make install
 
     # TODO setup virtualenv
 
-    ln -s $(NAME).conf /etc/apache2/sites-available/$(NAME).conf
-    a2ensite $(NAME)
+    ln -s ${NAME}.conf /etc/apache2/sites-available/${NAME}.conf
+    a2ensite ${NAME}
     service apache2 restart
 }
 
