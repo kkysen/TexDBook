@@ -22,19 +22,20 @@ function install_apache2_wsgi() {
     service apache2 restart
 }
 
-function install_TexDBook() {
+function install_deployment() {
     install_python2_and_pip
     install_apache2_wsgi
 
     check_and_install git
     check_and_install make
 
-    local name="TexDBook"
+    local name=$1
+    local githubUserName=$2
 
     cd /var/www/
     mkdir ${name}
     cd ${name}
-    git clone https://github.com/kkysen/TexDBook.git ${name}
+    git clone https://github.com/${githubUserName}/${name}.git ${name}
     cd ${name}
 
     make install
@@ -48,3 +49,10 @@ function install_TexDBook() {
     service apache2 restart
 }
 
+function install_TexDBook() {
+    install_deployment TexDBook kkysen
+}
+
+function install_deploytest() {
+    deploytest stuy-softdev
+}

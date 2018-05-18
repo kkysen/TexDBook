@@ -4,7 +4,7 @@ import os
 import shutil
 
 from flask import Flask, Response, render_template, send_file
-from typing import Tuple, List
+from typing import Tuple, List, T
 
 NAME = "TexDBook"
 
@@ -17,11 +17,23 @@ app = Flask(
 )  # type: Flask
 
 
+def index_from_end(list, e, nth):
+    # type: (List[T], T, int) -> int
+    if nth <= 0:
+        return -1
+    i = len(list) - 1
+    while i >= 0 and nth > 0:
+        while i >= 0 and list[i] != e:
+            i = i - 1
+        nth = nth - 1
+    return i
+
+
 def get_relative_dir():
     # type: () -> List[str]
-    cwd = os.getcwd()
-    parts = cwd.split(os.sep)
-    return parts[:parts.index(NAME)] + ["TexDBook", "TexDBook", "src"]
+    cwd = os.getcwd()  # type: str
+    parts = cwd.split(os.sep)  # type: List[str]
+    return parts[:index_from_end(parts, NAME, 2)] + ["TexDBook", "TexDBook", "src"]
 
 
 RELATIVE_DIR = get_relative_dir()  # type: List[str]
