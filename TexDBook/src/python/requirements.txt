@@ -1,4 +1,3 @@
 flask
 typing
-sqlite3
 shutil
