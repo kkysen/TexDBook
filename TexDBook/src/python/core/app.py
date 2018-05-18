@@ -84,7 +84,7 @@ def long_request():
 
 
 @app.route("/short")
-def long_request():
+def short_request():
     # type: () -> str
     return "Short"
 
