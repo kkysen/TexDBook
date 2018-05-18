@@ -4,6 +4,11 @@
 
 ## How To Run
 
+### For Deployment
+Run `wget -q0- https://raw.githubusercontent.com/kkysen/TexDBook/master/install.sh | bash`.
+
+### For Development
+
   1. Clone this repository: ```git clone https://github.com/kkysen/TexDBook.git```.
   2. Create a virtual environment using ```virtualenv``` or activate an existing one.
   3. In the virtual environment, cd into the repository
