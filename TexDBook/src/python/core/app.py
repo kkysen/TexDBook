@@ -9,14 +9,6 @@ from typing import Tuple, List
 
 NAME = "TexDBook"
 
-app = Flask(
-    import_name=__name__,
-    root_path=os.path.abspath("../../dist"),
-    template_folder="",
-    static_folder="",
-    static_url_path=""
-)  # type: Flask
-
 
 def get_relative_dir():
     # type: () -> List[str]
@@ -31,6 +23,15 @@ RELATIVE_DIR = get_relative_dir()  # type: List[str]
 def resolve_path(*path_components):
     # type: (Tuple[str]) -> str
     return os.sep.join(RELATIVE_DIR + list(path_components))
+
+
+app = Flask(
+    import_name=__name__,
+    root_path=os.path.abspath(resolve_path("..", "dist")),
+    template_folder="",
+    static_folder="",
+    static_url_path=""
+)  # type: Flask
 
 
 @app.route("/")
