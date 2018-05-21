@@ -14,8 +14,8 @@ NAME = "TexDBook"
 
 def get_relative_dir():
     # type: () -> List[str]
-    cwd = os.getcwd()  # type: str
-    parts = cwd.split(os.sep)  # type: List[str]
+    print(__file__)
+    parts = __file__.split(os.sep)  # type: List[str]
     return parts[:parts.index(NAME)] + ["TexDBook", "TexDBook", "src"]
 
 
