@@ -1,31 +1,14 @@
 from __future__ import print_function
 
-import logging
 import os
 import shutil
 import time
-from logging import Logger
 
 from flask import Flask, Response, render_template, send_file
-from typing import Tuple, List
+from typing import Tuple
 
-NAME = "TexDBook"
-
-
-def get_relative_dir():
-    # type: () -> List[str]
-    print(__file__)
-    parts = __file__.split(os.sep)  # type: List[str]
-    return parts[:parts.index(NAME)] + ["TexDBook", "TexDBook", "src"]
-
-
-RELATIVE_DIR = get_relative_dir()  # type: List[str]
-
-
-def resolve_path(*path_components):
-    # type: (Tuple[str]) -> str
-    return os.sep.join(RELATIVE_DIR + list(path_components))
-
+from TexDBook.src.python.core.init import NAME, resolve_path
+from TexDBook.src.python.util.log import log
 
 app = Flask(
     import_name=__name__,
@@ -34,9 +17,6 @@ app = Flask(
     static_folder="",
     static_url_path=""
 )  # type: Flask
-
-logging.basicConfig(filename="/var/log/apache2/TexDBook.log")
-log = logging.getLogger(NAME)  # type: Logger
 
 
 @app.route("/")
