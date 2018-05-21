@@ -6,6 +6,7 @@ import os
 import sys
 
 sys.path.insert(0, os.getcwdu())
+print(sys.path)
 
 from TexDBook import create_app
 
