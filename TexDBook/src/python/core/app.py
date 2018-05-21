@@ -1,8 +1,10 @@
 from __future__ import print_function
 
+import logging
 import os
 import shutil
 import time
+from logging import Logger
 
 from flask import Flask, Response, render_template, send_file
 from typing import Tuple, List
@@ -34,9 +36,14 @@ app = Flask(
 )  # type: Flask
 
 
+logging.basicConfig(filename="/var/log/apache2/TexDBook.log")
+log = logging.getLogger(NAME)  # type: Logger
+
+
 @app.route("/")
 def index():
     # type: () -> Response
+    log.debug("index")
     # map(print, app.url_map.iter_rules())
     return render_template("index.html")
 
@@ -45,6 +52,7 @@ def make_data_route(app, route, path, mime_type=None):
     # type: (Flask, str, str, str) -> None
     def data():
         # type: () -> Response
+        log.debug(route)
         print(route)
         return send_file(os.path.abspath(path), mimetype=mime_type)
     
@@ -80,6 +88,7 @@ def make_favicon():
 @app.route("/long")
 def long_request():
     # type: () -> str
+    log.debug("long")
     time.sleep(10)
     return "Long"
 
@@ -87,14 +96,20 @@ def long_request():
 @app.route("/short")
 def short_request():
     # type: () -> str
+    log.debug("short")
     return "Short"
 
 
 def create_app():
     # type: () -> Tuple[Flask, str]
     app.secret_key = os.urandom(32)
-    app.debug = True
+    
+    if False:
+        app.debug = True
     
     make_favicon()
+    
+    log.debug(app)
+    log.debug(NAME)
     
     return app, NAME
