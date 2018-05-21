@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import sys
 
+print(__file__)
 print(sys.path)
 
 from TexDBook import create_app
