@@ -58,10 +58,7 @@ def make_file_data_route(filename, dir, prefix=""):
     make_data_route(app, route, path, mime_type)
 
 
-def make_favicon():
-    # type: () -> None
-    shutil.copyfile(resolve_path("data", "CLRS.jpg"), resolve_path("data", "favicon.ico"))
-    make_file_data_route("favicon.ico", "data")
+make_file_data_route("favicon.ico", "data")
 
 
 @app.route("/long")
@@ -85,8 +82,6 @@ def create_app():
     
     if False:
         app.debug = True
-    
-    make_favicon()
     
     log.debug(app)
     log.debug(NAME)
