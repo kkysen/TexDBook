@@ -15,6 +15,14 @@ if False:
     
     log = logging.getLogger(NAME)  # type: Logger
 
-log = object()
 
-setattr(log, "debug", print)
+class FakeLog(object):
+    
+    def __init__(self):
+        pass
+    
+    def debug(self, *args, **kwargs):
+        print(*args, **kwargs)
+
+
+log = FakeLog()
