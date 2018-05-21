@@ -112,4 +112,6 @@ def create_app():
     log.debug(app)
     log.debug(NAME)
     
+    raise Exception("assert")
+    
     return app, NAME
