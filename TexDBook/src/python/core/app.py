@@ -35,9 +35,15 @@ app = Flask(
     static_url_path=""
 )  # type: Flask
 
-
 logging.basicConfig(filename="/var/log/apache2/TexDBook.log")
 log = logging.getLogger(NAME)  # type: Logger
+
+
+def _debug(msg):
+    open("/var/log/apache2/TexDBook.log", "a").write(s)
+
+
+log.debug = _debug
 
 
 @app.route("/")
