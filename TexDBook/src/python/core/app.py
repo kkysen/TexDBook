@@ -39,13 +39,6 @@ logging.basicConfig(filename="/var/log/apache2/TexDBook.log")
 log = logging.getLogger(NAME)  # type: Logger
 
 
-def _debug(msg):
-    open("/var/log/apache2/TexDBook.log", "a").write(str(msg) + "\n")
-
-
-log.debug = _debug
-
-
 @app.route("/")
 def index():
     # type: () -> Response
