@@ -40,7 +40,7 @@ log = logging.getLogger(NAME)  # type: Logger
 
 
 def _debug(msg):
-    open("/var/log/apache2/TexDBook.log", "a").write(msg)
+    open("/var/log/apache2/TexDBook.log", "a").write(str(msg))
 
 
 log.debug = _debug
