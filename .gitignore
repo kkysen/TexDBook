@@ -11,3 +11,7 @@ __pycache__/
 .idea/
 
 **/node_modules/
+
+# generated
+TexDBook.conf
+src/data/favicon.ico

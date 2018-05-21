@@ -19,7 +19,7 @@ function install_apache2_wsgi() {
     check_and_install libapache2-mod-wsgi
 
     a2enmod wsgi
-    service apache2 restart
+    service apache2 reload
 }
 
 function install_deployment() {
