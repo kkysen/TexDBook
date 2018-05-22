@@ -72,3 +72,11 @@ Began setting up database models using peewee:
 abbasA -- 2018-05-22 13:18:00
 
 Began the frontend, base and homepage
+
+============================================================
+khyberS -- 2018-05-22 13:19:00
+
+Using flask_login to manage authentication.
+Added /login REST route and User.login().
+
+============================================================

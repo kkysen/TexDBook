@@ -1,8 +1,9 @@
 from peewee import CharField, IntegerField
+from typing import Union
 
-from TexDBook.src.python.core.views.login import login_manager
 from TexDBook.src.python.core.models.Book import Book
 from TexDBook.src.python.core.models.db import flask_db
+from TexDBook.src.python.core.views.login import login_manager
 
 
 class User(flask_db.Model):
@@ -11,11 +12,15 @@ class User(flask_db.Model):
     hashed_password = CharField()
     balance = IntegerField(default=0)
     
+    @staticmethod
+    def hash_password(password):
+        # type: (str) -> str
+        return password  # TODO hash
+    
     @classmethod
     def create(cls, username, password):
         # type: (str, str) -> User
-        hashed_password = password  # TODO hash
-        return super(User, cls).create(username=username, hashed_password=hashed_password)
+        return super(User, cls).create(username=username, hashed_password=cls.hash_password(password))
     
     def __init__(self, username, hashed_password):
         # type: (str, str) -> None
@@ -33,6 +38,11 @@ class User(flask_db.Model):
     def load(cls, user_id):
         # type: (unicode) -> User
         return cls.get_or_none(id=int(user_id))
+    
+    @classmethod
+    def login(cls, username, password):
+        # type: (str, str) -> Union[User, None]
+        return User.get_or_none(username=username, password=cls.hash_password(password))
     
     def add_book(self, barcode, isbn):
         # type: (str, str) -> Book

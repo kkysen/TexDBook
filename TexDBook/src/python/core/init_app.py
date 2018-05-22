@@ -26,7 +26,7 @@ app = Flask(
     root_path=os.path.abspath(resolve_path("..", "dist")),
     template_folder="",
     static_folder="",
-    static_url_path=""
+    static_url_path="",
 )  # type: Flask
 
 app.secret_key = os.urandom(32)
