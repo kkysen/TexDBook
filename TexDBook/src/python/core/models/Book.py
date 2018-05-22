@@ -15,23 +15,23 @@ class Book(flask_db.Model):
     @staticmethod
     def clean(barcode):
         # type: (str) -> str
-        barcode.replace("-", "");
+        barcode = barcode.replace("-", "")
         if not barcode.isdigit():
             raise ValueError("Incorrectly formatted ISBN")
-        if barcode.length == 10:
+        if len(barcode) == 10:
             #convert from ISBN 10 to ISBN 13
             #add 978 to front and strip ISBN10 check digit
             #for check,
             #if even index, mult by 3, then sum digits, mod 10, then subtract value from 10
             barcode = "978" + barcode[:-1]
             bar = [int(i) for i in barcode]
-            for i in range(bar.length):
+            for i in range(len(bar)):
                 if i % 2 == 0:
                     bar[i] *= 3
             check = 10 - (sum(bar) % 10)
             barcode += str(check)
         return barcode
-    
+
     @classmethod
     def create(cls, barcode, isbn, owner):
         # type: (str, str, User) -> Book
@@ -44,3 +44,4 @@ class Book(flask_db.Model):
             lender=owner,
             borrower=owner,
         )
+
