@@ -2,8 +2,9 @@
 
 from __future__ import print_function
 
-import os
 import sys
+
+import os
 
 sys.path.insert(0, os.path.dirname(__file__))
 

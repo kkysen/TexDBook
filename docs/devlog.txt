@@ -54,3 +54,18 @@ All the other necessary .conf, .wsgi, etc. files are there now, too.
 Will test on VM now.
 
 ============================================================
+khyberS -- 2018-05-20 23:39:00
+
+Flask now runs through Apache2 correctly.
+
+It uses some form of multithreading and/or multiprocessing
+that has a low default limit
+(10 blocking calls are not evaluated at about the same time, but in batches).
+
+============================================================
+khyberS -- 2018-05-21 21:41:00
+
+Began setting up database models using peewee:
+    User, Book, IsbnBook, and Transaction.
+
+============================================================

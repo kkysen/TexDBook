@@ -1,10 +1,11 @@
 from __future__ import print_function
 
-import os
-import shutil
 import time
 
+import os
 from flask import Flask, Response, render_template, send_file
+from peewee import Database
+from playhouse.flask_utils import FlaskDB
 from typing import Tuple
 
 from TexDBook.src.python.core.init import NAME, resolve_path
@@ -17,6 +18,9 @@ app = Flask(
     static_folder="",
     static_url_path=""
 )  # type: Flask
+app.config.from_object(__name__)
+flask_db = FlaskDB(app)  # type: FlaskDB
+db = flask_db.database  # type: Database
 
 
 @app.route("/")
