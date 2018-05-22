@@ -69,3 +69,6 @@ Began setting up database models using peewee:
     User, Book, IsbnBook, and Transaction.
 
 ============================================================
+abbasA -- 2018-05-22 13:18:00
+
+Began the frontend, base and homepage
