@@ -3,3 +3,4 @@ typing
 cython
 apsw
 peewee
+flask-login

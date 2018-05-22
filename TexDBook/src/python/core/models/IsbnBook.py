@@ -1,6 +1,6 @@
 from peewee import FixedCharField, Tuple
 
-from TexDBook.src.python.core.app import flask_db
+from TexDBook.src.python.core.models.db import flask_db
 
 
 class IsbnBook(flask_db.Model):
@@ -17,4 +17,5 @@ class IsbnBook(flask_db.Model):
         # type: (str) -> Tuple[IsbnBook, bool]
         isbn13 = cls.clean(isbn)  # type: str
         # TODO fetch isbn book data from Google Books API
+        # TODO async or sync
         return cls.get_or_create(isbn=isbn13)

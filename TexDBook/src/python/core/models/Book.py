@@ -1,8 +1,8 @@
 from peewee import CharField, ForeignKeyField
 
-from TexDBook.src.python.core.app import flask_db
-from TexDBook.src.python.core.data import User
-from TexDBook.src.python.core.data.IsbnBook import IsbnBook
+from TexDBook.src.python.core.models import User
+from TexDBook.src.python.core.models.IsbnBook import IsbnBook
+from TexDBook.src.python.core.models.db import flask_db
 
 
 class Book(flask_db.Model):
@@ -18,10 +18,11 @@ class Book(flask_db.Model):
         pass
     
     @classmethod
-    def create_new(cls, barcode, isbn, owner):
+    def create(cls, barcode, isbn, owner):
         # type: (str, str, User) -> Book
         """Create a new Book owned by `owner`."""
-        return Book.create(
+        # TODO make transaction from initial, universal lender?
+        return super(Book, cls).create(
             barcode=cls.clean(barcode),
             isbn_book=IsbnBook.get_or_create_cleaned(isbn),
             owner=owner,
