@@ -80,3 +80,8 @@ Using flask_login to manage authentication.
 Added /login REST route and User.login().
 
 ============================================================
+naotakaK -- 2018-05-22 15:25:00
+
+Implemented clean function to convert ISBN 10 to ISBN 13
+
+============================================================

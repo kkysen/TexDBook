@@ -29,3 +29,4 @@ class Book(flask_db.Model):
             lender=owner,
             borrower=owner,
         )
+
