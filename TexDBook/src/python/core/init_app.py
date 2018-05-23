@@ -36,4 +36,5 @@ app.debug = True
 
 def default_init_app(app):
     # type: (Flask) -> None
+    """Do nothing. Meant for importing to run modules."""
     pass

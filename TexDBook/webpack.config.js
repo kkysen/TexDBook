@@ -20,6 +20,13 @@ module.exports = {
             },
         ]
     },
+    externals: {
+        // TODO check names
+        "react": "React",
+        "react-dom": "ReactDOM",
+        "react-router": true,
+        "react-router-dom": true,
+    },
     plugins: [
         new HtmlWebpackPlugin({
             hash: true,

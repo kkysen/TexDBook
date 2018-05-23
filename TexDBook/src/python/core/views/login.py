@@ -22,5 +22,5 @@ def login():
     if user:
         login_user(None, remember=True)
     return {
-        "logged_in": user is not None,
+        "isLoggedIn": user is not None,
     }

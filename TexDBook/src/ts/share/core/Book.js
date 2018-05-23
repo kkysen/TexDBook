@@ -4,4 +4,4 @@ void async function f() {
     let tb;
     const book = await tb.isbn.fetchBook();
 };
-//# sourceMappingURL=TextBook.js.map
+//# sourceMappingURL=Book.js.map

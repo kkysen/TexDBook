@@ -4,6 +4,7 @@ from typing import Union
 from TexDBook.src.python.core.models.Book import Book
 from TexDBook.src.python.core.models.db import flask_db
 from TexDBook.src.python.core.views.login import login_manager
+from TexDBook.src.python.util.password import hash_password, verify_password
 
 
 class User(flask_db.Model):
@@ -12,15 +13,10 @@ class User(flask_db.Model):
     hashed_password = CharField()
     balance = IntegerField(default=0)
     
-    @staticmethod
-    def hash_password(password):
-        # type: (str) -> str
-        return password  # TODO hash
-    
     @classmethod
     def create(cls, username, password):
         # type: (str, str) -> User
-        return super(User, cls).create(username=username, hashed_password=cls.hash_password(password))
+        return super(User, cls).create(username=username, hashed_password=hash_password(password))
     
     def __init__(self, username, hashed_password):
         # type: (str, str) -> None
@@ -42,7 +38,10 @@ class User(flask_db.Model):
     @classmethod
     def login(cls, username, password):
         # type: (str, str) -> Union[User, None]
-        return User.get_or_none(username=username, password=cls.hash_password(password))
+        user = User.get_or_none(username=username)
+        if user and verify_password(password, user.hashed_password):
+            return user
+        return None
     
     def add_book(self, barcode, isbn):
         # type: (str, str) -> Book

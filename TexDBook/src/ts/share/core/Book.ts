@@ -1,7 +1,7 @@
 import {Isbn} from "./Isbn";
 import {User} from "./User";
 
-export interface TextBook {
+export interface Book {
     
     readonly barcode: string;
     readonly department: string;
@@ -20,7 +20,7 @@ export interface TextBook {
 }
 
 void async function f() {
-    let tb: TextBook;
+    let tb: Book;
     const book = await tb.isbn.fetchBook();
     
 };

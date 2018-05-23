@@ -1,19 +1,19 @@
-import {TextBook} from "./TextBook";
+import {Book} from "./Book";
 
 export interface User {
     
     userName: string;
     
-    textBooks: TextBook[];
+    textBooks: Book[];
     
     totalPrice(): number;
     
-    checkOut(textBook: TextBook): void;
+    checkOut(textBook: Book): void;
     
-    return(textBook: TextBook): void;
+    return(textBook: Book): void;
     
-    checkOut(barcode: string): TextBook;
+    checkOut(barcode: string): Book;
     
-    return(barcode: string): TextBook;
+    return(barcode: string): Book;
     
 }
