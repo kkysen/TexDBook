@@ -11,9 +11,8 @@ exports.isSameOrigin = function (url) {
     return exports.getOrigin(url) === origin;
 };
 exports.corsFetch = function (input, init) {
-    console.log(arguments);
     const url = input instanceof Request ? input.url : input;
-    if (!exports.isSameOrigin(url)) {
+    if (url && !exports.isSameOrigin(url)) {
         const newUrl = exports.corsServerUrl + url;
         if (input instanceof Request) {
             input = new Request(newUrl, input);

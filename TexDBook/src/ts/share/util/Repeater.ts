@@ -1,6 +1,6 @@
 import {Class} from "./Class";
 
-type NumberFunc = (number) => number;
+type NumberFunc = (i: number) => number;
 
 type RepeaterFunc<T> = (repeatNum: number, interval: number) => T;
 

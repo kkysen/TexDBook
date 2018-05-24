@@ -13,14 +13,13 @@ export const isSameOrigin = function(url: string) {
 };
 
 export const corsFetch = function(input?: string | Request, init?: RequestInit): Promise<Response> {
-    console.log(arguments);
-    const url: string = input instanceof Request ? input.url : input;
-    if (!isSameOrigin(url)) {
+    const url: string | undefined = input instanceof Request ? input.url : input;
+    if (url && !isSameOrigin(url)) {
         const newUrl = corsServerUrl + url;
         if (input instanceof Request) {
-            input = new Request(newUrl, input);
+            input = new Request(newUrl, input as RequestInit);
         } else {
-            input = newUrl
+            input = newUrl;
         }
     }
     return window.fetch(input, init);

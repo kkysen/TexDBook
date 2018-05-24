@@ -66,7 +66,7 @@ export const CSSSelector: CSSSelectorClass = <CSSSelectorClass> <any> Class.new(
                 return this;
             },
             
-            styles(styleObj: Object): CSSSelector {
+            styles(styleObj: {[key: string]: string}): CSSSelector {
                 for (const field in styleObj) {
                     if (styleObj.hasOwnProperty(field) && styleObj[field]) {
                         lines.push(field.replace("_", "-") + ": " + styleObj[field]);

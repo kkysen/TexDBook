@@ -20,7 +20,8 @@ export interface Book {
 }
 
 void async function f() {
-    let tb: Book;
+    // TODO delete
+    let tb: Book = {} as Book;
     const book = await tb.isbn.fetchBook();
     
 };

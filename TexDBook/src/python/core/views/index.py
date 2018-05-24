@@ -7,7 +7,7 @@ from TexDBook.src.python.core.init_app import app, default_init_app
 def index():
     # type: () -> Response
     # map(print, app.url_map.iter_rules())
-    return render_template("index.html")
+    return render_template("index.html", debug=app.debug)
 
 
 init_app = default_init_app

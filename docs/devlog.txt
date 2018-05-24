@@ -85,3 +85,11 @@ naotakaK -- 2018-05-22 15:25:00
 Implemented clean function to convert ISBN 10 to ISBN 13
 
 ============================================================
+khyberS -- 2018-05-24 08:33:00
+
+Setup basic react router and it works.  
+Working on logging in now.
+
+Also moved clean_isbn() to correct location, not clean_barcode().
+
+============================================================

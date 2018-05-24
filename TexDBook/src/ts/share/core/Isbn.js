@@ -1237,10 +1237,10 @@ exports.Isbn = (() => {
         if (!isbn) {
             return null;
         }
-        const group = isbn.group;
-        if (!group) {
+        if (!isbn.group) {
             return null;
         }
+        const group = isbn.group;
         const isbn10Prefix = "978";
         const prefix = isbn.prefix || isbn10Prefix;
         const parts = [group.code, isbn.publisher, isbn.article];
@@ -1372,7 +1372,7 @@ exports.Isbn = (() => {
                                 })
                                 : null;
                 // check is like a hashsum
-                if (isbn.check !== (isbn.isbn13 ? isbn.check13 : isbn.check10)) {
+                if (!isbn || isbn.check !== (isbn.isbn13 ? isbn.check13 : isbn.check10)) {
                     return null;
                 }
                 return isbn;

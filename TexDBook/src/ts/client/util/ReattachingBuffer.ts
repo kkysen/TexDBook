@@ -25,7 +25,7 @@ export const ReattachingBuffer = {
         let detacher: Detacher = <Detacher> <any> detacherParent[detacherName];
         if (!detacher.detacher) {
             const realDetacher: AnyFunction = detacher;
-            detacher = <Detacher> function(...args: any[]): any {
+            detacher = <Detacher> function(this: any, ...args: any[]): any {
                 realDetacher.call(this, args);
                 for (const reattacher of detacher.attached) {
                     reattacher();

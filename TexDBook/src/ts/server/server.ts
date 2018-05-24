@@ -1,7 +1,5 @@
-import {Express, Request, Response} from "express";
 import * as express from "express";
-import {MongoClient} from "mongodb";
-import {mongo} from "mongoose";
+import {Express, Request, Response} from "express";
 
 
 const app: Express = express();

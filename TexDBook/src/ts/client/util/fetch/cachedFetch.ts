@@ -2,7 +2,7 @@ export type Fetch = typeof fetch;
 
 export interface FetchAs<T> {
     
-    (input: string | Request, init?: RequestInit): Promise<T>;
+    (input?: string | Request, init?: RequestInit): Promise<T>;
     
 }
 
@@ -28,7 +28,7 @@ const serializeResponse = function(arrayBuffer: ArrayBuffer): string {
     return new TextDecoder().decode(arrayBuffer);
 };
 
-type FetchArgs = {input: string | Request, init?: RequestInit};
+type FetchArgs = {input?: string | Request, init?: RequestInit};
 
 const serializeFetchArgs = function(args: FetchArgs): string {
     return JSON.stringify(args);
@@ -52,7 +52,7 @@ const onLoad = function(url: string | FetchArgs,): Promise<void> {
     });
 };
 
-const baseCachedFetch = function(input: string | Request, init?: RequestInit): [string, Promise<Response>] {
+const baseCachedFetch = function(input?: string | Request, init?: RequestInit): [string, Promise<Response>] {
     const key: string = serializeFetchArgs({
         input: input,
         init: init,
@@ -78,7 +78,7 @@ const baseCachedFetch = function(input: string | Request, init?: RequestInit): [
     ];
 };
 
-export const cachedSimpleFetch: Fetch = function(input: string | Request, init?: RequestInit): Promise<Response> {
+export const cachedSimpleFetch: Fetch = function(input?: string | Request, init?: RequestInit): Promise<Response> {
     const [key, promise] = baseCachedFetch(input, init);
     return promise.then(response => {
         if (onLoadFuncs[key]) {
@@ -90,16 +90,16 @@ export const cachedSimpleFetch: Fetch = function(input: string | Request, init?:
     });
 };
 
-const makeFetchAs = function <T>(then: (Response) => T): FetchAs<T> {
-    return (input: string | Request, init?: RequestInit) =>
+const makeFetchAs = function <T>(then: (response: Response) => T): FetchAs<T> {
+    return (input?: string | Request, init?: RequestInit) =>
         cachedSimpleFetch(input, init).then(then);
 };
 
 export const cachedFetch: SuperFetch = Object.assign(cachedSimpleFetch, ...[
-    response => response.text(),
-    response => response.json(),
-    response => response.arrayBuffer(),
-    response => response.blob(),
+    (response: Response) => response.text(),
+    (response: Response) => response.json(),
+    (response: Response) => response.arrayBuffer(),
+    (response: Response) => response.blob(),
 ].map(makeFetchAs));
 
 cachedFetch.onLoad = onLoad;

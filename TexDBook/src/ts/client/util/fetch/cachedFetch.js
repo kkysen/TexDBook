@@ -67,10 +67,10 @@ const makeFetchAs = function (then) {
     return (input, init) => exports.cachedSimpleFetch(input, init).then(then);
 };
 exports.cachedFetch = Object.assign(exports.cachedSimpleFetch, ...[
-    response => response.text(),
-    response => response.json(),
-    response => response.arrayBuffer(),
-    response => response.blob(),
+    (response) => response.text(),
+    (response) => response.json(),
+    (response) => response.arrayBuffer(),
+    (response) => response.blob(),
 ].map(makeFetchAs));
 exports.cachedFetch.onLoad = onLoad;
 //# sourceMappingURL=cachedFetch.js.map

@@ -2,7 +2,7 @@ setup:
 	python setup.py
 
 favicon:
-	cd TexDBook/src/data; ln -s CLRS.jpg favicon.ico
+	cd TexDBook/src/data; cp CLRS.jpg favicon.ico
 
 install:
 	# for apsw Cython

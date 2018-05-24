@@ -6,9 +6,9 @@ declare interface HTMLAppendable<T> {
 
 declare interface ObjectConstructor {
     
-    defineSharedProperties(object: any, sharedDescriptor: PropertyDescriptor, propertyValues: Object);
+    defineSharedProperties(object: any, sharedDescriptor: PropertyDescriptor, propertyValues: Object): void;
     
-    defineImmutableProperties(object: any, propertyValues: Object);
+    defineImmutableProperties(object: any, propertyValues: Object): void;
     
     getting<T, K extends keyof T>(key: K): (o: T) => T[K];
     
@@ -112,4 +112,5 @@ declare interface HTMLElement {
 }
 
 declare interface HTMLElement extends HTMLAppendable<HTMLElement> {
+
 }

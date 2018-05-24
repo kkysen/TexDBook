@@ -1,6 +1,5 @@
-import {IsbnBook} from "./IsbnBook";
-
 import {resolve as fetchIsbnBook} from "node-isbn";
+import {IsbnBook} from "./IsbnBook";
 
 type Range = [string, string];
 type Ranges = Range[];
@@ -1286,7 +1285,7 @@ export type Isbn10 = Readonly<MutableIsbn10>;
 
 export interface IsbnClass {
     
-    parse(isbnString: string, groups?: IsbnGroup[]): Isbn;
+    parse(isbnString: string, groups?: IsbnGroup[]): Isbn | null;
     
 }
 
@@ -1319,22 +1318,22 @@ export const Isbn: IsbnClass = (() => {
             return null;
         }
         
-        const group: IsbnGroup = isbn.group;
-        if (!group) {
+        if (!isbn.group) {
             return null;
         }
+        const group: IsbnGroup = isbn.group;
         
         const isbn10Prefix: string = "978";
         const prefix: string = isbn.prefix || isbn10Prefix;
         
-        const parts: string[] = [group.code, isbn.publisher, isbn.article];
+        const parts: string[] = <string[]> [group.code, isbn.publisher, isbn.article];
         const isbnString: string = parts.join("");
-        const check10: string = calcCheckDigit(isbnString);
+        const check10: string | null = calcCheckDigit(isbnString);
         if (!check10) {
             return null;
         }
         
-        const check13: string = calcCheckDigit(prefix + isbnString);
+        const check13: string | null = calcCheckDigit(prefix + isbnString);
         if (!check13) {
             return null;
         }
@@ -1372,7 +1371,7 @@ export const Isbn: IsbnClass = (() => {
         }
         
         isbn.fetchBook = async function(): Promise<IsbnBook> {
-            return fetchIsbnBook(isbn.isbn13);
+            return fetchIsbnBook((isbn as Isbn).isbn13);
         };
         
         isbn.freeze();
@@ -1381,7 +1380,7 @@ export const Isbn: IsbnClass = (() => {
     
     return {
         
-        parse(isbnString: string, _groups: IsbnGroup[] = Object.values(GROUPS)): Isbn {
+        parse(isbnString: string, _groups: IsbnGroup[] = Object.values(GROUPS)): Isbn | null {
             const groups: IsbnGroup[] = _groups;
             
             const getGroupRecord = function(isbn10: string): GroupRecord | null {
@@ -1429,7 +1428,7 @@ export const Isbn: IsbnClass = (() => {
                             ? splitAndBuild10(isbn) : null;
             };
             
-            const parse = function(isbnString: string): Isbn {
+            const parse = function(isbnString: string): Isbn | null {
                 const val: string = isbnString;
                 const isbn = val.match(/^\d{9}[\dX]$/)
                     ? buildRemainingFields(merge({
@@ -1467,7 +1466,7 @@ export const Isbn: IsbnClass = (() => {
                                 })
                                 : null;
                 // check is like a hashsum
-                if (isbn.check !== (isbn.isbn13 ? isbn.check13 : isbn.check10)) {
+                if (!isbn || isbn.check !== (isbn.isbn13 ? isbn.check13 : isbn.check10)) {
                     return null;
                 }
                 return isbn;

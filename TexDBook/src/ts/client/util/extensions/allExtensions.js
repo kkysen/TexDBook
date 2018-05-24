@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = require("react");
 const immutableDescriptor = {
     writable: false,
     enumerable: false,
@@ -144,10 +145,12 @@ Object.defineImmutableProperties(Number, {
 });
 Object.defineImmutableProperties(Node.prototype, {
     appendBefore(node) {
-        return this.parentNode.insertBefore(node, this);
+        this.parentNode && this.parentNode.insertBefore(node, this);
+        return node;
     },
     appendAfter(node) {
-        return this.nextSibling.appendBefore(node);
+        this.nextSibling && this.nextSibling.appendBefore(node);
+        return node;
     },
 });
 Object.defineImmutableProperties(Element.prototype, {
@@ -188,6 +191,11 @@ Object.defineImmutableProperties(HTMLElement.prototype, {
     withInnerHTML(html) {
         this.innerHTML = html;
         return this;
+    },
+});
+Object.defineImmutableProperties(react_1.Component.prototype, {
+    get url() {
+        return "/" + this.name;
     },
 });
 exports.addExtensions = function () {

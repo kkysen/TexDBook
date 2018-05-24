@@ -1,10 +1,12 @@
+import {Component} from "react";
+
 const immutableDescriptor: PropertyDescriptor = {
     writable: false,
     enumerable: false,
     configurable: false,
 };
 
-const defineSharedProperties = function(obj: any, sharedDescriptor: PropertyDescriptor, propertyValues: Object) {
+const defineSharedProperties = function(obj: any, sharedDescriptor: PropertyDescriptor, propertyValues: Object): void {
     const properties: PropertyDescriptorMap & ThisType<any> = Object.getOwnPropertyDescriptors(propertyValues);
     for (const propertyName in properties) {
         if (properties.hasOwnProperty(propertyName)) {
@@ -19,7 +21,7 @@ const defineSharedProperties = function(obj: any, sharedDescriptor: PropertyDesc
     Object.defineProperties(obj, properties);
 };
 
-const defineImmutableProperties = function(obj: any, propertyValues: Object) {
+const defineImmutableProperties = function(obj: any, propertyValues: Object): void {
     defineSharedProperties(obj, immutableDescriptor, propertyValues);
 };
 
@@ -82,7 +84,7 @@ Object.defineImmutableProperties(Function, {
         if (numFuncs === 1) {
             return funcs[0];
         }
-        return function(...args) {
+        return function(...args: any[]) {
             let result = funcs[0](...args);
             for (let i = 1; i < numFuncs; i++) {
                 result = funcs[i](result);
@@ -115,7 +117,7 @@ Object.defineImmutableProperties(Function.prototype, {
     },
     
     timed<T extends Function>(this: T): T {
-        const timer = (...args) => {
+        const timer = (...args: any[]) => {
             console.time(this.name);
             const returnValue = this(...args);
             console.timeEnd(this.name);
@@ -129,7 +131,7 @@ Object.defineImmutableProperties(Function.prototype, {
 
 Object.defineImmutableProperties(Array.prototype, {
     
-    clear(): void {
+    clear<T>(this: T[]): void {
         this.length = 0;
     },
     
@@ -148,8 +150,8 @@ Object.defineImmutableProperties(Array.prototype, {
         return func(...this);
     },
     
-    toObject(this: [string, any][]): any {
-        let o = {};
+    toObject<T>(this: [string, T][]): {[key: string]: T} {
+        let o: {[key: string]: T} = {};
         for (const [k, v] of this) {
             o[k] = v;
         }
@@ -182,22 +184,24 @@ Object.defineImmutableProperties(Number, {
 Object.defineImmutableProperties(Node.prototype, {
     
     appendBefore(this: Node, node: Node): Node {
-        return this.parentNode.insertBefore(node, this);
+        this.parentNode && this.parentNode.insertBefore(node, this);
+        return node;
     },
     
     appendAfter(this: Node, node: Node): Node {
-        return this.nextSibling.appendBefore(node);
+        this.nextSibling && this.nextSibling.appendBefore(node);
+        return node;
     },
     
 });
 
 Object.defineImmutableProperties(Element.prototype, {
     
-    clearHTML() {
+    clearHTML(this: Element) {
         this.innerHTML = "";
     },
     
-    setAttributes(attributes: {[name: string]: any}) {
+    setAttributes(this: Element, attributes: {[name: string]: any}) {
         for (const attribute in attributes) {
             if (attributes.hasOwnProperty(attribute) && attributes[attribute]) {
                 this.setAttribute(attribute, attributes[attribute].toString());
@@ -214,21 +218,21 @@ Object.defineImmutableProperties(HTMLElement.prototype, {
         return this;
     },
     
-    appendNewElement(tagName: string): HTMLElement {
+    appendNewElement(this: HTMLElement, tagName: string): HTMLElement {
         return this.appendChild(document.createElement(tagName));
     },
     
-    appendDiv(): HTMLDivElement {
+    appendDiv(this: HTMLElement): HTMLDivElement {
         return this.appendNewElement("div");
     },
     
-    appendButton(buttonText: string): HTMLButtonElement {
+    appendButton(this: HTMLElement, buttonText: string): HTMLButtonElement {
         const button = this.appendNewElement("button");
         button.innerText = buttonText;
         return button;
     },
     
-    appendBr(): HTMLBRElement {
+    appendBr(this: HTMLElement): HTMLBRElement {
         return this.appendNewElement("br");
     },
     
@@ -240,6 +244,14 @@ Object.defineImmutableProperties(HTMLElement.prototype, {
     withInnerHTML<T extends HTMLElement>(this: T, html: string): T {
         this.innerHTML = html;
         return this;
+    },
+    
+});
+
+Object.defineImmutableProperties(Component.prototype, {
+    
+    get url(this: Component & Function): string {
+        return "/" + this.name;
     },
     
 });

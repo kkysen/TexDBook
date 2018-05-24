@@ -21,23 +21,21 @@ export type RangeClass = {
 export const Range: RangeClass = Object.freeze({
     
     new(from: number, to?: number): Range {
-        if (!to) {
-            to = from;
-            from = 0;
-        }
+        const _from: number = to === undefined ? 0 : from;
+        const _to: number = to === undefined ? from : to;
         
         return {
             
             map<T>(func: (i: number) => T): T[] {
-                const a: T[] = new Array(to - from);
-                for (let i: number = from; i < to; i++) {
-                    a[i - from] = func(i);
+                const a: T[] = new Array(_to - _from);
+                for (let i: number = _from; i < _to; i++) {
+                    a[i - _from] = func(i);
                 }
                 return a;
             },
             
             forEach(func: (i: number) => void): void {
-                for (let i: number = from; i < to; i++) {
+                for (let i: number = _from; i < _to; i++) {
                     func(i);
                 }
             },
@@ -47,7 +45,7 @@ export const Range: RangeClass = Object.freeze({
             },
             
             toInterval(): number[] {
-                return [from, to];
+                return [_from, _to];
             },
             
         };
