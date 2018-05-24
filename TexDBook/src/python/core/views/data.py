@@ -1,7 +1,7 @@
 import os
 from flask import Flask, Response, send_file
 
-from TexDBook.src.python.core.init_app import app, default_init_app
+from TexDBook.src.python.core.init_app import app, default_init_app, resolve_path
 
 
 def make_data_route(app, route, path, mime_type=None):
@@ -17,7 +17,7 @@ def make_data_route(app, route, path, mime_type=None):
 
 def make_file_data_route(filename, dir, prefix=""):
     # type: (str, str) -> None
-    dir = "../" + dir
+    # dir = "../" + dir
     _, extension = filename.split(".")
     route = filename
     mime_type = {
@@ -28,7 +28,7 @@ def make_file_data_route(filename, dir, prefix=""):
         "json": "application/json",
         "ico": "image/vnd.microsoft.icon",
     }[extension]
-    path = dir + "/" + filename
+    path = resolve_path(dir, filename)
     if prefix:
         route = prefix + "/" + route
     make_data_route(app, route, path, mime_type)

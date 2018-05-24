@@ -13,7 +13,7 @@ const views: ComponentClass[] = [Home, Login, ViewBooks, UploadBooks, MakeTransa
 
 const navLinks: ReactNode[] = views.map(
     (view, i) =>
-        <li key={i.toString()}>
+        <li key={view.name}>
             <NavLink to={"/" + view.name}>
                 {view.name}
             </NavLink>
@@ -21,7 +21,7 @@ const navLinks: ReactNode[] = views.map(
 
 const routes: ReactNode[] = views.map(
     (view, i) => <Route
-        key={i.toString()}
+        key={view.name}
         path={"/" + view.name}
         component={view}
     />);
@@ -33,7 +33,7 @@ class Main extends Component {
             <HashRouter>
                 <div>
                     <h1>TexDBook</h1>
-                    {/*<ul className="header">{navLinks}</ul>*/}
+                    <ul className="header">{navLinks}</ul>
                     <div className="content">{routes}</div>
                 </div>
             </HashRouter>

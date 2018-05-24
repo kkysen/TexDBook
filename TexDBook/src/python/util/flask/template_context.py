@@ -78,6 +78,7 @@ context.update({
     'dict': dict,
     'range': range,
     'xrange': xrange or range,
+    'int': int,
 })
 
 

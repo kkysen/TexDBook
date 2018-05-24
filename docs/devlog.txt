@@ -93,3 +93,9 @@ Working on logging in now.
 Also moved clean_isbn() to correct location, not clean_barcode().
 
 ============================================================
+khyberS -- 2018-05-24 13:01:00
+
+Fixed circular importing (had to put all model classes in same module).
+Now it runs correctly from Flask (through Apache not tested yet).
+
+============================================================

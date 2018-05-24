@@ -3,13 +3,7 @@ from flask_login import LoginManager, login_user
 from typing import Dict
 
 from TexDBook.src.python.core.init_app import app, default_init_app
-from TexDBook.src.python.core.models.User import User
-
-login_manager = LoginManager()  # type: LoginManager
-
-login_manager.init_app(app)
-
-init_app = default_init_app
+from TexDBook.src.python.core.models import User
 
 
 @app.route("/login")
