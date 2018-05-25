@@ -99,3 +99,6 @@ Fixed circular importing (had to put all model classes in same module).
 Now it runs correctly from Flask (through Apache not tested yet).
 
 ============================================================
+abbasA -- 2018-05-25 13:09:00
+
+Worked on login and homepage and fixed the navbar. Raised an issue on an extra home.html with seemingly valuable content in it.
