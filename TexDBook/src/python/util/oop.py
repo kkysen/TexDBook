@@ -2,7 +2,7 @@ import functools
 
 from typing import Any, Callable, Dict, Tuple, Type, Union
 
-from util.types import Function
+from TexDBook.src.python.util.types import Function
 
 T = Type['CtorArgs']  # class type
 R = Type['R']  # return type
@@ -14,7 +14,7 @@ def extend(klass):
     # type: (Type[T]) -> Function[Extender, None]
     """
     Decorate a method so that it extends a class-like object
-    (i.e. also a module), the givne klass.
+    (i.e. also a module), the given klass.
     """
 
     def extender(extension_method):

@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const react_1 = require("react");
 const immutableDescriptor = {
     writable: false,
     enumerable: false,
@@ -191,11 +190,6 @@ Object.defineImmutableProperties(HTMLElement.prototype, {
     withInnerHTML(html) {
         this.innerHTML = html;
         return this;
-    },
-});
-Object.defineImmutableProperties(react_1.Component.prototype, {
-    get url() {
-        return "/" + this.name;
     },
 });
 exports.addExtensions = function () {

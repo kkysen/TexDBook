@@ -1,26 +1,48 @@
+import json
 from datetime import datetime
 
-from peewee import CharField, Database, DateTimeField, FixedCharField, ForeignKeyField, IntegerField, SqliteDatabase
+from peewee import Database, DateTimeField, FixedCharField, ForeignKeyField, IntegerField, TextField
 from playhouse.flask_utils import FlaskDB
-from typing import Tuple, Union
+from playhouse.shortcuts import model_to_dict
+from typing import Any, Dict, Optional, Tuple
 
+from TexDBook.src.python.core.db_loader import TexDBookDatabase
 from TexDBook.src.python.core.init_app import NAME, app, default_init_app, resolve_path
 from TexDBook.src.python.core.login_manager import login_manager
+from TexDBook.src.python.util.oop import extend
 from TexDBook.src.python.util.password import hash_password, verify_password
 
-app.config.from_object(__name__)
+app.config.from_object(__name__)  # TODO FIXME check cookie security
 
-db = SqliteDatabase(resolve_path("data", NAME + ".db"))  # type: Database
+db = TexDBookDatabase(resolve_path("data", NAME + ".db"))  # type: Database
 
 flask_db = FlaskDB(app, db)  # type: FlaskDB
 
 init_app = default_init_app
 
 
+@extend(flask_db.Model)
+def to_dict(self):
+    # type: (flask_db.Model) -> Dict[str, Any]
+    return model_to_dict(self)
+
+
+@extend(flask_db.Model)
+def to_json(self):
+    # type: (flask_db.Model) -> Dict[str, Any]
+    return json.dumps(self.to_dict())
+
+
+@extend(flask_db.Model)
+def __str__(self):
+    # type: (flask_db.Model) -> str
+    return str(self.to_json())
+
+
 class User(flask_db.Model):
     id = IntegerField(primary_key=True, default=None)
-    username = CharField()
-    hashed_password = CharField()
+    username = TextField()
+    hashed_password = TextField()
     balance = IntegerField(default=0)
     
     @classmethod
@@ -28,9 +50,9 @@ class User(flask_db.Model):
         # type: (str, str) -> User
         return super(User, cls).create(username=username, hashed_password=hash_password(password))
     
-    def __init__(self, username, hashed_password):
-        # type: (str, str) -> None
-        super(User, self).__init__(username=username, hashed_password=hashed_password)
+    def __init__(self, **kwargs):
+        # type: (Dict[str, Any]) -> None
+        super(User, self).__init__(**kwargs)
         self.is_authenticated = False
         self.is_active = True
         self.is_anonymous = False
@@ -40,14 +62,16 @@ class User(flask_db.Model):
         return unicode(self.id)
     
     @classmethod
-    @login_manager.user_loader  # TODO check decorator order
     def load(cls, user_id):
         # type: (unicode) -> User
-        return cls.get_or_none(id=int(user_id))
+        user = cls.get_or_none(id=int(user_id))
+        user.is_authenticated = True
+        user.hashed_password = None  # make sure to not leak this
+        return user
     
     @classmethod
     def login(cls, username, password):
-        # type: (str, str) -> Union[User, None]
+        # type: (unicode, unicode) -> Optional[User]
         user = User.get_or_none(username=username)
         if user and verify_password(password, user.hashed_password):
             return user
@@ -57,6 +81,9 @@ class User(flask_db.Model):
         # type: (str, str) -> Book
         """Create a new Book owned by this User."""
         return Book.create(barcode, isbn, self)
+
+
+login_manager.user_callback = User.load
 
 
 class IsbnBook(flask_db.Model):
@@ -96,7 +123,7 @@ class IsbnBook(flask_db.Model):
 
 
 class Book(flask_db.Model):
-    barcode = CharField(primary_key=True)
+    barcode = TextField(primary_key=True)
     isbn_book = ForeignKeyField(IsbnBook, backref="books")
     owner = ForeignKeyField(User, backref="ownedBooks")
     lender = ForeignKeyField(User, backref="lentBooks")
@@ -153,3 +180,20 @@ class Transaction(flask_db.Model):
             book.save()
             
             return transaction
+
+
+def setup_db():
+    # type: () -> None
+    db.connect()
+    db.create_tables([User, IsbnBook, Book, Transaction])
+    print(db)
+    
+    username = "Khyber"
+    password = "5e9708d50aa3cef560fa6a6d47787e44aae25d19de9bb06a9f653939df82881b"  # SHA256 of "Sen"
+    # User.create(username, password)
+    user = User.login(username, password)
+    print(user)
+    print("Done")
+
+
+setup_db()

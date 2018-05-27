@@ -4,3 +4,4 @@ cython
 apsw
 peewee
 flask-login
+flask-paranoid

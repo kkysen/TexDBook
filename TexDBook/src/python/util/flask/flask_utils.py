@@ -6,9 +6,9 @@ from sys import stderr
 from flask import Flask, Response, redirect, request, session, url_for
 from typing import Any, Callable, Dict, Iterable, KeysView, List, Set, Tuple, Type
 
-from util.annotations import override
-from util.flask.flask_utils_types import Precondition, Route, Router
-from util.oop import extend
+from TexDBook.src.python.util.annotations import override
+from TexDBook.src.python.util.flask.flask_utils_types import Route, Router, Precondition
+from TexDBook.src.python.util.oop import extend
 
 
 def reroute_to(route_func, *args, **kwargs):

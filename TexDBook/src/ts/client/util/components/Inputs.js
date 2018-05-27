@@ -4,9 +4,6 @@ const React = require("react");
 const react_1 = require("react");
 const reactstrap_1 = require("reactstrap");
 class Inputs extends react_1.Component {
-    constructor(props) {
-        super(props);
-    }
     static argsAsObject(args) {
         return {
             field: args[0],
@@ -26,6 +23,7 @@ class Inputs extends react_1.Component {
             React.createElement(reactstrap_1.InputGroup, null,
                 React.createElement(reactstrap_1.InputGroupAddon, { addonType: "prepend" }, args.label),
                 React.createElement(reactstrap_1.Input, { type: args.type, innerRef: args.field.ref })))));
+        // TODO make ENTER linked to clicking submit button
     }
 }
 exports.Inputs = Inputs;

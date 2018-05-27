@@ -1,6 +1,8 @@
 import * as React from "react";
 import {Component, ComponentClass, ReactNode} from "react";
+import {bindProps} from "../../util/bindProps";
 import {Repeat} from "../../util/components/Repeat";
+import {ViewRouter} from "../../util/components/ViewRouter";
 import {TexDBook} from "../TexDBook";
 import {CreateAccount} from "./CreateAccount";
 import {Home} from "./Home";
@@ -10,7 +12,6 @@ import {Logout} from "./Logout";
 import {MakeTransaction} from "./MakeTransaction";
 import {UploadBooks} from "./UploadBooks";
 import {ViewBooks} from "./ViewBooks";
-import {ViewRouter} from "./ViewRouter";
 
 
 export class LoginManager extends Component<{}, IsLoggedIn> {
@@ -29,17 +30,15 @@ export class LoginManager extends Component<{}, IsLoggedIn> {
         const logIn = this.logIn.bind(this);
         
         const bindLogin = function(login: ComponentClass<LoginProps>): ComponentClass {
-            const boundLogin: ComponentClass = login.bind(null, {onLogin: logIn});
-            Object.defineProperties(boundLogin, Object.getOwnPropertyDescriptors(login));
-            return boundLogin;
+            return bindProps(login, {onLogin: logIn});
         };
         
-        if (!this.state.isLoggedIn) {
-            return <ViewRouter views={[
-                Home, ViewBooks, UploadBooks, MakeTransaction, bindLogin(Logout),
+        if (this.state.isLoggedIn) {
+            return <ViewRouter name="TexDBook" views={[
+                Home, ViewBooks, UploadBooks, MakeTransaction, bindLogin(Logout)
             ]}/>;
         } else {
-            return <ViewRouter views={[
+            return <ViewRouter name="TexDBook" views={[
                 bindLogin(Login),
                 bindLogin(CreateAccount),
             ]}/>;

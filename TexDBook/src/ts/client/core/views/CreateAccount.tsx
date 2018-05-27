@@ -20,8 +20,8 @@ export class CreateAccount extends LoginComponent {
     private readonly username: InputRef = InputRef.new();
     private readonly password: InputRef = InputRef.new();
     private readonly passwordConfirmation: InputRef = InputRef.new();
-    private readonly email: InputRef = InputRef.new();
-    private readonly phone: InputRef = InputRef.new();
+    // private readonly email: InputRef = InputRef.new();
+    // private readonly phone: InputRef = InputRef.new();
     
     public constructor(props: LoginProps) {
         super(props, "Create Account");
@@ -32,8 +32,8 @@ export class CreateAccount extends LoginComponent {
             [this.username, "text", "Username"],
             [this.password, "password", "Password"],
             [this.passwordConfirmation, "password", "Confirm Password"],
-            [this.email, "email", "Email"],
-            [this.phone, "tel", "Phone"],
+            // [this.email, "email", "Email"],
+            // [this.phone, "tel", "Phone"],
         ];
     }
     

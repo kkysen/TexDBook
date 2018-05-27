@@ -1,4 +1,4 @@
-from util.types import Function
+from TexDBook.src.python.util.types import Function
 
 
 def override(method):

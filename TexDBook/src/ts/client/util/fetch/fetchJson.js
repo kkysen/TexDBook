@@ -1,7 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const anyWindow_1 = require("../anyWindow");
 exports.fetchJson = async function (url, arg, options) {
     const response = await fetch(url, Object.assign(options || {}, {
+        credentials: "include",
+        method: "POST",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -10,4 +13,5 @@ exports.fetchJson = async function (url, arg, options) {
     }));
     return await response.json();
 };
+anyWindow_1.anyWindow.fetchJson = exports.fetchJson;
 //# sourceMappingURL=fetchJson.js.map

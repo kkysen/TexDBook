@@ -8,10 +8,11 @@
   </head>
   <body>
     <script>
-        const TexDBook = window.TexDBook = {};
-        TexDBook.isLoggedIn = {
-            isLoggedIn: !!{{ int(current_user.is_authenticated) }},
-        }
+        window.TexDBook = {
+            isLoggedIn: {
+                isLoggedIn: !!{{ int(current_user.is_authenticated) }},
+            },
+        };
     </script>
     
     {% if False %}

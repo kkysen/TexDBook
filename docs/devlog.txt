@@ -112,3 +112,17 @@ Working on integrating the Login, Logout, and CreateAccount LoginComponents
 with the Flask server right now.
 
 ============================================================
+khyberS -- 2018-05-27 18:27:00
+
+Fixed the login mechanism w.r.t to cookies.
+    Needed to set {credentials: "include"} in Fetch call to send all cookies.
+    Needed to fix User.load() to set User.is_authenticated = True.
+    Needed to set login_manager.user_callback = User.load manually
+        instead of using decorator, since class methods messed it up.
+
+Wrote bindProps to bind props to a ComponentClass,
+like how Function.bind works with functions.
+It does this by wrapping the ComponentClass in a new ComponentClass
+and then copying all the properties of the original to the wrapper.
+
+============================================================

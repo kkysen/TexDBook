@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const react_1 = require("react");
+const bindProps_1 = require("../../util/bindProps");
 const Repeat_1 = require("../../util/components/Repeat");
+const ViewRouter_1 = require("../../util/components/ViewRouter");
 const TexDBook_1 = require("../TexDBook");
 const CreateAccount_1 = require("./CreateAccount");
 const Home_1 = require("./Home");
@@ -11,7 +13,6 @@ const Logout_1 = require("./Logout");
 const MakeTransaction_1 = require("./MakeTransaction");
 const UploadBooks_1 = require("./UploadBooks");
 const ViewBooks_1 = require("./ViewBooks");
-const ViewRouter_1 = require("./ViewRouter");
 class LoginManager extends react_1.Component {
     constructor(props) {
         super(props);
@@ -24,17 +25,15 @@ class LoginManager extends react_1.Component {
     renderLogin() {
         const logIn = this.logIn.bind(this);
         const bindLogin = function (login) {
-            const boundLogin = login.bind(null, { onLogin: logIn });
-            Object.defineProperties(boundLogin, Object.getOwnPropertyDescriptors(login));
-            return boundLogin;
+            return bindProps_1.bindProps(login, { onLogin: logIn });
         };
-        if (!this.state.isLoggedIn) {
-            return React.createElement(ViewRouter_1.ViewRouter, { views: [
-                    Home_1.Home, ViewBooks_1.ViewBooks, UploadBooks_1.UploadBooks, MakeTransaction_1.MakeTransaction, bindLogin(Logout_1.Logout),
+        if (this.state.isLoggedIn) {
+            return React.createElement(ViewRouter_1.ViewRouter, { name: "TexDBook", views: [
+                    Home_1.Home, ViewBooks_1.ViewBooks, UploadBooks_1.UploadBooks, MakeTransaction_1.MakeTransaction, bindLogin(Logout_1.Logout)
                 ] });
         }
         else {
-            return React.createElement(ViewRouter_1.ViewRouter, { views: [
+            return React.createElement(ViewRouter_1.ViewRouter, { name: "TexDBook", views: [
                     bindLogin(Login_1.Login),
                     bindLogin(CreateAccount_1.CreateAccount),
                 ] });

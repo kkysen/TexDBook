@@ -1,3 +1,4 @@
+import {anyWindow} from "../util/anyWindow";
 import {IsLoggedIn} from "./views/LoginComponent";
 import {reactMain} from "./views/Main";
 
@@ -8,7 +9,7 @@ export interface GlobalTexDBook {
     
 }
 
-export const TexDBook: GlobalTexDBook = (<any> window).TexDBook;
+export const TexDBook: GlobalTexDBook = anyWindow.TexDBook;
 
 
 export const main = function(): void {

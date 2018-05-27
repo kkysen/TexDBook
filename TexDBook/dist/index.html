@@ -8,10 +8,11 @@
   <link rel="shortcut icon" href="favicon.ico"></head>
   <body>
     <script>
-        const TexDBook = window.TexDBook = {};
-        TexDBook.isLoggedIn = {
-            isLoggedIn: !!{{ int(current_user.is_authenticated) }},
-        }
+        window.TexDBook = {
+            isLoggedIn: {
+                isLoggedIn: !!{{ int(current_user.is_authenticated) }},
+            },
+        };
     </script>
     
     {% if False %}
@@ -31,5 +32,5 @@
     {% endif %}
     {% endif %}
   
-  <script type="text/javascript" src="client.js?88267ef8f02df9760de8"></script></body>
+  <script type="text/javascript" src="client.js?289b016d8baf56b9fb64"></script></body>
 </html>

@@ -23,10 +23,6 @@ type InputsProps = {
 
 export class Inputs extends Component<InputsProps, {}> {
     
-    public constructor(props: InputsProps) {
-        super(props);
-    }
-    
     private static argsAsObject(args: InputArgs): InputArgsObj {
         return {
             field: args[0],
@@ -55,6 +51,7 @@ export class Inputs extends Component<InputsProps, {}> {
                 </InputGroup>
             </div>
         ));
+        // TODO make ENTER linked to clicking submit button
     }
     
 }

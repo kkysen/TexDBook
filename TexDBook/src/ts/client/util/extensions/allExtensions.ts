@@ -248,14 +248,6 @@ Object.defineImmutableProperties(HTMLElement.prototype, {
     
 });
 
-Object.defineImmutableProperties(Component.prototype, {
-    
-    get url(this: Component & Function): string {
-        return "/" + this.name;
-    },
-    
-});
-
 export const addExtensions = function(): void {
     
 };
