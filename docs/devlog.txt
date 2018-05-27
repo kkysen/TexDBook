@@ -99,3 +99,11 @@ Fixed circular importing (had to put all model classes in same module).
 Now it runs correctly from Flask (through Apache not tested yet).
 
 ============================================================
+khyberS -- 2018-05-26 22:47:00
+
+Setup the React front-end with separate ViewRouters for logged in and logged out states.
+
+Working on integrating the Login, Logout, and CreateAccount LoginComponents
+with the Flask server right now.
+
+============================================================

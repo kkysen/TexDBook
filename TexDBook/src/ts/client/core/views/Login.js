@@ -1,43 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const react_1 = require("react");
-const react_router_1 = require("react-router");
-const anyWindow_1 = require("../../util/anyWindow");
-const fetchJson_1 = require("../../util/fetch/fetchJson");
-const hash_1 = require("../../util/hash");
-const TexDBook_1 = require("../TexDBook");
-const ViewBooks_1 = require("./ViewBooks");
-const onLogin = anyWindow_1.anyWindow.onLogin = function () {
-    react_router_1.withRouter(({ history }) => {
-        history.push(ViewBooks_1.ViewBooks.name);
-        return null;
-    });
-};
-const onLoginFailure = function () {
-};
-const login = async function (username, password) {
-    // pre hash server side for extra security
-    const hashedPassword = await hash_1.SHA._256.hash(password);
-    const isLoggedIn = (await fetchJson_1.fetchJson("/login", {
-        username: username,
-        password: hashedPassword,
-    }, {
-        cache: "reload",
-    })).isLoggedIn;
-    if (isLoggedIn) {
-        TexDBook_1.TexDBook.isLoggedIn = true;
-        onLogin();
+const InputRef_1 = require("../../util/refs/InputRef");
+const LoginComponent_1 = require("./LoginComponent");
+class Login extends LoginComponent_1.LoginComponent {
+    constructor(props) {
+        super(props, "Login");
+        this.username = InputRef_1.InputRef.new();
+        this.password = InputRef_1.InputRef.new();
     }
-    else {
-        onLoginFailure();
+    inputsArgs() {
+        return [
+            [this.username, "text", "Username"],
+            [this.password, "password", "Password"],
+        ];
     }
-    // TODO change stuff after login or after failed login
-    return isLoggedIn;
-};
-class Login extends react_1.Component {
-    render() {
-        return (React.createElement("div", null, "Login"));
+    async doLogin() {
+        return await LoginComponent_1.loginUser(this.username(), this.password());
     }
 }
 exports.Login = Login;

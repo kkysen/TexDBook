@@ -6,7 +6,7 @@ exports.fetchJson = async function (url, arg, options) {
             Accept: "application/json",
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(arg),
+        body: !arg ? arg : JSON.stringify(arg),
     }));
     return await response.json();
 };

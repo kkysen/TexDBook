@@ -1,58 +1,27 @@
 import * as React from "react";
-import {Component, ReactNode} from "react";
-import {withRouter} from "react-router";
-import {anyWindow} from "../../util/anyWindow";
-import {fetchJson} from "../../util/fetch/fetchJson";
-import {SHA} from "../../util/hash";
-import {TexDBook} from "../TexDBook";
-import {ViewBooks} from "./ViewBooks";
+import {InputsArgs} from "../../util/components/Inputs";
+import {InputRef} from "../../util/refs/InputRef";
+import {IsLoggedIn, LoginComponent, LoginProps, loginUser} from "./LoginComponent";
 
 
-type LoginArgs = {
-    username: string,
-    password: string,
-};
-
-type LoginReturn = {
-    isLoggedIn: boolean,
-};
-
-const onLogin = anyWindow.onLogin = function(): void {
-    withRouter(({history}) => {
-        history.push(ViewBooks.name);
-        return null;
-    });
-};
-
-const onLoginFailure = function(): void {
-
-};
-
-const login = async function(username: string, password: string): Promise<boolean> {
-    // pre hash server side for extra security
-    const hashedPassword: string = await SHA._256.hash(password);
-    const isLoggedIn: boolean = (await fetchJson<LoginArgs, LoginReturn>("/login", {
-        username: username,
-        password: hashedPassword,
-    }, {
-        cache: "reload",
-    })).isLoggedIn;
-    if (isLoggedIn) {
-        TexDBook.isLoggedIn = true;
-        onLogin();
-    } else {
-        onLoginFailure();
-    }
-    // TODO change stuff after login or after failed login
-    return isLoggedIn;
-};
-
-export class Login extends Component {
+export class Login extends LoginComponent {
     
-    render(): ReactNode {
-        return (
-            <div>Login</div>
-        );
+    private readonly username: InputRef = InputRef.new();
+    private readonly password: InputRef = InputRef.new();
+    
+    public constructor(props: LoginProps) {
+        super(props, "Login");
+    }
+    
+    protected inputsArgs(): InputsArgs {
+        return [
+            [this.username, "text", "Username"],
+            [this.password, "password", "Password"],
+        ];
+    }
+    
+    protected async doLogin(): Promise<IsLoggedIn> {
+        return await loginUser(this.username(), this.password());
     }
     
 }

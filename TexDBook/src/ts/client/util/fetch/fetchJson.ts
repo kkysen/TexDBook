@@ -4,7 +4,7 @@ export const fetchJson = async function <T = any, U = any>(url: string, arg: T, 
             Accept: "application/json",
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(arg),
+        body: !arg ? arg : JSON.stringify(arg),
     }));
     return <U> await response.json();
 };

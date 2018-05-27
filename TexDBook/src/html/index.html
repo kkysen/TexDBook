@@ -3,31 +3,33 @@
   <head>
     <meta charset="UTF-8">
     <title>TexDBook</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+          integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
   </head>
   <body>
-    <h1>Welcome to TexDBook</h1>
-
-  <script>
-    const TexDBook = window.TexDBook = {};
-    TexDBook.isLoggedIn = !!{{ int(current_user.is_authenticated) }};
-  </script>
-
+    <script>
+        const TexDBook = window.TexDBook = {};
+        TexDBook.isLoggedIn = {
+            isLoggedIn: !!{{ int(current_user.is_authenticated) }},
+        }
+    </script>
+    
     {% if False %}
-      {% if debug %}
-        <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
-        <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
-        <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-router/4.2.0/react-router.js"></script>
-        <script crossorigin
-                src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/4.2.2/react-router-dom.js"></script>
-      {% else %}
-        <script crossorigin
-                src="https://cdnjs.cloudflare.com/ajax/libs/react-router/4.2.0/react-router.min.js"></script>
-        <script crossorigin
-                src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/4.2.2/react-router-dom.min.js"></script>
-        <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
-        <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
-      {% endif %}
+    {% if debug %}
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-router/4.2.0/react-router.js"></script>
+    <script crossorigin
+            src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/4.2.2/react-router-dom.js"></script>
+    {% else %}
+    <script crossorigin
+            src="https://cdnjs.cloudflare.com/ajax/libs/react-router/4.2.0/react-router.min.js"></script>
+    <script crossorigin
+            src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/4.2.2/react-router-dom.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
     {% endif %}
-
+    {% endif %}
+  
   </body>
 </html>
