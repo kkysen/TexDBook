@@ -28,9 +28,8 @@ export class LoginManager extends Component<{}, IsLoggedIn> {
     
     private renderLogin(): ReactNode {
         const logIn = this.logIn.bind(this);
-        
-        const bindLogin = function(login: ComponentClass<LoginProps>): ComponentClass {
-            return bindProps(login, {onLogin: logIn});
+        const bindLogin = (login: ComponentClass<LoginProps>): ComponentClass => {
+            return bindProps(login, {onLogin: logIn, message: this.state.message});
         };
         
         if (this.state.isLoggedIn) {
@@ -48,7 +47,6 @@ export class LoginManager extends Component<{}, IsLoggedIn> {
     render(): ReactNode {
         return (
             <div>
-                {this.state.message}
                 {this.renderLogin()}
                 <Repeat times={5} render={() => <br/>}/>
             </div>

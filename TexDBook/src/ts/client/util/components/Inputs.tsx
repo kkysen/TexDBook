@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Component, ReactNode} from "react";
-import {InputGroup, InputGroupAddon, Input} from "reactstrap";
+import {Input, InputGroup, InputGroupAddon} from "reactstrap";
 import {InputType} from "reactstrap/lib/Input";
 import {InputRef} from "../refs/InputRef";
 
@@ -18,7 +18,8 @@ export type InputArgs = [InputRef, HTMLInputType, string];
 export type InputsArgs = InputArgs[] | InputArgsObj[];
 
 type InputsProps = {
-    readonly args: InputsArgs;
+    args: InputsArgs;
+    onEnter(): void | Promise<void>;
 }
 
 export class Inputs extends Component<InputsProps, {}> {
@@ -32,12 +33,21 @@ export class Inputs extends Component<InputsProps, {}> {
     }
     
     private argsAsObjects(): InputArgsObj[] {
+        if (this.args) {
+            return this.args;
+        }
         const args: InputsArgs = this.props.args;
         return args.length === 0 || Array.isArray(args[0])
             ? (args as InputArgs[]).map(Inputs.argsAsObject)
             : args as InputArgsObj[];
     }
     
+    private readonly args: InputArgsObj[];
+    
+    public constructor(props: InputsProps) {
+        super(props);
+        this.args = this.argsAsObjects();
+    }
     
     public render(): ReactNode {
         return this.argsAsObjects().map((args, i) => (
@@ -51,7 +61,19 @@ export class Inputs extends Component<InputsProps, {}> {
                 </InputGroup>
             </div>
         ));
-        // TODO make ENTER linked to clicking submit button
+    }
+    
+    public componentDidMount(): void {
+        this.argsAsObjects()
+            .map(arg => arg.field.ref.current)
+            .forEach((node: HTMLInputElement) => {
+                node.addEventListener("keyup", e => {
+                    e.preventDefault();
+                    if (e.key === "Enter") {
+                        this.props.onEnter();
+                    }
+                });
+            });
     }
     
 }

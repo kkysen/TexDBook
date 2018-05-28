@@ -126,3 +126,11 @@ It does this by wrapping the ComponentClass in a new ComponentClass
 and then copying all the properties of the original to the wrapper.
 
 ============================================================
+khyberS -- 2018-05-27 18:27:00
+
+LoginComponents now display messages themselves instead of in LoginManager.
+
+Inputs now takes an onEnter prop that is linked to
+the input's onkeyup event when Enter is pressed.
+
+============================================================

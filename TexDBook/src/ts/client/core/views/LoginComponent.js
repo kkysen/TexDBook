@@ -6,17 +6,22 @@ const reactstrap_1 = require("reactstrap");
 const Inputs_1 = require("../../util/components/Inputs");
 const fetchJson_1 = require("../../util/fetch/fetchJson");
 const hash_1 = require("../../util/hash");
+const utils_1 = require("../../util/utils");
 class LoginComponent extends react_1.Component {
     constructor(props, name) {
         super(props);
-        this.name = name;
+        this.name = name || utils_1.separateClassName(this.constructor.name);
         this.handleClick = async () => this.props.onLogin(await this.doLogin());
     }
     render() {
+        // TODO style name and message
+        // TODO link inputs to button
         return (React.createElement("div", null,
             this.name,
             React.createElement("br", null),
-            React.createElement(Inputs_1.Inputs, { args: this.inputsArgs() }),
+            this.props.message,
+            React.createElement("br", null),
+            React.createElement(Inputs_1.Inputs, { args: this.inputsArgs(), onEnter: this.handleClick }),
             React.createElement("br", null),
             React.createElement(reactstrap_1.Button, { color: "primary", onClick: this.handleClick }, this.name)));
     }

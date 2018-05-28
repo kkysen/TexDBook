@@ -4,6 +4,7 @@ import {Button} from "reactstrap";
 import {Inputs, InputsArgs} from "../../util/components/Inputs";
 import {fetchJson} from "../../util/fetch/fetchJson";
 import {SHA} from "../../util/hash";
+import {separateClassName} from "../../util/utils";
 
 export type IsLoggedIn = {
     readonly isLoggedIn: boolean;
@@ -12,6 +13,7 @@ export type IsLoggedIn = {
 
 export type LoginProps = {
     onLogin(loggedIn: IsLoggedIn): void;
+    readonly message?: string;
 };
 
 export type LoginState = {};
@@ -21,9 +23,9 @@ export abstract class LoginComponent extends Component<LoginProps, LoginState> i
     private readonly name: string;
     private readonly handleClick: () => Promise<void>;
     
-    protected constructor(props: LoginProps, name: string) {
+    protected constructor(props: LoginProps, name?: string) {
         super(props);
-        this.name = name;
+        this.name = name || separateClassName(this.constructor.name);
         this.handleClick = async () => this.props.onLogin(await this.doLogin());
     }
     
@@ -32,11 +34,15 @@ export abstract class LoginComponent extends Component<LoginProps, LoginState> i
     protected abstract doLogin(): Promise<IsLoggedIn>;
     
     public render(): ReactNode {
+        // TODO style name and message
+        // TODO link inputs to button
         return (
             <div>
                 {this.name}
                 <br/>
-                <Inputs args={this.inputsArgs()}/>
+                {this.props.message}
+                <br/>
+                <Inputs args={this.inputsArgs()} onEnter={this.handleClick}/>
                 <br/>
                 <Button color="primary" onClick={this.handleClick}>{this.name}</Button>
             </div>

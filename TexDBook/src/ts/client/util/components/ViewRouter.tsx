@@ -3,6 +3,7 @@ import {Component, ComponentClass, ReactNode} from "react";
 import {Route} from "react-router";
 import {HashRouter} from "react-router-dom";
 import {Nav, Navbar, NavbarBrand, NavItem} from "reactstrap";
+import {separateClassName} from "../utils";
 import {RouterNavLink} from "./RouterNavLink";
 
 
@@ -25,10 +26,6 @@ export type ViewRouterProps = {
 
 export class ViewRouter extends Component<ViewRouterProps, {}> {
     
-    private static fixName(name: string): string {
-        return name.replace(/([A-Z])/g, ' $1').trim();
-    }
-    
     private static toStrictView(view: View): StrictView {
         const strictView: StrictView = (() => {
             if ("render" in view) {
@@ -46,7 +43,7 @@ export class ViewRouter extends Component<ViewRouterProps, {}> {
                 path: "/" + view.name,
             };
         })();
-        strictView.name = ViewRouter.fixName(strictView.name);
+        strictView.name = separateClassName(strictView.name);
         return strictView;
     }
     

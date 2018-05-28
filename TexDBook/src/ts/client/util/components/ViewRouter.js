@@ -5,11 +5,9 @@ const react_1 = require("react");
 const react_router_1 = require("react-router");
 const react_router_dom_1 = require("react-router-dom");
 const reactstrap_1 = require("reactstrap");
+const utils_1 = require("../utils");
 const RouterNavLink_1 = require("./RouterNavLink");
 class ViewRouter extends react_1.Component {
-    static fixName(name) {
-        return name.replace(/([A-Z])/g, ' $1').trim();
-    }
     static toStrictView(view) {
         const strictView = (() => {
             if ("render" in view) {
@@ -27,7 +25,7 @@ class ViewRouter extends react_1.Component {
                 path: "/" + view.name,
             };
         })();
-        strictView.name = ViewRouter.fixName(strictView.name);
+        strictView.name = utils_1.separateClassName(strictView.name);
         return strictView;
     }
     strictViews() {

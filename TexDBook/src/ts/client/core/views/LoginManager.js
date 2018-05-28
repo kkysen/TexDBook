@@ -24,8 +24,8 @@ class LoginManager extends react_1.Component {
     }
     renderLogin() {
         const logIn = this.logIn.bind(this);
-        const bindLogin = function (login) {
-            return bindProps_1.bindProps(login, { onLogin: logIn });
+        const bindLogin = (login) => {
+            return bindProps_1.bindProps(login, { onLogin: logIn, message: this.state.message });
         };
         if (this.state.isLoggedIn) {
             return React.createElement(ViewRouter_1.ViewRouter, { name: "TexDBook", views: [
@@ -41,7 +41,6 @@ class LoginManager extends react_1.Component {
     }
     render() {
         return (React.createElement("div", null,
-            this.state.message,
             this.renderLogin(),
             React.createElement(Repeat_1.Repeat, { times: 5, render: () => React.createElement("br", null) })));
     }
