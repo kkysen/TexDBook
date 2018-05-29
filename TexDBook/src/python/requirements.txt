@@ -5,3 +5,4 @@ apsw
 peewee
 flask-login
 flask-paranoid
+passlib
