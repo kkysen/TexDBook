@@ -26,7 +26,7 @@ function install_apache2_wsgi_ssl() {
 
 function install_deployment() {
     install_python2_and_pip
-    install_apache2_wsgi
+    install_apache2_wsgi_ssl
 
     check_and_install git
     check_and_install make
