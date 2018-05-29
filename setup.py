@@ -4,6 +4,8 @@ from TexDBook import create_app
 
 application, name = create_app()
 
+domain = "206.189.226.167"
+
 
 def make_apache_conf_file():
     # type: () -> None
@@ -12,7 +14,10 @@ def make_apache_conf_file():
         if filename.endswith(".conf") and filename != template_name:
             os.remove(filename)
     template = open(template_name).read()
-    open(name + ".conf", "w").write(template.replace("${AppName}", name))
+    template = template \
+        .replace("${AppName}", name) \
+        .replace("${Domain}", domain)
+    open(name + ".conf", "w").write(template)
 
 
 if __name__ == '__main__':
