@@ -4,17 +4,24 @@ from datetime import datetime
 from peewee import Database, DateTimeField, FixedCharField, ForeignKeyField, IntegerField, TextField
 from playhouse.flask_utils import FlaskDB
 from playhouse.shortcuts import model_to_dict
-from typing import Any, Dict, Optional, Tuple, List
+from typing import Any, Dict, List, Optional, Tuple, Callable
 
 from TexDBook.src.python.core.db_loader import TexDBookDatabase
 from TexDBook.src.python.core.init_app import NAME, app, default_init_app, resolve_path
 from TexDBook.src.python.core.login_manager import login_manager
-from TexDBook.src.python.util.oop import extend
+from TexDBook.src.python.util.oop import extend, override
 from TexDBook.src.python.util.password import hash_password, verify_password
 
 app.config.from_object(__name__)  # TODO FIXME check cookie security
 
 db = TexDBookDatabase(resolve_path("data", NAME + ".db"))  # type: Database
+
+
+@override(db)
+def connect(_super, self, reuse_if_open=True):
+    # type: (Callable[[bool], bool], Database, bool) -> bool
+    return _super(reuse_if_open)
+
 
 flask_db = FlaskDB(app, db)  # type: FlaskDB
 
