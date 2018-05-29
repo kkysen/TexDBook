@@ -1277,7 +1277,7 @@ interface MutableIsbn10 extends MutableIsbn {
     
 }
 
-export type Isbn = Readonly<MutableIsbn>;
+export interface Isbn extends Readonly<MutableIsbn> {}
 
 export type Isbn13 = Readonly<MutableIsbn13>;
 
@@ -1370,12 +1370,31 @@ export const Isbn: IsbnClass = (() => {
             });
         }
         
+        let bookPromise: Promise<IsbnBook> | null = null;
         isbn.fetchBook = async function(): Promise<IsbnBook> {
-            return fetchIsbnBook((isbn as Isbn).isbn13);
+            return await (bookPromise && (bookPromise = fetchIsbnBook((isbn as Isbn).isbn13)));
         };
         
         isbn.freeze();
         return isbn as Isbn;
+    };
+    
+    type IsbnCache = Map<string, Isbn>;
+    
+    const fastCache: IsbnCache = new Map(); // stores raw isbnString
+    const fullCache: IsbnCache = new Map(); // stores validated, standardized isbn13
+    
+    const checkCache = function(cache: IsbnCache, key: string, supplier: () => Isbn | null): Isbn | null {
+        const cachedIsbn: Isbn | undefined = cache.get(key);
+        if (cachedIsbn) {
+            return cachedIsbn;
+        }
+        const isbn: Isbn | null = supplier();
+        if (!isbn) {
+            return null;
+        }
+        cache.set(key, isbn);
+        return isbn;
     };
     
     return {
@@ -1430,7 +1449,7 @@ export const Isbn: IsbnClass = (() => {
             
             const parse = function(isbnString: string): Isbn | null {
                 const val: string = isbnString;
-                const isbn = val.match(/^\d{9}[\dX]$/)
+                const isbn: Isbn | null = val.match(/^\d{9}[\dX]$/)
                     ? buildRemainingFields(merge({
                         source: val,
                         isIsbn10: true,
@@ -1472,7 +1491,10 @@ export const Isbn: IsbnClass = (() => {
                 return isbn;
             };
             
-            return parse(isbnString);
+            return checkCache(fastCache, isbnString, () => {
+                const isbn: Isbn | null = parse(isbnString);
+                return isbn && checkCache(fullCache, isbn.isbn13, () => isbn);
+            });
         },
         
     }.freeze();

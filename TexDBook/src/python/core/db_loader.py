@@ -3,6 +3,7 @@ from peewee import Database, SqliteDatabase
 
 def can_import_apsw():
     # type: () -> bool
+    return False  # for now
     try:
         import apsw
         return True

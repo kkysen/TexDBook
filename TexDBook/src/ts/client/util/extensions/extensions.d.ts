@@ -53,6 +53,8 @@ declare interface Array<T> {
     
     remove(value: T): void;
     
+    addAll(values: T[]): void;
+    
     applyOn<T, U>(this: T[], func: (args: T[]) => U): U;
     
     callOn<T, U>(this: T[], func: (...args: T[]) => U): U;

@@ -1,7 +1,7 @@
 import * as React from "react";
 import {InputsArgs} from "../../util/components/Inputs";
-import {fetchJson} from "../../util/fetch/fetchJson";
-import {IsLoggedIn, LoginComponent, LoginProps} from "./LoginComponent";
+import {api} from "../api";
+import {IsLoggedIn, LoginComponent, LoginProps,} from "./LoginComponent";
 
 
 export class Logout extends LoginComponent {
@@ -15,9 +15,7 @@ export class Logout extends LoginComponent {
     }
     
     protected async doLogin(): Promise<IsLoggedIn> {
-        return await fetchJson("/logout", undefined, {
-            cache: "reload",
-        });
+        return api.logout();
     }
     
 }

@@ -1,1 +1,1 @@
-{"version":3,"file":"TexDBook.js","sourceRoot":"","sources":["TexDBook.ts"],"names":[],"mappings":";;AAAA,iDAA4C;AAE5C,uCAAuC;AAS1B,QAAA,QAAQ,GAAmB,qBAAS,CAAC,QAAQ,CAAC;AAG9C,QAAA,IAAI,GAAG;IAChB,gBAAS,EAAE,CAAC;AAChB,CAAC,CAAC"}
+{"version":3,"file":"TexDBook.js","sourceRoot":"","sources":["TexDBook.ts"],"names":[],"mappings":";;AAAA,iDAA4C;AAE5C,uCAAuC;AAW1B,QAAA,QAAQ,GAAmB,qBAAS,CAAC,QAAQ,CAAC;AAG9C,QAAA,IAAI,GAAG;IAChB,gBAAS,EAAE,CAAC;AAChB,CAAC,CAAC"}

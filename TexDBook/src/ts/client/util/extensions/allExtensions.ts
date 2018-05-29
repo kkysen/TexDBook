@@ -142,6 +142,10 @@ Object.defineImmutableProperties(Array.prototype, {
         }
     },
     
+    addAll<T>(this: T[], values: T[]): void {
+        this.push(...values);
+    },
+    
     applyOn<T, U>(this: T[], func: (args: T[]) => U): U {
         return func(this);
     },

@@ -11,7 +11,17 @@ exports.fetchJson = async function (url, arg, options) {
         },
         body: !arg ? arg : JSON.stringify(arg),
     }));
-    return await response.json();
+    try {
+        return await response.json();
+    }
+    catch (e) {
+        console.error(e);
+        return {
+            success: false,
+            message: "Invalid JSON",
+            response: undefined,
+        };
+    }
 };
 anyWindow_1.anyWindow.fetchJson = exports.fetchJson;
 //# sourceMappingURL=fetchJson.js.map

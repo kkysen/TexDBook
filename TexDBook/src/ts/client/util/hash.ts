@@ -18,11 +18,15 @@ const makeSha = function(numBits: number): Hash {
         }
         return <Buffer> data;
     };
+    
+    const digest: (buffer: Buffer) => Promise<ArrayBuffer> =
+        crypto.subtle.digest.bind(crypto.subtle, {name: "SHA-" + numBits});
+    
     return {
         async hash(data: string | Buffer): Promise<string> {
             const buffer: Buffer = toBuffer(data);
-            const hashBuffer: ArrayBuffer = await crypto.subtle.digest("SHA-" + numBits, buffer);
-            const hashArray: number[] = Array.from(new Uint8Array(hashBuffer));
+            const hashBuffer: ArrayBuffer = await digest(buffer);
+            const hashArray: number[] = [...new Uint8Array(hashBuffer)];
             return hashArray.map(b => ("00" + b.toString(16)).slice(-2)).join("");
         },
     }.freeze();

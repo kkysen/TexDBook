@@ -12,6 +12,7 @@
             isLoggedIn: {
                 isLoggedIn: !!{{ int(current_user.is_authenticated) }},
             },
+            csrfToken: "{{ csrf_token }}",
         };
     </script>
     

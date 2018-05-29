@@ -5,7 +5,7 @@ import {InputType} from "reactstrap/lib/Input";
 import {InputRef} from "../refs/InputRef";
 
 
-export type HTMLInputType = InputType; // TODO add rest
+export type HTMLInputType = InputType;
 
 export type InputArgsObj = {
     field: InputRef,

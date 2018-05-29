@@ -1283,10 +1283,25 @@ exports.Isbn = (() => {
                 },
             });
         }
+        let bookPromise = null;
         isbn.fetchBook = async function () {
-            return node_isbn_1.resolve(isbn.isbn13);
+            return await (bookPromise && (bookPromise = node_isbn_1.resolve(isbn.isbn13)));
         };
         isbn.freeze();
+        return isbn;
+    };
+    const fastCache = new Map(); // stores raw isbnString
+    const fullCache = new Map(); // stores validated, standardized isbn13
+    const checkCache = function (cache, key, supplier) {
+        const cachedIsbn = cache.get(key);
+        if (cachedIsbn) {
+            return cachedIsbn;
+        }
+        const isbn = supplier();
+        if (!isbn) {
+            return null;
+        }
+        cache.set(key, isbn);
         return isbn;
     };
     return {
@@ -1377,7 +1392,10 @@ exports.Isbn = (() => {
                 }
                 return isbn;
             };
-            return parse(isbnString);
+            return checkCache(fastCache, isbnString, () => {
+                const isbn = parse(isbnString);
+                return isbn && checkCache(fullCache, isbn.isbn13, () => isbn);
+            });
         },
     }.freeze();
 })();

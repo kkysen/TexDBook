@@ -1,5 +1,5 @@
-from typing import Union, Callable, Dict, Any
+from typing import Union, Callable, Dict, Any, AnyStr
 
-Json = Dict[str, Any]
+Json = Dict[AnyStr, Any]
 
 Function = Union[Callable, callable]

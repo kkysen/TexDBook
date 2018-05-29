@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const fetchJson_1 = require("../../util/fetch/fetchJson");
+const api_1 = require("../api");
 const LoginComponent_1 = require("./LoginComponent");
 class Logout extends LoginComponent_1.LoginComponent {
     constructor(props) {
@@ -10,9 +10,7 @@ class Logout extends LoginComponent_1.LoginComponent {
         return [];
     }
     async doLogin() {
-        return await fetchJson_1.fetchJson("/logout", undefined, {
-            cache: "reload",
-        });
+        return api_1.api.logout();
     }
 }
 exports.Logout = Logout;

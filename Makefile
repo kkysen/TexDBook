@@ -1,9 +1,6 @@
 setup:
 	python setup.py
 
-favicon:
-	cd TexDBook/src/data; cp CLRS.jpg favicon.ico
-
 install:
 	# for apsw Cython
 	apt-get install python-dev
@@ -12,5 +9,5 @@ install:
 
 	cd TexDBook; make install
 	make setup
-	make favicon
+	cd TexDBook/src/data; make all
 

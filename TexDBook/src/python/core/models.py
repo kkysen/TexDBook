@@ -4,7 +4,7 @@ from datetime import datetime
 from peewee import Database, DateTimeField, FixedCharField, ForeignKeyField, IntegerField, TextField
 from playhouse.flask_utils import FlaskDB
 from playhouse.shortcuts import model_to_dict
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple, List
 
 from TexDBook.src.python.core.db_loader import TexDBookDatabase
 from TexDBook.src.python.core.init_app import NAME, app, default_init_app, resolve_path
@@ -78,9 +78,12 @@ class User(flask_db.Model):
         return None
     
     def add_book(self, barcode, isbn):
-        # type: (str, str) -> Book
+        # type: (unicode, unicode) -> Tuple[Book, bool]
         """Create a new Book owned by this User."""
-        return Book.create(barcode, isbn, self)
+        book = Book.get_or_none(barcode=barcode, isbn=isbn)
+        if book:
+            return book, False
+        return Book.create(barcode, isbn, self), True
 
 
 login_manager.user_callback = User.load
@@ -91,7 +94,7 @@ class IsbnBook(flask_db.Model):
     
     @staticmethod
     def isbn10_to_isbn13(isbn10):
-        # type: (str) -> str
+        # type: (unicode) -> unicode
         # convert from ISBN 10 to ISBN 13
         # add 978 to front, replace ISBN 10 check digit w/ ISBN 13 check digit
         isbn = "978" + isbn10[:-1]
@@ -103,7 +106,7 @@ class IsbnBook(flask_db.Model):
     
     @staticmethod
     def clean_isbn(isbn):
-        # type: (str) -> str
+        # type: (unicode) -> unicode
         """Convert any ISBN configuration into an ISBN 13 with no delimiters."""
         isbn = isbn.replace("-", "")
         if not isbn.isdigit():
@@ -115,11 +118,16 @@ class IsbnBook(flask_db.Model):
     
     @classmethod
     def get_or_create(cls, isbn):
-        # type: (str) -> Tuple[IsbnBook, bool]
+        # type: (unicode) -> Tuple[IsbnBook, bool]
         isbn13 = cls.clean_isbn(isbn)  # type: str
         # TODO fetch isbn book data from Google Books API
         # TODO async or sync
         return super(IsbnBook, cls).get_or_create(isbn=isbn13)
+    
+    @classmethod
+    def all_isbns(cls):
+        # type: () -> List[unicode]
+        return cls.select(cls.isbn)
 
 
 class Book(flask_db.Model):
@@ -131,12 +139,12 @@ class Book(flask_db.Model):
     
     @staticmethod
     def clean_barcode(barcode):
-        # type: (str) -> str
+        # type: (unicode) -> unicode
         return barcode  # TODO
     
     @classmethod
     def create(cls, barcode, isbn, owner):
-        # type: (str, str, User) -> Book
+        # type: (unicode, unicode, User) -> Book
         """Create a new Book owned by `owner`."""
         # TODO make transaction from initial, universal lender?
         return super(Book, cls).create(

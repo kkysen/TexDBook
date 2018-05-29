@@ -1,18 +1,9 @@
 import * as React from "react";
 import {InputsArgs} from "../../util/components/Inputs";
-import {fetchJson} from "../../util/fetch/fetchJson";
+import {RestResponse} from "../../util/fetch/fetchJson";
 import {InputRef} from "../../util/refs/InputRef";
-import {IsLoggedIn, LoginArgs, LoginComponent, LoginProps, loginUser} from "./LoginComponent";
-
-
-type CreateAccountArgs = LoginArgs & {
-    passwordConfirmation: string,
-};
-
-type DidCreateAccount = {
-    readonly didCreateAccount: boolean,
-    readonly message: string,
-};
+import {api} from "../api";
+import {IsLoggedIn, LoginComponent, LoginProps, loginUser} from "./LoginComponent";
 
 
 export class CreateAccount extends LoginComponent {
@@ -40,14 +31,8 @@ export class CreateAccount extends LoginComponent {
     protected async doLogin(): Promise<IsLoggedIn> {
         const username: string = this.username();
         const password: string = this.password();
-        const response: DidCreateAccount = await fetchJson<CreateAccountArgs, DidCreateAccount>("/createAccount", {
-            username: username,
-            password: password,
-            passwordConfirmation: this.passwordConfirmation(),
-        }, {
-            cache: "reload",
-        });
-        if (response.didCreateAccount) {
+        const response: RestResponse<{}> = await api.createAccount(username, password, this.passwordConfirmation());
+        if (response.success) {
             return await loginUser(username, password);
         } else {
             return {

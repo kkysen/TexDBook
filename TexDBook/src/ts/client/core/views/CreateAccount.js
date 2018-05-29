@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const fetchJson_1 = require("../../util/fetch/fetchJson");
 const InputRef_1 = require("../../util/refs/InputRef");
+const api_1 = require("../api");
 const LoginComponent_1 = require("./LoginComponent");
 class CreateAccount extends LoginComponent_1.LoginComponent {
     // private readonly email: InputRef = InputRef.new();
@@ -22,14 +22,8 @@ class CreateAccount extends LoginComponent_1.LoginComponent {
     async doLogin() {
         const username = this.username();
         const password = this.password();
-        const response = await fetchJson_1.fetchJson("/createAccount", {
-            username: username,
-            password: password,
-            passwordConfirmation: this.passwordConfirmation(),
-        }, {
-            cache: "reload",
-        });
-        if (response.didCreateAccount) {
+        const response = await api_1.api.createAccount(username, password, this.passwordConfirmation());
+        if (response.success) {
             return await LoginComponent_1.loginUser(username, password);
         }
         else {

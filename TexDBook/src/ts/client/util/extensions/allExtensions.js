@@ -113,6 +113,9 @@ Object.defineImmutableProperties(Array.prototype, {
             this.splice(i, 1);
         }
     },
+    addAll(values) {
+        this.push(...values);
+    },
     applyOn(func) {
         return func(this);
     },

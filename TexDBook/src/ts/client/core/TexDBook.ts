@@ -7,6 +7,8 @@ export interface GlobalTexDBook {
     
     isLoggedIn: IsLoggedIn;
     
+    csrfToken: string;
+    
 }
 
 export const TexDBook: GlobalTexDBook = anyWindow.TexDBook;

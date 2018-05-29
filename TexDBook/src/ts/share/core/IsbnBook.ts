@@ -1,35 +1,35 @@
-export type IndustryIdentifier = Readonly<{
+export interface IndustryIdentifier {
 
-    type: string;
-    identifier: string;
+    readonly type: string;
+    readonly identifier: string;
 
-}>;
+}
 
-export type IsbnBook = Readonly<{
+export interface IsbnBook {
     
-    title: string;
-    authors: ReadonlyArray<string>;
-    publisher: string;
-    publishedDate: string;
-    description: string;
-    industryIdentifiers: ReadonlyArray<IndustryIdentifier>;
-    readingModes: Readonly<{
-        text: boolean;
-        image: boolean;
-    }>;
-    pageCount: number;
-    printType: string;
-    categories: ReadonlyArray<string>;
-    averageRating: number;
-    ratingsCount: number;
-    contentVersion: string;
-    imageLinks: Readonly<{
-        smallThumbnail: string;
-        thumbnail: string;
-    }>;
-    language: string;
-    previewLink: string;
-    infoLink: string;
-    canonicalVolumeLink: string;
+    readonly title: string;
+    readonly authors: ReadonlyArray<string>;
+    readonly publisher: string;
+    readonly publishedDate: string;
+    readonly description: string;
+    readonly industryIdentifiers: ReadonlyArray<IndustryIdentifier>;
+    readonly readingModes: {
+        readonly text: boolean;
+        readonly image: boolean;
+    };
+    readonly pageCount: number;
+    readonly printType: string;
+    readonly categories: ReadonlyArray<string>;
+    readonly averageRating: number;
+    readonly ratingsCount: number;
+    readonly contentVersion: string;
+    readonly imageLinks: {
+        readonly smallThumbnail: string;
+        readonly thumbnail: string;
+    };
+    readonly language: string;
+    readonly previewLink: string;
+    readonly infoLink: string;
+    readonly canonicalVolumeLink: string;
     
-}>;
+}

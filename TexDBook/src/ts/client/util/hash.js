@@ -7,11 +7,12 @@ const makeSha = function (numBits) {
         }
         return data;
     };
+    const digest = crypto.subtle.digest.bind(crypto.subtle, { name: "SHA-" + numBits });
     return {
         async hash(data) {
             const buffer = toBuffer(data);
-            const hashBuffer = await crypto.subtle.digest("SHA-" + numBits, buffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashBuffer = await digest(buffer);
+            const hashArray = [...new Uint8Array(hashBuffer)];
             return hashArray.map(b => ("00" + b.toString(16)).slice(-2)).join("");
         },
     }.freeze();

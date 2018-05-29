@@ -4,9 +4,8 @@ const React = require("react");
 const react_1 = require("react");
 const reactstrap_1 = require("reactstrap");
 const Inputs_1 = require("../../util/components/Inputs");
-const fetchJson_1 = require("../../util/fetch/fetchJson");
-const hash_1 = require("../../util/hash");
 const utils_1 = require("../../util/utils");
+const api_1 = require("../api");
 class LoginComponent extends react_1.Component {
     constructor(props, name) {
         super(props);
@@ -15,7 +14,6 @@ class LoginComponent extends react_1.Component {
     }
     render() {
         // TODO style name and message
-        // TODO link inputs to button
         return (React.createElement("div", null,
             this.name,
             React.createElement("br", null),
@@ -28,11 +26,6 @@ class LoginComponent extends react_1.Component {
 }
 exports.LoginComponent = LoginComponent;
 exports.loginUser = async function (username, password) {
-    return await fetchJson_1.fetchJson("/login", {
-        username: username,
-        password: await hash_1.SHA._256.hash(password),
-    }, {
-        cache: "reload",
-    });
+    return api_1.api.login(username, password);
 };
 //# sourceMappingURL=LoginComponent.js.map

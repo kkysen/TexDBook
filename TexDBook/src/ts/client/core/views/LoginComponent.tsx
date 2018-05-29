@@ -2,9 +2,10 @@ import * as React from "react";
 import {Component, ReactNode} from "react";
 import {Button} from "reactstrap";
 import {Inputs, InputsArgs} from "../../util/components/Inputs";
-import {fetchJson} from "../../util/fetch/fetchJson";
+import {fetchJson, RestResponse} from "../../util/fetch/fetchJson";
 import {SHA} from "../../util/hash";
 import {separateClassName} from "../../util/utils";
+import {api} from "../api";
 
 export type IsLoggedIn = {
     readonly isLoggedIn: boolean;
@@ -35,7 +36,6 @@ export abstract class LoginComponent extends Component<LoginProps, LoginState> i
     
     public render(): ReactNode {
         // TODO style name and message
-        // TODO link inputs to button
         return (
             <div>
                 {this.name}
@@ -51,16 +51,7 @@ export abstract class LoginComponent extends Component<LoginProps, LoginState> i
     
 }
 
-export type LoginArgs = {
-    username: string,
-    password: string,
-};
 
 export const loginUser = async function(username: string, password: string): Promise<IsLoggedIn> {
-    return await fetchJson<LoginArgs, IsLoggedIn>("/login", {
-        username: username,
-        password: await SHA._256.hash(password), // pre hash on client side
-    }, {
-        cache: "reload",
-    });
+    return api.login(username, password);
 };
