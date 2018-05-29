@@ -17,10 +17,10 @@ app.config.from_object(__name__)  # TODO FIXME check cookie security
 db = TexDBookDatabase(resolve_path("data", NAME + ".db"))  # type: Database
 
 
-@override(db)
+@override(TexDBookDatabase)
 def connect(_super, self, reuse_if_open=True):
-    # type: (Callable[[bool], bool], Database, bool) -> bool
-    return _super(reuse_if_open)
+    # type: (Callable[[TexDBookDatabase, bool], bool], TexDBookDatabase, bool) -> bool
+    return _super(self, reuse_if_open)
 
 
 flask_db = FlaskDB(app, db)  # type: FlaskDB

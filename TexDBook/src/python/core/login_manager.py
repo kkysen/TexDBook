@@ -13,7 +13,7 @@ paranoid.init_app(app)
 paranoid.redirect_view = "/"
 
 
-@extend(paranoid)
+@extend(Paranoid)
 def get_token(self):
     # type: (Paranoid) -> str
     token = self.get_token_from_session()  # type: Optional[str]

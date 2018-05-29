@@ -37,7 +37,7 @@ def override(klass):
         @functools.wraps(override_method)
         def override_closure(*args, **kwargs):
             # type: (Tuple, Dict) -> R
-            return override_method(super_method, super_method.__self__, *args, **kwargs)
+            return override_method(super_method, *args, **kwargs)
 
         setattr(klass, func_name, override_closure)
         return None
