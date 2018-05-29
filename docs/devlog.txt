@@ -134,3 +134,45 @@ Inputs now takes an onEnter prop that is linked to
 the input's onkeyup event when Enter is pressed.
 
 ============================================================
+khyberS -- 2018-05-29 03:19:00
+
+Tldr: I need to buy a domain name for SSL certificates for HTTPS for subtle.crypto.
+
+Tried to run all of these changes on Apache on the DO Droplet,
+but ran into major problems:
+
+    Fixed the problems below first.
+
+    window.subtle.crypto is not available in insecure contexts,
+    meaning on non-localhost HTTP sites, it's not available.
+    We're using subtle.crypto to hash password on the client for extra security,
+    so our website doesn't work if subtle.crypto isn't available.
+
+    HTTPS is necessary for subtle.crypto,
+    so I set up template.conf to redirect the <VirtualHost *:80> to <VirtualHost *:443> for HTTPS
+    and set up <VirtualHost *:443> for HTTPS by setting:
+        WSGIPassAuthorization On
+        SSLEngine on
+
+    SSLEngine requires mod_ssl (pre-installed on Ubuntu), so I added a2enmod ssl to install.sh.
+    However, SSL requires SSL certificates.
+    But to get SSL certificates, I need a domain name, which I presume I have to buy.
+    So until I get a domain name and register it, our website won't run on non-localhost.
+
+Overrode TexDBookDatabase.connect()
+to always pass reuse_if_open=True
+so that Apache doesn't erroneously open the database multiple times.
+
+Added passlib dependency.
+
+Unfinished changes:
+    Started standardizing our REST APIs.
+    Wrote @rest_api_route() that decorates a method returning JSON or an error message.
+    Wrote the api singleton in TS that calls all of the REST APIs.
+        Many of these are refactored from the extended LoginComponents.
+    Currently working on /uploadBooks on both front and backend.
+        Need to finish AllIsbns/Books singleton first,
+        which keeps track of all the books and
+        makes metadata fetches before syncing with the server.
+
+============================================================
