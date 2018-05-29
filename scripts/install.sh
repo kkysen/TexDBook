@@ -14,11 +14,13 @@ function install_python2_and_pip() {
 #    check_and_install python-pip
 }
 
-function install_apache2_wsgi() {
+function install_apache2_wsgi_ssl() {
     check_and_install apache2
     check_and_install libapache2-mod-wsgi
+#    check_and_install mod_ssl
 
     a2enmod wsgi
+    a2enmod ssl
     service apache2 reload
 }
 
