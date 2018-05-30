@@ -13,7 +13,9 @@ exports.fetchJson = async function (url, arg, options) {
     }));
     try {
         const response = await responsePromise;
-        return await response.json();
+        const text = await response.text();
+        return JSON.parse(text);
+        // return <RestResponse<U>> await response.json();
     }
     catch (e) {
         console.error(e);
