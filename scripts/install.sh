@@ -20,7 +20,7 @@ function install_apache2_wsgi_ssl() {
 #    check_and_install mod_ssl
 
     a2enmod wsgi
-    a2enmod ssl
+#    a2enmod ssl
     service apache2 reload
 }
 
