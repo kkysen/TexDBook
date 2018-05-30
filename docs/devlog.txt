@@ -190,3 +190,8 @@ Trying to revert to HTTP on Apache for now so we can demo something.
 Client-side hashing will be disabled for now.
 
 ============================================================
+naotakaK -- 2018-05-30 15:34:00
+
+Wrote searchISBN function to return data about given ISBN.
+
+============================================================
