@@ -14,9 +14,9 @@ type CreateAccountArgs = LoginArgs & {
     passwordConfirmation: string,
 };
 
-const toIsLoggedIn = function(response: RestResponse<{}>) {
+const toIsLoggedIn = function(negate: boolean, response: RestResponse<{}>) {
     return {
-        isLoggedIn: response.success,
+        isLoggedIn: negate ? !response.success : response.success,
         message: response.message,
     };
 };
@@ -68,7 +68,7 @@ export interface TexDBookApi {
 export const api: TexDBookApi = {
     
     async login(username: string, password: string): Promise<IsLoggedIn> {
-        return toIsLoggedIn(await fetchJson<LoginArgs, {}>("/login", {
+        return toIsLoggedIn(false, await fetchJson<LoginArgs, {}>("/login", {
             username: username,
             password: await SHA._256.hash(password), // pre hash on client side
         }, {
@@ -77,7 +77,7 @@ export const api: TexDBookApi = {
     },
     
     async logout(): Promise<IsLoggedIn> {
-        return toIsLoggedIn(await fetchJson("/logout", undefined, {
+        return toIsLoggedIn(true, await fetchJson("/logout", undefined, {
             cache: "reload",
         }));
     },

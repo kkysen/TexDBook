@@ -2,8 +2,6 @@ import * as React from "react";
 import {Component, ReactNode} from "react";
 import {Button} from "reactstrap";
 import {Inputs, InputsArgs} from "../../util/components/Inputs";
-import {fetchJson, RestResponse} from "../../util/fetch/fetchJson";
-import {SHA} from "../../util/hash";
 import {separateClassName} from "../../util/utils";
 import {api} from "../api";
 

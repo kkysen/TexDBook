@@ -4,15 +4,15 @@ const Isbn_1 = require("../../share/core/Isbn");
 const fetchJson_1 = require("../util/fetch/fetchJson");
 const hash_1 = require("../util/hash");
 const TexDBook_1 = require("./TexDBook");
-const toIsLoggedIn = function (response) {
+const toIsLoggedIn = function (negate, response) {
     return {
-        isLoggedIn: response.success,
+        isLoggedIn: negate ? !response.success : response.success,
         message: response.message,
     };
 };
 exports.api = {
     async login(username, password) {
-        return toIsLoggedIn(await fetchJson_1.fetchJson("/login", {
+        return toIsLoggedIn(false, await fetchJson_1.fetchJson("/login", {
             username: username,
             password: await hash_1.SHA._256.hash(password),
         }, {
@@ -20,7 +20,7 @@ exports.api = {
         }));
     },
     async logout() {
-        return toIsLoggedIn(await fetchJson_1.fetchJson("/logout", undefined, {
+        return toIsLoggedIn(true, await fetchJson_1.fetchJson("/logout", undefined, {
             cache: "reload",
         }));
     },
