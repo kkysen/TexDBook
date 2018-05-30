@@ -12,7 +12,8 @@ exports.fetchJson = async function (url, arg, options) {
         body: !arg ? arg : JSON.stringify(arg),
     }));
     try {
-        return await (await responsePromise).json();
+        const response = await responsePromise;
+        return await response.json();
     }
     catch (e) {
         console.error(e);

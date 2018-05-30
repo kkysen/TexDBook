@@ -1,3 +1,5 @@
+import {anyWindow} from "./anyWindow";
+
 export type TypedArray =
     Int8Array
     | Uint8Array
@@ -9,7 +11,8 @@ export type TypedArray =
     | Float32Array
     | Float64Array;
 
-export const hasCrypto: boolean = !!crypto.subtle;
+// FIXME temp set to false always
+export const hasCrypto: boolean = !"hello".includes("h") && !!crypto.subtle;
 if (!hasCrypto) {
     console.error("crypto.subtle not available b/c using HTTP, SHA not being used");
 }

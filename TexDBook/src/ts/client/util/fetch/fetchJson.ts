@@ -18,7 +18,8 @@ export const fetchJson = async function <T = any, U = any>(
         body: !arg ? arg : JSON.stringify(arg),
     }));
     try {
-        return <RestResponse<U>> await (await responsePromise).json();
+        const response: Response = await responsePromise;
+        return <RestResponse<U>> await response.json();
     } catch (e) {
         console.error(e);
         return {

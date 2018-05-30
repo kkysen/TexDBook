@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hasCrypto = !!crypto.subtle;
+// FIXME temp set to false always
+exports.hasCrypto = !"hello".includes("h") && !!crypto.subtle;
 if (!exports.hasCrypto) {
     console.error("crypto.subtle not available b/c using HTTP, SHA not being used");
 }
