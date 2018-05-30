@@ -8,7 +8,9 @@ const Books = {
         const barcodes = new Map();
         const isbns = new Map();
         const addIsbn = function (isbn) {
+            return true;
         };
+        return {};
     }
 };
 exports.allIsbns = (() => {
@@ -70,14 +72,14 @@ exports.allIsbns = (() => {
         const uploadResponse = api_1.api.uploadBooks(books);
         transitioning.putAllFrom(client);
         server.putAllFrom(client);
-        (await uploadResponse)
-            .filter();
+        // (await uploadResponse)
+        //     .filter()
     };
     return {
         addIsbn: addIsbnString,
         assignBarcode: assignBarcode,
         async sync(books) {
-            Array.from(clientIsbns)
+            Array.from([])
                 .map(async (isbn) => {
                 return {};
             });

@@ -1,21 +1,31 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.hasCrypto = !!crypto.subtle;
+if (!exports.hasCrypto) {
+    console.error("crypto.subtle not available b/c using HTTP, SHA not being used");
+}
 const makeSha = function (numBits) {
+    const isString = function (t) {
+        return Object.prototype.toString.call(t) === "[object String]";
+    };
     const toBuffer = function (data) {
-        if (Object.prototype.toString.call(data) === "[object String]") {
+        if (isString(data)) {
             return new TextEncoder().encode(data);
         }
         return data;
     };
-    const hasCrypto = !!crypto.subtle;
-    if (!hasCrypto) {
-        console.error("crypto.subtle not available b/c using HTTP, SHA not being used");
-    }
-    const digest = hasCrypto
-        ? crypto.subtle.digest.bind(crypto.subtle, { name: "SHA-" + numBits })
-        : async (buffer) => buffer;
+    const toString = function (data) {
+        if (isString(data)) {
+            return data;
+        }
+        return new TextDecoder().decode(data);
+    };
+    const digest = exports.hasCrypto && crypto.subtle.digest.bind(crypto.subtle, { name: "SHA-" + numBits });
     return {
         async hash(data) {
+            if (!exports.hasCrypto) {
+                return toString(data);
+            }
             const buffer = toBuffer(data);
             const hashBuffer = await digest(buffer);
             const hashArray = [...new Uint8Array(hashBuffer)];

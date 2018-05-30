@@ -45,8 +45,10 @@ const Books = {
         const isbns: Map<Isbn, string[]> = new Map();
         
         const addIsbn = function(isbn: Isbn): boolean {
-            
+            return true;
         };
+        
+        return {} as any;
     }
     
 };
@@ -123,8 +125,8 @@ export const allIsbns: Books = ((): Books => {
         const uploadResponse: Promise<BookUploadResponse[]> = api.uploadBooks(books);
         transitioning.putAllFrom(client);
         server.putAllFrom(client);
-        (await uploadResponse)
-            .filter()
+        // (await uploadResponse)
+        //     .filter()
     };
     
     return {
@@ -132,7 +134,7 @@ export const allIsbns: Books = ((): Books => {
         assignBarcode: assignBarcode,
         
         async sync(books: BookUpload[]): Promise<void> {
-            Array.from(clientIsbns)
+            Array.from([])
                 .map(async isbn => {
                     
                     return {};

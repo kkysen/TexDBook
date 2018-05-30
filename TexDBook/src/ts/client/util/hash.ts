@@ -9,27 +9,40 @@ export type TypedArray =
     | Float32Array
     | Float64Array;
 
+export const hasCrypto: boolean = !!crypto.subtle;
+if (!hasCrypto) {
+    console.error("crypto.subtle not available b/c using HTTP, SHA not being used");
+}
+
 export type Buffer = TypedArray | ArrayBuffer | DataView;
 
 const makeSha = function(numBits: number): Hash {
-    const toBuffer = function(data: string | Buffer): Buffer {
-        if (Object.prototype.toString.call(data) === "[object String]") {
-            return new TextEncoder().encode(<string> data);
-        }
-        return <Buffer> data;
+    const isString = function(t: any): t is string {
+        return Object.prototype.toString.call(t) === "[object String]";
     };
     
-    const hasCrypto: boolean = !!crypto.subtle;
-    if (!hasCrypto) {
-        console.error("crypto.subtle not available b/c using HTTP, SHA not being used");
-    }
+    const toBuffer = function(data: string | Buffer): Buffer {
+        if (isString(data)) {
+            return new TextEncoder().encode(data);
+        }
+        return data;
+    };
     
-    const digest: (buffer: Buffer) => Promise<ArrayBuffer> = hasCrypto
-         ? crypto.subtle.digest.bind(crypto.subtle, {name: "SHA-" + numBits})
-        : async buffer => buffer;
+    const toString = function(data: string | Buffer): string {
+        if (isString(data)) {
+            return data;
+        }
+        return new TextDecoder().decode(data);
+    };
+    
+    const digest: (buffer: Buffer) => Promise<ArrayBuffer> =
+        hasCrypto && crypto.subtle.digest.bind(crypto.subtle, {name: "SHA-" + numBits});
     
     return {
         async hash(data: string | Buffer): Promise<string> {
+            if (!hasCrypto) {
+                return toString(data);
+            }
             const buffer: Buffer = toBuffer(data);
             const hashBuffer: ArrayBuffer = await digest(buffer);
             const hashArray: number[] = [...new Uint8Array(hashBuffer)];
