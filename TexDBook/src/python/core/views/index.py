@@ -7,8 +7,8 @@ from TexDBook.src.python.core.login_manager import paranoid
 @app.route("/")
 def index():
     # type: () -> Response
-    print("\tINDEX\t")
-    print(request.__dict__)
+    print("INDEX")
+    # print(request.__dict__)
     return render_template("index.html", debug=app.debug, csrf_token=paranoid.create_token())
 
 

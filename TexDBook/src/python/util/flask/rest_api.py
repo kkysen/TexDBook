@@ -23,8 +23,8 @@ def rest_api(route):
     def wrapper(*args, **kwargs):
         # type: () -> Json
         # noinspection PyArgumentList
-        print("\tAPI\t")
-        print(request.__dict__)
+        print("API")
+        # print(request.__dict__)
         response_or_message = route(*args, **kwargs)  # type: Union[Json, str]
         if isinstance(response_or_message, str):
             return {

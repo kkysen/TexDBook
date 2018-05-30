@@ -41,9 +41,7 @@ def login():
 def logout():
     # type: () -> Json
     logged_out = not logout_user()  # type: bool
-    return {
-        "isLoggedIn": logged_out,
-    }
+    return {} if logged_out else "Logout failed"
 
 
 @rest_api_route(app, "/createAccount")

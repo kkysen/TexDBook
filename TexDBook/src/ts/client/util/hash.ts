@@ -1,5 +1,3 @@
-import {anyWindow} from "./anyWindow";
-
 export type TypedArray =
     Int8Array
     | Uint8Array
