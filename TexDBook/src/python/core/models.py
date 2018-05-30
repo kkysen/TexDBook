@@ -204,7 +204,7 @@ def setup_db():
     print(db)
     
     username = "Khyber"
-    password = "5e9708d50aa3cef560fa6a6d47787e44aae25d19de9bb06a9f653939df82881b"  # SHA256 of "Sen"
+    password = "Sen"  # "5e9708d50aa3cef560fa6a6d47787e44aae25d19de9bb06a9f653939df82881b"  # SHA256 of "Sen"
     # User.create(username, password)
     user = User.login(username, password)
     print(user)
