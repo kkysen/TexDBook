@@ -1,9 +1,10 @@
+from flask import Response
 from flask_login import LoginManager
 from flask_paranoid import Paranoid
-from typing import Optional
 
 from TexDBook.src.python.core.init_app import app, default_init_app
-from TexDBook.src.python.util.oop import extend
+from TexDBook.src.python.core.views import index
+from TexDBook.src.python.util.flask.flask_utils import reroute_to
 
 login_manager = LoginManager()  # type: LoginManager
 login_manager.init_app(app)
@@ -13,14 +14,11 @@ paranoid.init_app(app)
 paranoid.redirect_view = "/"
 
 
-@extend(Paranoid)
-def get_token(self):
-    # type: (Paranoid) -> str
-    token = self.get_token_from_session()  # type: Optional[str]
-    if token is None:
-        token = self.create_token()
-        self.write_token_to_session(token)
-    return token
+@paranoid.on_invalid_session
+def on_invalid_session():
+    # type: () -> str
+    print("Invalid Session")
+    return "Invalid Session"
 
 
 init_app = default_init_app

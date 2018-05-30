@@ -9,7 +9,7 @@ def index():
     # type: () -> Response
     print("\tINDEX\t")
     print(request.__dict__)
-    return render_template("index.html", debug=app.debug, csrf_token=paranoid.get_token())
+    return render_template("index.html", debug=app.debug, csrf_token=paranoid.create_token())
 
 
 init_app = default_init_app
