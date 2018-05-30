@@ -16,6 +16,7 @@ const ViewBooks_1 = require("./ViewBooks");
 class LoginManager extends react_1.Component {
     constructor(props) {
         super(props);
+        console.log(this.props);
         this.state = TexDBook_1.TexDBook.isLoggedIn._clone();
     }
     logIn(loggedIn) {

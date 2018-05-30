@@ -18,6 +18,7 @@ export class LoginManager extends Component<{}, IsLoggedIn> {
     
     constructor(props: {}) {
         super(props);
+        console.log(this.props);
         this.state = TexDBook.isLoggedIn._clone();
     }
     
