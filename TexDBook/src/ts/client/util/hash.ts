@@ -19,8 +19,14 @@ const makeSha = function(numBits: number): Hash {
         return <Buffer> data;
     };
     
-    const digest: (buffer: Buffer) => Promise<ArrayBuffer> =
-        crypto.subtle.digest.bind(crypto.subtle, {name: "SHA-" + numBits});
+    const hasCrypto: boolean = !!crypto.subtle;
+    if (!hasCrypto) {
+        console.error("crypto.subtle not available b/c using HTTP, SHA not being used");
+    }
+    
+    const digest: (buffer: Buffer) => Promise<ArrayBuffer> = hasCrypto
+         ? crypto.subtle.digest.bind(crypto.subtle, {name: "SHA-" + numBits})
+        : async buffer => buffer;
     
     return {
         async hash(data: string | Buffer): Promise<string> {

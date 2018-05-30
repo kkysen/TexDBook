@@ -176,3 +176,17 @@ Unfinished changes:
         makes metadata fetches before syncing with the server.
 
 ============================================================
+khyberS -- 2018-05-30 08:31:00
+
+Wrote MultiBiMap<K, V> for use in Books.
+Acts like a function, mapping a domain (keys) onto a range (values),
+such that multiple keys can map to the same value but not vice versa.
+Used to map barcodes to isbns.
+
+Modified SHA in hash.ts to not hash when crypto.subtle is not available
+instead of just failing (throwing an exception).
+
+Trying to revert to HTTP on Apache for now so we can demo something.
+Client-side hashing will be disabled for now.
+
+============================================================

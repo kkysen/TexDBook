@@ -1,7 +1,7 @@
 import {Isbn} from "../../share/core/Isbn";
 import {IsbnBook} from "../../share/core/IsbnBook";
-import {api, BookUpload} from "./api";
-import {UploadBooks} from "./views/UploadBooks";
+import {MultiBiMap} from "../../share/util/MultiBiMap";
+import {api, BookUpload, BookUploadResponse} from "./api";
 
 /**
  * Keeps tracks of two sets of Isbns:
@@ -53,25 +53,26 @@ const Books = {
 
 export const allIsbns: Books = ((): Books => {
     
-    const barcodes: Map<string, BookUpload> = new Map();
+    type Barcode = string;
+    type Books = MultiBiMap<Barcode, Isbn>;
     
-    const serverIsbns: Set<Isbn> = new Set();
-    const clientIsbns: Set<Isbn> = new Set();
-    const transitioningIsbns: Set<Isbn> = new Set();
+    const server: Books = MultiBiMap.new();
+    const client: Books = MultiBiMap.new();
+    const transitioning: Books = MultiBiMap.new();
     
     const addExistingIsbn = function(isbn: Isbn): void {
-        serverIsbns.add(isbn);
+        server.putValue(isbn);
     };
     
     const addIsbn = function(isbn: Isbn): boolean {
-        if (serverIsbns.has(isbn) || clientIsbns.has(isbn)) {
+        if (server.hasValue(isbn) || client.hasValue(isbn)) {
             return false;
         }
         (async () => {
             const book: IsbnBook = await isbn.fetchBook();
             // TODO verify book
         })();
-        clientIsbns.add(isbn);
+        client.putValue(isbn);
         return true;
     };
     
@@ -88,14 +89,17 @@ export const allIsbns: Books = ((): Books => {
         return addIsbn(isbn);
     };
     
+    const assignExistingBarcode = function(book: BookUpload): void {
+        server.put(book.barcode, book.isbn);
+    };
+    
     const assignBarcode = function(book: BookUpload): boolean {
-        if (!serverIsbns.has(book.isbn)) {
-            clientIsbns.add(book.isbn);
-        }
-        if (barcodes.has(book.barcode)) {
+        addIsbn(book.isbn);
+        
+        if (server.hasKey(book.barcode) || client.hasKey(book.barcode)) {
             return false;
         }
-        barcodes.set(book.barcode, book);
+        client.put(book.barcode, book.isbn);
         return true;
     };
     
@@ -105,7 +109,7 @@ export const allIsbns: Books = ((): Books => {
         const barcodes: Promise<BookUpload[]> = api.ownBarcodes();
         (await isbns).forEach(addExistingIsbn);
         // barcodes must be added afterwards
-        (await barcodes).forEach(assignBarcode);
+        (await barcodes).forEach(assignExistingBarcode);
         initialized = true;
     };
     
@@ -113,7 +117,14 @@ export const allIsbns: Books = ((): Books => {
     loadInitial();
     
     const sync = async function(): Promise<void> {
-    
+        const books: BookUpload[] = Array.from(client.keyEntries())
+            .map(([barcode, isbn]) => ({barcode: barcode, isbn: isbn}));
+        loadInitial();
+        const uploadResponse: Promise<BookUploadResponse[]> = api.uploadBooks(books);
+        transitioning.putAllFrom(client);
+        server.putAllFrom(client);
+        (await uploadResponse)
+            .filter()
     };
     
     return {
@@ -124,9 +135,7 @@ export const allIsbns: Books = ((): Books => {
             Array.from(clientIsbns)
                 .map(async isbn => {
                     
-                    return {
-                    
-                    };
+                    return {};
                 });
             
         },

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const anyWindow_1 = require("../anyWindow");
 exports.fetchJson = async function (url, arg, options) {
-    const response = await fetch(url, Object.assign(options || {}, {
+    const responsePromise = fetch(url, Object.assign(options || {}, {
         credentials: "include",
         method: "POST",
         headers: {
@@ -12,13 +12,13 @@ exports.fetchJson = async function (url, arg, options) {
         body: !arg ? arg : JSON.stringify(arg),
     }));
     try {
-        return await response.json();
+        return await (await responsePromise).json();
     }
     catch (e) {
         console.error(e);
         return {
             success: false,
-            message: "Invalid JSON",
+            message: e.message,
             response: undefined,
         };
     }

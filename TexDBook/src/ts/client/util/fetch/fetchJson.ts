@@ -8,7 +8,7 @@ export type RestResponse<T> = {
 
 export const fetchJson = async function <T = any, U = any>(
     url: string, arg: T, options?: RequestInit): Promise<RestResponse<U>> {
-    const response: Response = await fetch(url, Object.assign(options || {}, <RequestInit> {
+    const responsePromise: Promise<Response> = fetch(url, Object.assign(options || {}, <RequestInit> {
         credentials: "include",
         method: "POST",
         headers: {
@@ -18,12 +18,12 @@ export const fetchJson = async function <T = any, U = any>(
         body: !arg ? arg : JSON.stringify(arg),
     }));
     try {
-        return <RestResponse<U>> await response.json();
+        return <RestResponse<U>> await (await responsePromise).json();
     } catch (e) {
         console.error(e);
         return {
             success: false,
-            message: "Invalid JSON",
+            message: e.message,
             response: undefined,
         };
     }

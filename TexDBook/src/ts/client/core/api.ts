@@ -1,4 +1,3 @@
-import {Book} from "../../share/core/Book";
 import {Isbn} from "../../share/core/Isbn";
 import {IsbnBook} from "../../share/core/IsbnBook";
 import {fetchJson, RestResponse} from "../util/fetch/fetchJson";

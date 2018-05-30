@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Isbn_1 = require("../../share/core/Isbn");
+const MultiBiMap_1 = require("../../share/util/MultiBiMap");
 const api_1 = require("./api");
 const Books = {
     new() {
@@ -11,22 +12,21 @@ const Books = {
     }
 };
 exports.allIsbns = (() => {
-    const barcodes = new Map();
-    const serverIsbns = new Set();
-    const clientIsbns = new Set();
-    const transitioningIsbns = new Set();
+    const server = MultiBiMap_1.MultiBiMap.new();
+    const client = MultiBiMap_1.MultiBiMap.new();
+    const transitioning = MultiBiMap_1.MultiBiMap.new();
     const addExistingIsbn = function (isbn) {
-        serverIsbns.add(isbn);
+        server.putValue(isbn);
     };
     const addIsbn = function (isbn) {
-        if (serverIsbns.has(isbn) || clientIsbns.has(isbn)) {
+        if (server.hasValue(isbn) || client.hasValue(isbn)) {
             return false;
         }
         (async () => {
             const book = await isbn.fetchBook();
             // TODO verify book
         })();
-        clientIsbns.add(isbn);
+        client.putValue(isbn);
         return true;
     };
     /**
@@ -41,14 +41,15 @@ exports.allIsbns = (() => {
         }
         return addIsbn(isbn);
     };
+    const assignExistingBarcode = function (book) {
+        server.put(book.barcode, book.isbn);
+    };
     const assignBarcode = function (book) {
-        if (!serverIsbns.has(book.isbn)) {
-            clientIsbns.add(book.isbn);
-        }
-        if (barcodes.has(book.barcode)) {
+        addIsbn(book.isbn);
+        if (server.hasKey(book.barcode) || client.hasKey(book.barcode)) {
             return false;
         }
-        barcodes.set(book.barcode, book);
+        client.put(book.barcode, book.isbn);
         return true;
     };
     let initialized = false;
@@ -57,12 +58,20 @@ exports.allIsbns = (() => {
         const barcodes = api_1.api.ownBarcodes();
         (await isbns).forEach(addExistingIsbn);
         // barcodes must be added afterwards
-        (await barcodes).forEach(assignBarcode);
+        (await barcodes).forEach(assignExistingBarcode);
         initialized = true;
     };
     // noinspection JSIgnoredPromiseFromCall
     loadInitial();
     const sync = async function () {
+        const books = Array.from(client.keyEntries())
+            .map(([barcode, isbn]) => ({ barcode: barcode, isbn: isbn }));
+        loadInitial();
+        const uploadResponse = api_1.api.uploadBooks(books);
+        transitioning.putAllFrom(client);
+        server.putAllFrom(client);
+        (await uploadResponse)
+            .filter();
     };
     return {
         addIsbn: addIsbnString,

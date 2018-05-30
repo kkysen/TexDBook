@@ -24,6 +24,27 @@ function install_apache2_wsgi_ssl() {
     service apache2 reload
 }
 
+function create_ssl_certificates() {
+    # Using Let's Encrypt signed SSL certificates
+    local domain=$1
+
+    add-apt-repository ppa:certbot/cerbot
+    apt-get update
+    apt-get install python-certbot-apache
+
+    certbot --apache -d ${domain} -d www.${domain}
+
+    echo SSL certificates:
+    ll /etc/letsencrypt/live
+
+    local certificate_status=https://www.ssllabs.com/ssltest/analyze.html?d=${domain}&latest
+    echo check SSL certificate status at ${certificate_status}
+
+    certbot renew --dry-run  # check if automatic renewal works
+
+    # TODO finish
+}
+
 function install_deployment() {
     install_python2_and_pip
     install_apache2_wsgi_ssl

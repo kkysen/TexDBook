@@ -7,7 +7,13 @@ const makeSha = function (numBits) {
         }
         return data;
     };
-    const digest = crypto.subtle.digest.bind(crypto.subtle, { name: "SHA-" + numBits });
+    const hasCrypto = !!crypto.subtle;
+    if (!hasCrypto) {
+        console.error("crypto.subtle not available b/c using HTTP, SHA not being used");
+    }
+    const digest = hasCrypto
+        ? crypto.subtle.digest.bind(crypto.subtle, { name: "SHA-" + numBits })
+        : async (buffer) => buffer;
     return {
         async hash(data) {
             const buffer = toBuffer(data);
