@@ -19,9 +19,9 @@ export const fetchJson = async function <T = any, U = any>(
     }));
     try {
         const response: Response = await responsePromise;
-        const text: string = await response.text();
-        return JSON.parse(text);
-        // return <RestResponse<U>> await response.json();
+        // const text: string = await response.text();
+        // return JSON.parse(text);
+        return <RestResponse<U>> await response.json();
     } catch (e) {
         console.error(e);
         return {

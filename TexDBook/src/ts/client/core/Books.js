@@ -3,17 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Isbn_1 = require("../../share/core/Isbn");
 const MultiBiMap_1 = require("../../share/util/MultiBiMap");
 const api_1 = require("./api");
-const Books = {
-    new() {
-        const barcodes = new Map();
-        const isbns = new Map();
-        const addIsbn = function (isbn) {
-            return true;
-        };
-        return {};
-    }
-};
-exports.allIsbns = (() => {
+const createAllBooks = function () {
     const server = MultiBiMap_1.MultiBiMap.new();
     const client = MultiBiMap_1.MultiBiMap.new();
     const transitioning = MultiBiMap_1.MultiBiMap.new();
@@ -65,25 +55,31 @@ exports.allIsbns = (() => {
     };
     // noinspection JSIgnoredPromiseFromCall
     loadInitial();
+    const undoFailedBooks = function (uploadResponse) {
+        uploadResponse
+            .filter(book => book.response.success)
+            .map(book => book.barcode)
+            .forEach(transitioning.removeKey);
+        client.putAllFrom(transitioning);
+        const failedBarcodes = Array.from(transitioning.keys());
+        failedBarcodes.forEach(server.removeKey);
+        return failedBarcodes;
+    };
     const sync = async function () {
         const books = Array.from(client.keyEntries())
             .map(([barcode, isbn]) => ({ barcode: barcode, isbn: isbn }));
+        // noinspection JSIgnoredPromiseFromCall
         loadInitial();
         const uploadResponse = api_1.api.uploadBooks(books);
         transitioning.putAllFrom(client);
         server.putAllFrom(client);
-        // (await uploadResponse)
-        //     .filter()
+        return undoFailedBooks(await uploadResponse);
     };
     return {
         addIsbn: addIsbnString,
         assignBarcode: assignBarcode,
-        async sync(books) {
-            Array.from([])
-                .map(async (isbn) => {
-                return {};
-            });
-        },
-    }.freeze();
-})();
+        sync: sync,
+    };
+};
+exports.AllBooks = createAllBooks().freeze();
 //# sourceMappingURL=Books.js.map

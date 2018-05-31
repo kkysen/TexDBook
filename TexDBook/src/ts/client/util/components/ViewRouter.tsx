@@ -37,8 +37,10 @@ export class ViewRouter extends Component<ViewRouterProps, {}> {
                 }
                 return view as StrictView;
             }
+            const node: ReactNode = React.createElement(view);
+            console.log(node);
             return {
-                render: () => React.createElement(view),
+                render: () => node,
                 name: view.name,
                 path: "/" + view.name,
             };
@@ -52,6 +54,7 @@ export class ViewRouter extends Component<ViewRouterProps, {}> {
     }
     
     public render(): ReactNode {
+        console.log("rendering ViewRouter");
         const views: StrictView[] = this.strictViews();
         
         const makeLink = function(view: StrictView): ReactNode {
@@ -67,11 +70,14 @@ export class ViewRouter extends Component<ViewRouterProps, {}> {
         const links: ReactNode[] = views.map(view => makeLink(view));
         
         const routes: ReactNode[] = views.map(
-            (view, i) => (<Route
-                key={view.name}
-                path={view.path}
-                render={view.render}
-            />)
+            (view, i) => {
+                console.log("creating Routes");
+                return (<Route
+                    key={view.name}
+                    path={view.path}
+                    render={view.render}
+                />);
+            }
         );
         
         return (<HashRouter>

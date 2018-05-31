@@ -20,6 +20,8 @@ export interface MultiBiMap<K, V> {
     
     removeValue(value: V): Set<K> | undefined;
     
+    clear(): void;
+    
     numKeys(): number;
     
     numValues(): number;
@@ -111,6 +113,11 @@ export const MultiBiMap = {
                 const prev: Set<K> | undefined = unmap.get(value);
                 unmap.get(value);
                 return prev;
+            },
+            
+            clear(): void {
+                map.clear();
+                unmap.clear();
             },
             
             numKeys(): number {

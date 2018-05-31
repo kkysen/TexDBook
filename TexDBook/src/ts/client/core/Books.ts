@@ -3,9 +3,11 @@ import {IsbnBook} from "../../share/core/IsbnBook";
 import {MultiBiMap} from "../../share/util/MultiBiMap";
 import {api, BookUpload, BookUploadResponse} from "./api";
 
+export type Barcode = string;
+
 /**
  * Keeps tracks of two sets of Isbns:
- *     1. (server) Isbn's already on server, retrieved via api.allIsbns().
+ *     1. (server) Isbn's already on server, retrieved via api.AllBooks().
  *        The IsbnBooks for these Isbn's don't need to be fetched
  *        since they are already on the server.
  *     2. (client) Isbn's uploaded by the user that haven't been sent to the server yet.
@@ -36,26 +38,12 @@ export interface Books {
     
     assignBarcode(book: BookUpload): boolean;
     
+    sync(): Promise<Barcode[]>;
+    
 }
 
-const Books = {
+const createAllBooks = function(): Books {
     
-    new(): Books {
-        const barcodes: Map<string, Isbn> = new Map();
-        const isbns: Map<Isbn, string[]> = new Map();
-        
-        const addIsbn = function(isbn: Isbn): boolean {
-            return true;
-        };
-        
-        return {} as any;
-    }
-    
-};
-
-export const allIsbns: Books = ((): Books => {
-    
-    type Barcode = string;
     type Books = MultiBiMap<Barcode, Isbn>;
     
     const server: Books = MultiBiMap.new();
@@ -118,30 +106,34 @@ export const allIsbns: Books = ((): Books => {
     // noinspection JSIgnoredPromiseFromCall
     loadInitial();
     
-    const sync = async function(): Promise<void> {
+    const undoFailedBooks = function(uploadResponse: BookUploadResponse[]): Barcode[] {
+        uploadResponse
+            .filter(book => book.response.success)
+            .map(book => book.barcode)
+            .forEach(transitioning.removeKey);
+        client.putAllFrom(transitioning);
+        const failedBarcodes = Array.from(transitioning.keys());
+        failedBarcodes.forEach(server.removeKey);
+        return failedBarcodes;
+    };
+    
+    const sync = async function(): Promise<Barcode[]> {
         const books: BookUpload[] = Array.from(client.keyEntries())
             .map(([barcode, isbn]) => ({barcode: barcode, isbn: isbn}));
+        // noinspection JSIgnoredPromiseFromCall
         loadInitial();
         const uploadResponse: Promise<BookUploadResponse[]> = api.uploadBooks(books);
         transitioning.putAllFrom(client);
         server.putAllFrom(client);
-        // (await uploadResponse)
-        //     .filter()
+        return undoFailedBooks(await uploadResponse);
     };
     
     return {
         addIsbn: addIsbnString,
         assignBarcode: assignBarcode,
-        
-        async sync(books: BookUpload[]): Promise<void> {
-            Array.from([])
-                .map(async isbn => {
-                    
-                    return {};
-                });
-            
-        },
-        
-    }.freeze();
+        sync: sync,
+    };
     
-})();
+};
+
+export const AllBooks: Books = createAllBooks().freeze();

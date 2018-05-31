@@ -41,7 +41,7 @@ exports.api = {
         });
     },
     async allIsbns() {
-        const response = await fetchJson_1.fetchJson("/allIsbns", undefined, {
+        const response = await fetchJson_1.fetchJson("/AllBooks", undefined, {
             cache: "reload",
         });
         return (response.response || [])
