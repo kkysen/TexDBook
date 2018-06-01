@@ -151,15 +151,22 @@ export const api: TexDBookApi = {
     
 };
 
-function searchISBN(isbn: string) : {title : string, author : string[], publisher : string,
-	 		  	    date: number, description : string, isbn: string} {
-	 let response = JSON.parse("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn);
-	 return {
-	 	title : response.volumeInfo.title;
-		author : response.volumeInfo.authors;
-		publisher : response.volumeInfo.publisher;
-		date : response.volumeInfo.publishedDate;
-		description : response.volumeInfo.description;
-		isbn : isbn;
-		};
+
+async function searchISBN(isbn: string) : Promise<{title : string, author : string[], publisher : string, date: number, description : string, isbn: string, pages : number, categories : string[], rating : number, images : string[]}> {
+      var resp = await fetch("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn);
+      var r = await resp.json();
+      return {
+      	     "title": r.items[0].volumeInfo.title,
+	     "author": r.items[0].volumeInfo.authors,
+	     "publisher": r.items[0].volumeInfo.publisher,
+	     "date": parseInt(r.items[0].volumeInfo.publishedDate),
+	     "description": r.items[0].volumeInfo.description,
+	     "isbn": isbn,
+	     "pages" : r.items[0].volumeInfo.pageCount,
+	     "categories" : r.items[0].volumeInfo.categories,
+	     "rating" : r.items[0].volumeInfo.averageRating,
+	     "images" : r.items[0].volumeInfo.imageLinks
+	    };
 };
+
+(window as any).searchISBN = searchISBN;
