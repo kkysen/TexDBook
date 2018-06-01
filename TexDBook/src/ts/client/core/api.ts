@@ -100,7 +100,7 @@ export const api: TexDBookApi = {
     },
     
     async allIsbns(): Promise<Isbn[]> {
-        const response: RestResponse<string[]> = await fetchJson<undefined, string[]>("/allIsbns", undefined, {
+        const response: RestResponse<string[]> = await fetchJson<undefined, string[]>("/AllBooks", undefined, {
             cache: "reload",
         });
         return (response.response || [])

@@ -64,6 +64,10 @@ exports.MultiBiMap = {
                 unmap.get(value);
                 return prev;
             },
+            clear() {
+                map.clear();
+                unmap.clear();
+            },
             numKeys() {
                 return map.size;
             },

@@ -19,8 +19,10 @@ class ViewRouter extends react_1.Component {
                 }
                 return view;
             }
+            const node = React.createElement(view);
+            console.log(node);
             return {
-                render: () => React.createElement(view),
+                render: () => node,
                 name: view.name,
                 path: "/" + view.name,
             };
@@ -32,13 +34,17 @@ class ViewRouter extends react_1.Component {
         return this.props.views.map(ViewRouter.toStrictView);
     }
     render() {
+        console.log("rendering ViewRouter");
         const views = this.strictViews();
         const makeLink = function (view) {
             return (React.createElement(reactstrap_1.NavItem, { key: view.name },
                 React.createElement(RouterNavLink_1.RouterNavLink, { to: view.path }, view.name)));
         };
         const links = views.map(view => makeLink(view));
-        const routes = views.map((view, i) => (React.createElement(react_router_1.Route, { key: view.name, path: view.path, render: view.render })));
+        const routes = views.map((view, i) => {
+            console.log("creating Routes");
+            return (React.createElement(react_router_1.Route, { key: view.name, path: view.path, render: view.render }));
+        });
         return (React.createElement(react_router_dom_1.HashRouter, null,
             React.createElement("div", null,
                 React.createElement(reactstrap_1.Navbar, { color: "light", light: true, expand: "md" },
