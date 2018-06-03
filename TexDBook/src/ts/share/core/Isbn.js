@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const node_isbn_1 = require("node-isbn");
+const api_1 = require("../../client/core/api");
 const GROUPS = {
     "0": {
         code: "0",
@@ -1283,12 +1283,13 @@ exports.Isbn = (() => {
                 },
             });
         }
+        const _isbn = isbn;
         let bookPromise = null;
         isbn.fetchBook = async function () {
-            return await (bookPromise || (bookPromise = node_isbn_1.resolve(isbn.isbn13)));
+            return await (bookPromise || (bookPromise = api_1.api.resolveIsbn(_isbn)));
         };
-        isbn.freeze();
-        return isbn;
+        _isbn.freeze();
+        return _isbn;
     };
     const fastCache = new Map(); // stores raw isbnString
     const fullCache = new Map(); // stores validated, standardized isbn13

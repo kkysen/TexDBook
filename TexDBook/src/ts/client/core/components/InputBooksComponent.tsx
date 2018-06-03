@@ -3,6 +3,7 @@ import {Isbn} from "../../../share/core/Isbn";
 import {IsbnBook} from "../../../share/core/IsbnBook";
 import {onlyDigitsInput} from "../../../share/util/utils";
 import {InputLists, MaybeSurroundingNodes, StringInputs} from "../../util/components/InputLists";
+import {AllBooks} from "../Books";
 
 
 export interface InputBook {
@@ -31,7 +32,7 @@ export class InputBooksComponent extends InputLists<InputBooks> {
             {
                 name: "Department",
                 onInput(): void {
-                    
+                
                 }
             }, {
                 name: "ISBN",
@@ -44,6 +45,7 @@ export class InputBooksComponent extends InputLists<InputBooks> {
                             before: "Invalid ISBN",
                         };
                     }
+                    AllBooks.addIsbn(isbn.isbn13);
                     return (async () => {
                         try {
                             const book: IsbnBook = await isbn.fetchBook();
@@ -66,6 +68,7 @@ export class InputBooksComponent extends InputLists<InputBooks> {
                 name: "Barcode",
                 onInput(): void {
                     onlyDigitsInput(this);
+                    
                 },
             },
         ]);

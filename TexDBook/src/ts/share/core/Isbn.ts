@@ -1,4 +1,4 @@
-import {resolve as fetchIsbnBook} from "node-isbn";
+import {api} from "../../client/core/api";
 import {IsbnBook} from "./IsbnBook";
 
 type Range = [string, string];
@@ -1277,7 +1277,8 @@ interface MutableIsbn10 extends MutableIsbn {
     
 }
 
-export interface Isbn extends Readonly<MutableIsbn> {}
+export interface Isbn extends Readonly<MutableIsbn> {
+}
 
 export type Isbn13 = Readonly<MutableIsbn13>;
 
@@ -1370,13 +1371,15 @@ export const Isbn: IsbnClass = (() => {
             });
         }
         
+        const _isbn: Isbn = isbn as Isbn;
+        
         let bookPromise: Promise<IsbnBook> | null = null;
         isbn.fetchBook = async function(): Promise<IsbnBook> {
-            return await (bookPromise || (bookPromise = fetchIsbnBook((isbn as Isbn).isbn13)));
+            return await (bookPromise || (bookPromise = api.resolveIsbn(_isbn)));
         };
         
-        isbn.freeze();
-        return isbn as Isbn;
+        _isbn.freeze();
+        return _isbn;
     };
     
     type IsbnCache = Map<string, Isbn>;

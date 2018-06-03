@@ -231,3 +231,8 @@ like how the "Invalid ISBN" and picture of the book show up.
 Thus, it's extremely easy to extend to other hierarchical input lists.
 
 ============================================================
+khyberS -- 2018-06-03 00:53:00
+
+Integrated Naotaka's searchISBN() as api.resolveIsbn().
+
+============================================================

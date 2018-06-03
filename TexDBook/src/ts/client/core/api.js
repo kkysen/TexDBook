@@ -66,10 +66,7 @@ exports.api = {
                 isbn: book.isbn.isbn13,
             })),
             isbns: await Promise.all(Array.from(new Set(books.map(book => book.isbn)))
-                .map(async (isbn) => ({
-                isbn: isbn.isbn13,
-                ...await isbn.fetchBook(),
-            }))),
+                .map(async (isbn) => await isbn.fetchBook())),
         });
         if (!response.success) {
             return books.map(book => ({
@@ -83,20 +80,32 @@ exports.api = {
         }
         return response.response;
     },
+    async resolveIsbn(isbn) {
+        const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn.isbn13}`);
+        const { totalItems, items } = await response.json();
+        if (totalItems === 0) {
+            throw new Error("Cannot resolve ISBN: " + isbn.isbn13Hyphenated);
+        }
+        const [{ volumeInfo }] = items;
+        // need to copy fields b/c Google Books API sends extra fields that we want to exclude.
+        const { title, authors, publisher, publishedDate, description, pageCount, categories, averageRating, ratingsCount, imageLinks, language, previewLink, infoLink, link, } = volumeInfo;
+        return {
+            isbn: isbn.isbn13,
+            title: title,
+            authors: authors,
+            publisher: publisher,
+            publishedDate: publishedDate,
+            description: description,
+            pageCount: pageCount,
+            categories: categories,
+            averageRating: averageRating,
+            ratingsCount: ratingsCount,
+            imageLinks: imageLinks,
+            language: language,
+            previewLink: previewLink,
+            infoLink: infoLink,
+            link: link,
+        };
+    },
 };
-// async function searchISBN(isbn: string) : Promise<{title : string, author : string[], publisher : string,
-// 	 		  	    date: number, description : string, isbn: string}> {
-// 	 const response2: Response = await fetch("url");
-// 	 return response2.json();
-//
-//     let response = JSON.parse("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn);
-// 	 return {
-// 	 	title : response.volumeInfo.title;
-// 		author : response.volumeInfo.authors;
-// 		publisher : response.volumeInfo.publisher;
-// 		date : response.volumeInfo.publishedDate;
-// 		description : response.volumeInfo.description;
-// 		isbn : isbn;
-// 		};
-// };
 //# sourceMappingURL=api.js.map

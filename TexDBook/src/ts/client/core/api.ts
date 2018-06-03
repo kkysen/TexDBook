@@ -2,8 +2,8 @@ import {Isbn} from "../../share/core/Isbn";
 import {IsbnBook} from "../../share/core/IsbnBook";
 import {fetchJson, RestResponse} from "../util/fetch/fetchJson";
 import {SHA} from "../util/hash";
-import {TexDBook} from "./TexDBook";
 import {IsLoggedIn} from "./components/login/LoginComponent";
+import {TexDBook} from "./TexDBook";
 
 type LoginArgs = {
     username: string,
@@ -46,7 +46,16 @@ interface BooksUpload {
     
     readonly csrfToken: string;
     readonly books: RawBookUpload[];
-    readonly isbns: (IsbnBook & {readonly isbn: string})[];
+    readonly isbns: IsbnBook[];
+}
+
+interface GoogleBooksResponse {
+    
+    readonly totalItems: number;
+    readonly items: ReadonlyArray<{
+        readonly volumeInfo: IsbnBook;
+    }>;
+    
 }
 
 export interface TexDBookApi {
@@ -62,6 +71,8 @@ export interface TexDBookApi {
     ownBarcodes(): Promise<BookUpload[]>;
     
     uploadBooks(books: BookUpload[]): Promise<BookUploadResponse[]>;
+    
+    resolveIsbn(isbn: Isbn): Promise<IsbnBook>;
     
 }
 
@@ -130,10 +141,7 @@ export const api: TexDBookApi = {
                 })),
                 isbns: await Promise.all(
                     Array.from(new Set(books.map(book => book.isbn)))
-                        .map(async isbn => ({
-                            isbn: isbn.isbn13,
-                            ...await isbn.fetchBook(),
-                        }))
+                        .map(async isbn => await isbn.fetchBook())
                 ),
             });
         if (!response.success) {
@@ -149,24 +157,47 @@ export const api: TexDBookApi = {
         return response.response as BookUploadResponse[];
     },
     
+    async resolveIsbn(isbn: Isbn): Promise<IsbnBook> {
+        const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn.isbn13}`);
+        const {totalItems, items} = <GoogleBooksResponse> await response.json();
+        if (totalItems === 0) {
+            throw new Error("Cannot resolve ISBN: " + isbn.isbn13Hyphenated);
+        }
+        const [{volumeInfo}] = items;
+        // need to copy fields b/c Google Books API sends extra fields that we want to exclude.
+        const {
+            title,
+            authors,
+            publisher,
+            publishedDate,
+            description,
+            pageCount,
+            categories,
+            averageRating,
+            ratingsCount,
+            imageLinks,
+            language,
+            previewLink,
+            infoLink,
+            link,
+        } = volumeInfo;
+        return {
+            isbn: isbn.isbn13,
+            title: title,
+            authors: authors,
+            publisher: publisher,
+            publishedDate: publishedDate,
+            description: description,
+            pageCount: pageCount,
+            categories: categories,
+            averageRating: averageRating,
+            ratingsCount: ratingsCount,
+            imageLinks: imageLinks,
+            language: language,
+            previewLink: previewLink,
+            infoLink: infoLink,
+            link: link,
+        };
+    },
+    
 };
-
-
-async function searchISBN(isbn: string) : Promise<{title : string, author : string[], publisher : string, date: number, description : string, isbn: string, pages : number, categories : string[], rating : number, images : string[]}> {
-      var resp = await fetch("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn);
-      var r = await resp.json();
-      return {
-      	     "title": r.items[0].volumeInfo.title,
-	     "author": r.items[0].volumeInfo.authors,
-	     "publisher": r.items[0].volumeInfo.publisher,
-	     "date": parseInt(r.items[0].volumeInfo.publishedDate),
-	     "description": r.items[0].volumeInfo.description,
-	     "isbn": isbn,
-	     "pages" : r.items[0].volumeInfo.pageCount,
-	     "categories" : r.items[0].volumeInfo.categories,
-	     "rating" : r.items[0].volumeInfo.averageRating,
-	     "images" : r.items[0].volumeInfo.imageLinks
-	    };
-};
-
-(window as any).searchISBN = searchISBN;

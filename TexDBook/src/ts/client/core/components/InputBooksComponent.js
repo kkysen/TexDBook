@@ -4,6 +4,7 @@ const React = require("react");
 const Isbn_1 = require("../../../share/core/Isbn");
 const utils_1 = require("../../../share/util/utils");
 const InputLists_1 = require("../../util/components/InputLists");
+const Books_1 = require("../Books");
 class InputBooksComponent extends InputLists_1.InputLists {
     constructor(props) {
         super(props, "Upload Books", [
@@ -21,6 +22,7 @@ class InputBooksComponent extends InputLists_1.InputLists {
                             before: "Invalid ISBN",
                         };
                     }
+                    Books_1.AllBooks.addIsbn(isbn.isbn13);
                     return (async () => {
                         try {
                             const book = await isbn.fetchBook();
