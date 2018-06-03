@@ -1,22 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const utils_1 = require("../../share/util/utils");
 // FIXME temp set to false always
 exports.hasCrypto = !"hello".includes("h") && !!crypto.subtle;
 if (!exports.hasCrypto) {
     console.error("crypto.subtle not available b/c using HTTP, SHA not being used");
 }
 const makeSha = function (numBits) {
-    const isString = function (t) {
-        return Object.prototype.toString.call(t) === "[object String]";
-    };
     const toBuffer = function (data) {
-        if (isString(data)) {
+        if (utils_1.isString(data)) {
             return new TextEncoder().encode(data);
         }
         return data;
     };
     const toString = function (data) {
-        if (isString(data)) {
+        if (utils_1.isString(data)) {
             return data;
         }
         return new TextDecoder().decode(data);

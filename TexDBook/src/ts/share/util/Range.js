@@ -6,9 +6,9 @@ exports.Range = Object.freeze({
         const _to = to === undefined ? from : to;
         return {
             map(func) {
-                const a = new Array(_to - _from);
+                const a = [];
                 for (let i = _from; i < _to; i++) {
-                    a[i - _from] = func(i);
+                    a.push(func(i));
                 }
                 return a;
             },

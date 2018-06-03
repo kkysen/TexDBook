@@ -1,16 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const immutableDescriptor = {
+const immutableDescriptor = Object.freeze({
     writable: false,
     enumerable: false,
     configurable: false,
-};
+});
 const defineSharedProperties = function (obj, sharedDescriptor, propertyValues) {
     const properties = Object.getOwnPropertyDescriptors(propertyValues);
     for (const propertyName in properties) {
         if (properties.hasOwnProperty(propertyName)) {
             let property = properties[propertyName];
-            property = Object.assign(property, sharedDescriptor);
+            property = { ...property, ...sharedDescriptor };
             if (property.get || property.set) {
                 delete property.writable;
             }
@@ -102,19 +102,44 @@ Object.defineImmutableProperties(Function.prototype, {
         timer.name = "timing_" + this.name;
         return timer;
     },
+    setName(name) {
+        Object.defineProperties(this, {
+            name: {
+                value: name,
+            },
+        });
+    },
+    named(name) {
+        this.setName(name);
+        return this;
+    },
 });
 Object.defineImmutableProperties(Array.prototype, {
+    last() {
+        return this[this.length - 1];
+    },
     clear() {
         this.length = 0;
+    },
+    removeAt(index) {
+        return this.splice(index, 1)[0];
     },
     remove(value) {
         const i = this.indexOf(value);
         if (i !== -1) {
-            this.splice(i, 1);
+            return this.removeAt(i);
         }
     },
-    addAll(values) {
-        this.push(...values);
+    add(index, value) {
+        this.splice(index, 0, value);
+    },
+    addAll(values, index = this.length) {
+        if (index === this.length) {
+            this.push(...values);
+        }
+        else {
+            this.splice(index, 0, ...values);
+        }
     },
     applyOn(func) {
         return func(this);

@@ -1,17 +1,15 @@
-import {Component} from "react";
-
-const immutableDescriptor: PropertyDescriptor = {
+const immutableDescriptor: PropertyDescriptor = Object.freeze({
     writable: false,
     enumerable: false,
     configurable: false,
-};
+});
 
 const defineSharedProperties = function(obj: any, sharedDescriptor: PropertyDescriptor, propertyValues: Object): void {
     const properties: PropertyDescriptorMap & ThisType<any> = Object.getOwnPropertyDescriptors(propertyValues);
     for (const propertyName in properties) {
         if (properties.hasOwnProperty(propertyName)) {
             let property: PropertyDescriptor = properties[propertyName];
-            property = Object.assign(property, sharedDescriptor);
+            property = {...property, ...sharedDescriptor};
             if (property.get || property.set) {
                 delete property.writable;
             }
@@ -127,23 +125,52 @@ Object.defineImmutableProperties(Function.prototype, {
         return <T> <any> timer;
     },
     
+    setName<T extends Function>(this: T, name: string): void {
+        Object.defineProperties(this, {
+            name: {
+                value: name,
+            },
+        });
+    },
+    
+    named<T extends Function>(this: T, name: string): T {
+        this.setName(name);
+        return this;
+    },
+    
 });
 
 Object.defineImmutableProperties(Array.prototype, {
+    
+    last<T>(this: T[]): T {
+        return this[this.length - 1];
+    },
     
     clear<T>(this: T[]): void {
         this.length = 0;
     },
     
-    remove<T>(this: T[], value: T): void {
+    removeAt<T>(this: T[], index: number): T {
+        return this.splice(index, 1)[0];
+    },
+    
+    remove<T>(this: T[], value: T): T | undefined {
         const i: number = this.indexOf(value);
         if (i !== -1) {
-            this.splice(i, 1);
+            return this.removeAt(i);
         }
     },
     
-    addAll<T>(this: T[], values: T[]): void {
-        this.push(...values);
+    add<T>(this: T[], index: number, value: T): void {
+        this.splice(index, 0, value);
+    },
+    
+    addAll<T>(this: T[], values: T[], index: number = this.length): void {
+        if (index === this.length) {
+            this.push(...values);
+        } else {
+            this.splice(index, 0, ...values);
+        }
     },
     
     applyOn<T, U>(this: T[], func: (args: T[]) => U): U {

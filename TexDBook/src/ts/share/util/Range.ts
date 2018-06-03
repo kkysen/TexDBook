@@ -27,9 +27,9 @@ export const Range: RangeClass = Object.freeze({
         return {
             
             map<T>(func: (i: number) => T): T[] {
-                const a: T[] = new Array(_to - _from);
+                const a: T[] = [];
                 for (let i: number = _from; i < _to; i++) {
-                    a[i - _from] = func(i);
+                    a.push(func(i));
                 }
                 return a;
             },
@@ -39,7 +39,7 @@ export const Range: RangeClass = Object.freeze({
                     func(i);
                 }
             },
-    
+            
             toArray(): number[] {
                 return this.map(i => i);
             },

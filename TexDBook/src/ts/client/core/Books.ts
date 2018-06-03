@@ -7,7 +7,7 @@ export type Barcode = string;
 
 /**
  * Keeps tracks of two sets of Isbns:
- *     1. (server) Isbn's already on server, retrieved via api.AllBooks().
+ *     1. (server) Isbn's already on server, retrieved via api.allIsbns().
  *        The IsbnBooks for these Isbn's don't need to be fetched
  *        since they are already on the server.
  *     2. (client) Isbn's uploaded by the user that haven't been sent to the server yet.

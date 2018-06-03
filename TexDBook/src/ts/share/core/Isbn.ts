@@ -1372,7 +1372,7 @@ export const Isbn: IsbnClass = (() => {
         
         let bookPromise: Promise<IsbnBook> | null = null;
         isbn.fetchBook = async function(): Promise<IsbnBook> {
-            return await (bookPromise && (bookPromise = fetchIsbnBook((isbn as Isbn).isbn13)));
+            return await (bookPromise || (bookPromise = fetchIsbnBook((isbn as Isbn).isbn13)));
         };
         
         isbn.freeze();
@@ -1424,12 +1424,12 @@ export const Isbn: IsbnClass = (() => {
                     const [start, end]: Range = range;
                     const key: string = rest.substring(0, start.length);
                     if (start <= key && end >= key) {
-                        const realRest: string = rest.substr(key.length);
+                        const _rest: string = rest.substring(key.length);
                         return {
                             group: group,
                             publisher: key,
-                            article: realRest.substr(0, rest.length - 1),
-                            check: rest[rest.length - 1],
+                            article: _rest.substring(0, _rest.length - 1),
+                            check: _rest[_rest.length - 1],
                         };
                     }
                 }
@@ -1448,7 +1448,7 @@ export const Isbn: IsbnClass = (() => {
             };
             
             const parse = function(isbnString: string): Isbn | null {
-                const val: string = isbnString;
+                const val: string = isbnString.trim();
                 const isbn: Isbn | null = val.match(/^\d{9}[\dX]$/)
                     ? buildRemainingFields(merge({
                         source: val,
@@ -1470,8 +1470,8 @@ export const Isbn: IsbnClass = (() => {
                                 source: val,
                                 isIsbn10: () => false,
                                 isIsbn13: () => true,
-                                prefix: RegExp.$1
-                            }, splitAndBuild(RegExp.$1)))
+                                prefix: RegExp.$1,
+                            }, splitAndBuild(val)))
                             : val.length === 17 && val.match(/^(978|979)-(\d+)-(\d+)-(\d+)-([\dX])$/)
                                 ? buildRemainingFields({
                                     source: val,

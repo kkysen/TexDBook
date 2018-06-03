@@ -41,7 +41,7 @@ exports.api = {
         });
     },
     async allIsbns() {
-        const response = await fetchJson_1.fetchJson("/AllBooks", undefined, {
+        const response = await fetchJson_1.fetchJson("/allIsbns", undefined, {
             cache: "reload",
         });
         return (response.response || [])
@@ -84,4 +84,19 @@ exports.api = {
         return response.response;
     },
 };
+// async function searchISBN(isbn: string) : Promise<{title : string, author : string[], publisher : string,
+// 	 		  	    date: number, description : string, isbn: string}> {
+// 	 const response2: Response = await fetch("url");
+// 	 return response2.json();
+//
+//     let response = JSON.parse("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn);
+// 	 return {
+// 	 	title : response.volumeInfo.title;
+// 		author : response.volumeInfo.authors;
+// 		publisher : response.volumeInfo.publisher;
+// 		date : response.volumeInfo.publishedDate;
+// 		description : response.volumeInfo.description;
+// 		isbn : isbn;
+// 		};
+// };
 //# sourceMappingURL=api.js.map

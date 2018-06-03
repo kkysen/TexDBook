@@ -195,3 +195,39 @@ naotakaK -- 2018-05-30 15:34:00
 Wrote searchISBN function to return data about given ISBN.
 
 ============================================================
+khyberS -- 2018-06-03 00:53:00
+
+Created fancy input form for uploading books.
+
+    There are indented, collapsible, hierarchical sections
+    for inputting the department, ISBN, and barcode.
+
+    You can add new input fields, for any of the three
+    by clicking "New <field>" and optionally specifying an amount.
+
+    You can delete input fields by clicking on the X on the right.
+
+    When you add or delete input fields,
+    it automatically scrolls the button into view again
+    so you can keep clicking on it easily.
+
+    If you click on the name of the input field,
+    it will highlight and then collapse (or uncollapse) that entire section.
+
+    When you enter an ISBN, it is immediately validated.
+    If wrong, it tells you invalid ISBN.
+    If right, it queries the Google Books API to get an image of the actual book,
+    which is placed next to the ISBN entered.
+
+    The ISBN and barcode input fields only allow numbers.
+    Any other characters are immediately deleted.
+
+This is done using the InputLists Component by extending it.
+You can call super with all the options for the InputLists,
+including the sets of the names of the hierarchy of input fields,
+with an optional onKeyUp() function that takes the current value of the input
+and returns (optionally) two ReactNodes to render before and after the input,
+like how the "Invalid ISBN" and picture of the book show up.
+Thus, it's extremely easy to extend to other hierarchical input lists.
+
+============================================================

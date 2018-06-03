@@ -1,6 +1,6 @@
 import {anyWindow} from "../util/anyWindow";
-import {IsLoggedIn} from "./views/LoginComponent";
-import {reactMain} from "./views/Main";
+import {IsLoggedIn} from "./components/login/LoginComponent";
+import {reactMain} from "./components/views/Main";
 
 
 export interface GlobalTexDBook {

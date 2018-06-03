@@ -5,7 +5,7 @@ const react_1 = require("react");
 const react_router_1 = require("react-router");
 const react_router_dom_1 = require("react-router-dom");
 const reactstrap_1 = require("reactstrap");
-const utils_1 = require("../utils");
+const utils_1 = require("../../../share/util/utils");
 const RouterNavLink_1 = require("./RouterNavLink");
 class ViewRouter extends react_1.Component {
     static toStrictView(view) {

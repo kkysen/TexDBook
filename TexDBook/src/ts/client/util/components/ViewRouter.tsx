@@ -3,7 +3,7 @@ import {Component, ComponentClass, ReactNode} from "react";
 import {Route} from "react-router";
 import {HashRouter} from "react-router-dom";
 import {Nav, Navbar, NavbarBrand, NavItem} from "reactstrap";
-import {separateClassName} from "../utils";
+import {separateClassName} from "../../../share/util/utils";
 import {RouterNavLink} from "./RouterNavLink";
 
 
@@ -83,7 +83,9 @@ export class ViewRouter extends Component<ViewRouterProps, {}> {
         return (<HashRouter>
             <div>
                 <Navbar color="light" light expand="md">
-                    <NavbarBrand href="/">{this.props.name}</NavbarBrand>
+                    <NavbarBrand href="/">
+                        {this.props.name}
+                    </NavbarBrand>
                     <Nav navbar justified className="ml-auto">
                         {links}
                     </Nav>

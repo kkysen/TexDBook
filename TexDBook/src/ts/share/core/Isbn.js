@@ -1285,7 +1285,7 @@ exports.Isbn = (() => {
         }
         let bookPromise = null;
         isbn.fetchBook = async function () {
-            return await (bookPromise && (bookPromise = node_isbn_1.resolve(isbn.isbn13)));
+            return await (bookPromise || (bookPromise = node_isbn_1.resolve(isbn.isbn13)));
         };
         isbn.freeze();
         return isbn;
@@ -1328,12 +1328,12 @@ exports.Isbn = (() => {
                     const [start, end] = range;
                     const key = rest.substring(0, start.length);
                     if (start <= key && end >= key) {
-                        const realRest = rest.substr(key.length);
+                        const _rest = rest.substring(key.length);
                         return {
                             group: group,
                             publisher: key,
-                            article: realRest.substr(0, rest.length - 1),
-                            check: rest[rest.length - 1],
+                            article: _rest.substring(0, _rest.length - 1),
+                            check: _rest[_rest.length - 1],
                         };
                     }
                 }
@@ -1350,7 +1350,7 @@ exports.Isbn = (() => {
                             ? splitAndBuild10(isbn) : null;
             };
             const parse = function (isbnString) {
-                const val = isbnString;
+                const val = isbnString.trim();
                 const isbn = val.match(/^\d{9}[\dX]$/)
                     ? buildRemainingFields(merge({
                         source: val,
@@ -1372,8 +1372,8 @@ exports.Isbn = (() => {
                                 source: val,
                                 isIsbn10: () => false,
                                 isIsbn13: () => true,
-                                prefix: RegExp.$1
-                            }, splitAndBuild(RegExp.$1)))
+                                prefix: RegExp.$1,
+                            }, splitAndBuild(val)))
                             : val.length === 17 && val.match(/^(978|979)-(\d+)-(\d+)-(\d+)-([\dX])$/)
                                 ? buildRemainingFields({
                                     source: val,

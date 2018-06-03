@@ -3,7 +3,7 @@ import {IsbnBook} from "../../share/core/IsbnBook";
 import {fetchJson, RestResponse} from "../util/fetch/fetchJson";
 import {SHA} from "../util/hash";
 import {TexDBook} from "./TexDBook";
-import {IsLoggedIn} from "./views/LoginComponent";
+import {IsLoggedIn} from "./components/login/LoginComponent";
 
 type LoginArgs = {
     username: string,
@@ -100,7 +100,7 @@ export const api: TexDBookApi = {
     },
     
     async allIsbns(): Promise<Isbn[]> {
-        const response: RestResponse<string[]> = await fetchJson<undefined, string[]>("/AllBooks", undefined, {
+        const response: RestResponse<string[]> = await fetchJson<undefined, string[]>("/allIsbns", undefined, {
             cache: "reload",
         });
         return (response.response || [])
@@ -151,15 +151,18 @@ export const api: TexDBookApi = {
     
 };
 
-function searchISBN(isbn: string) : {title : string, author : string[], publisher : string,
-	 		  	    date: number, description : string, isbn: string} {
-	 let response = JSON.parse("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn);
-	 return {
-	 	title : response.volumeInfo.title;
-		author : response.volumeInfo.authors;
-		publisher : response.volumeInfo.publisher;
-		date : response.volumeInfo.publishedDate;
-		description : response.volumeInfo.description;
-		isbn : isbn;
-		};
-};
+// async function searchISBN(isbn: string) : Promise<{title : string, author : string[], publisher : string,
+// 	 		  	    date: number, description : string, isbn: string}> {
+// 	 const response2: Response = await fetch("url");
+// 	 return response2.json();
+//
+//     let response = JSON.parse("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn);
+// 	 return {
+// 	 	title : response.volumeInfo.title;
+// 		author : response.volumeInfo.authors;
+// 		publisher : response.volumeInfo.publisher;
+// 		date : response.volumeInfo.publishedDate;
+// 		description : response.volumeInfo.description;
+// 		isbn : isbn;
+// 		};
+// };

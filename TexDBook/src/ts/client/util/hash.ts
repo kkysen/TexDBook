@@ -1,3 +1,5 @@
+import {isString} from "../../share/util/utils";
+
 export type TypedArray =
     Int8Array
     | Uint8Array
@@ -18,10 +20,6 @@ if (!hasCrypto) {
 export type Buffer = TypedArray | ArrayBuffer | DataView;
 
 const makeSha = function(numBits: number): Hash {
-    const isString = function(t: any): t is string {
-        return Object.prototype.toString.call(t) === "[object String]";
-    };
-    
     const toBuffer = function(data: string | Buffer): Buffer {
         if (isString(data)) {
             return new TextEncoder().encode(data);

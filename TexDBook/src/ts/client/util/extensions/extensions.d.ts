@@ -45,15 +45,25 @@ declare interface Function {
     
     timed<T>(this: T): T;
     
+    setName(name: string): void;
+    
+    named<T>(this: T, name: string): T;
+    
 }
 
 declare interface Array<T> {
     
+    last(): T;
+    
     clear(): void;
     
-    remove(value: T): void;
+    removeAt(index: number): T;
     
-    addAll(values: T[]): void;
+    remove(value: T): T | undefined;
+    
+    add(index: number, value: T): void;
+    
+    addAll(values: T[], index?: number): void;
     
     applyOn<T, U>(this: T[], func: (args: T[]) => U): U;
     
