@@ -251,3 +251,13 @@ Fixed the /allIsbns and /ownBooks APIs.
 Working on /uploadBooks, api.uploadBooks(), and allBooks right now.
 
 ============================================================
+khyberS -- 2018-06-04 13:18:00
+
+Got api.uploadBooks() working.
+It was working before, but I needed to call allBooks.assignBarcode()
+in InputBooksComponent.submitInput() before calling allBooks.sync().
+
+Fixed /uploadBooks, which uses @rest_api add_book() to add each book itself.
+Testing it now.
+
+============================================================

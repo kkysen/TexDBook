@@ -79,8 +79,12 @@ class InputBooksComponent extends InputLists_1.InputLists {
         }
         return rows;
     }
-    submitInput(inputs) {
-        this.invalidate(true);
+    async submitInput(inputs) {
+        for (const { department, isbn, barcode } of this.convertToCsvRows(inputs)) {
+            Books_1.allBooks.assignBarcode({ isbn: Isbn_1.Isbn.parse(isbn), barcode: barcode });
+        }
+        const failedBarcodes = await Books_1.allBooks.sync();
+        console.log(failedBarcodes);
     }
 }
 exports.InputBooksComponent = InputBooksComponent;

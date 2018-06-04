@@ -271,12 +271,11 @@ class InputLists extends react_1.Component {
     }
     render() {
         // TODO make name fancier
-        // TODO separate buttons horizontally with CSS
         const renderButton = function (ref, on, text) {
             return React.createElement(reactstrap_1.Button, { innerRef: ref, onClick: on, color: "primary" }, text);
         };
         return (React.createElement("div", null,
-            this.name,
+            React.createElement("div", { style: { fontSize: "large" } }, this.name),
             React.createElement(this.InputList, {
                 inputs: this.inputs,
                 remove: () => undefined,

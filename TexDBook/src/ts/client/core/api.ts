@@ -134,7 +134,8 @@ export const api: TexDBookApi = {
     },
     
     async uploadBooks(books: BookUpload[]): Promise<BookUploadResponse[]> {
-        const response: RestResponse<BookUploadResponse[]> = await fetchJson<BooksUpload, BookUploadResponse[]>(
+        type BookUploadResponses = {books: BookUploadResponse[]};
+        const response: RestResponse<BookUploadResponses> = await fetchJson<BooksUpload, BookUploadResponses>(
             "/uploadBooks", {
                 csrfToken: TexDBook.csrfToken,
                 books: books.map(book => ({
@@ -156,7 +157,7 @@ export const api: TexDBookApi = {
                 },
             }));
         }
-        return response.response as BookUploadResponse[];
+        return (response.response as BookUploadResponses).books;
     },
     
     async resolveIsbn(isbn: Isbn): Promise<IsbnBook> {

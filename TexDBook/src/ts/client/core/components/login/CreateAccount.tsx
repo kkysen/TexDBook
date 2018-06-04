@@ -3,7 +3,8 @@ import {InputsArgs} from "../../../util/components/Inputs";
 import {RestResponse} from "../../../util/fetch/fetchJson";
 import {InputRef} from "../../../util/refs/InputRef";
 import {api} from "../../api";
-import {IsLoggedIn, LoginComponent, LoginProps, loginUser} from "./LoginComponent";
+import {IsLoggedIn} from "../../TexDBook";
+import {LoginComponent, LoginProps, loginUser} from "./LoginComponent";
 
 
 export class CreateAccount extends LoginComponent {

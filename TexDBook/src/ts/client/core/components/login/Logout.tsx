@@ -1,7 +1,8 @@
 import * as React from "react";
 import {InputsArgs} from "../../../util/components/Inputs";
 import {api} from "../../api";
-import {IsLoggedIn, LoginComponent, LoginProps,} from "./LoginComponent";
+import {IsLoggedIn} from "../../TexDBook";
+import {LoginComponent, LoginProps,} from "./LoginComponent";
 
 
 export class Logout extends LoginComponent {

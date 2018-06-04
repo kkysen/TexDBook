@@ -1,7 +1,8 @@
 import * as React from "react";
 import {InputsArgs} from "../../../util/components/Inputs";
 import {InputRef} from "../../../util/refs/InputRef";
-import {IsLoggedIn, LoginComponent, LoginProps, loginUser} from "./LoginComponent";
+import {IsLoggedIn} from "../../TexDBook";
+import {LoginComponent, LoginProps, loginUser} from "./LoginComponent";
 
 
 export class Login extends LoginComponent {

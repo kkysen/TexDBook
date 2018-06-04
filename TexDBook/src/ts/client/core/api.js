@@ -80,7 +80,7 @@ exports.api = {
                 },
             }));
         }
-        return response.response;
+        return response.response.books;
     },
     async resolveIsbn(isbn) {
         const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn.isbn13}`);

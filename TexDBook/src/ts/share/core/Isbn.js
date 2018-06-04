@@ -1287,7 +1287,13 @@ exports.Isbn = (() => {
         const _isbn = isbn;
         let bookPromise = null;
         isbn.fetchBook = async function () {
-            return await (bookPromise || (bookPromise = api_1.api.resolveIsbn(_isbn)));
+            try {
+                return await (bookPromise || (bookPromise = api_1.api.resolveIsbn(_isbn)));
+            }
+            catch (e) {
+                bookPromise = null; // retry next time if error first time
+                throw e;
+            }
         };
         _isbn.freeze();
         return _isbn;

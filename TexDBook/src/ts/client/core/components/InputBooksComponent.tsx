@@ -3,7 +3,7 @@ import {Isbn} from "../../../share/core/Isbn";
 import {IsbnBook} from "../../../share/core/IsbnBook";
 import {onlyDigitsInput} from "../../../share/util/utils";
 import {InputLists, MaybeSurroundingNodes, StringInputs} from "../../util/components/InputLists";
-import {allBooks} from "../Books";
+import {allBooks, Barcode} from "../Books";
 
 
 export interface InputIsbn {
@@ -76,6 +76,7 @@ export class InputBooksComponent extends InputLists<InputDepartment, InputBook> 
                             before: "Barcode Exists",
                         };
                     }
+                    
                     // TODO need to access parent input here
                 },
             },
@@ -108,8 +109,12 @@ export class InputBooksComponent extends InputLists<InputDepartment, InputBook> 
         return rows;
     }
     
-    protected submitInput(inputs: InputDepartment[]): void {
-        this.invalidate(true);
+    protected async submitInput(inputs: InputDepartment[]): Promise<void> {
+        for (const {department, isbn, barcode} of this.convertToCsvRows(inputs)) {
+            allBooks.assignBarcode({isbn: Isbn.parse(isbn) as Isbn, barcode: barcode});
+        }
+        const failedBarcodes: Barcode[] = await allBooks.sync();
+        console.log(failedBarcodes);
     }
     
     

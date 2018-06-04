@@ -495,14 +495,12 @@ export abstract class InputLists<Input, Row> extends Component<{}, {}> {
     
     public render(): ReactNode {
         // TODO make name fancier
-        // TODO separate buttons horizontally with CSS
-        
         const renderButton = function(ref: ButtonRef, on: () => void, text: string): ReactNode {
             return <Button innerRef={ref} onClick={on} color="primary">{text}</Button>;
         };
         
         return (<div>
-            {this.name}
+            <div style={{fontSize: "large"}}>{this.name}</div>
             {React.createElement(this.InputList, {
                 inputs: this.inputs,
                 remove: () => undefined,

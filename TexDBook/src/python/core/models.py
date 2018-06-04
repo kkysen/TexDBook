@@ -4,6 +4,7 @@ from datetime import datetime
 from peewee import Database, DateTimeField, FixedCharField, FloatField, ForeignKeyField, IntegerField, ManyToManyField, \
     TextField
 from playhouse.flask_utils import FlaskDB
+from playhouse.hybrid import hybrid_property
 from playhouse.shortcuts import model_to_dict
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
@@ -98,8 +99,8 @@ class User(flask_db.Model):
     def add_book(self, barcode, isbn):
         # type: (unicode, unicode) -> Tuple[Book, bool]
         """Create a new Book owned by this User."""
-        book = Book.get_or_none(barcode=barcode, isbn_book=IsbnBook.get(isbn=isbn))
-        if book:
+        book = Book.get_or_none(barcode=barcode)
+        if book or book.isbn != isbn:
             return book, False
         return Book.create(barcode, isbn, self), True
 
@@ -278,6 +279,11 @@ class Book(flask_db.Model):
             lender=owner,
             borrower=owner,
         )
+    
+    @hybrid_property
+    def isbn(self):
+        # type: () -> unicode
+        return self.isbn_book.isbn
 
 
 class Transaction(flask_db.Model):
