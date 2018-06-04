@@ -4,18 +4,20 @@ import {Button} from "reactstrap";
 import {separateClassName} from "../../../../share/util/utils";
 import {Inputs, InputsArgs} from "../../../util/components/Inputs";
 import {api} from "../../api";
+import {IsLoggedIn} from "../../TexDBook";
 
-export type IsLoggedIn = {
-    readonly isLoggedIn: boolean;
-    message?: string;
-};
 
-export type LoginProps = {
+export interface LoginProps {
+    
     onLogin(loggedIn: IsLoggedIn): void;
+    
     readonly message?: string;
-};
+    
+}
 
-export type LoginState = {};
+export interface LoginState {
+
+}
 
 export abstract class LoginComponent extends Component<LoginProps, LoginState> implements LoginComponent {
     

@@ -57,6 +57,13 @@ Object.defineImmutableProperties(Object.prototype, {
     _clone() {
         return Object.assign({}, this);
     },
+    mapFields(mapper) {
+        const obj = {};
+        for (const [key, value] of Object.entries(this)) {
+            obj[key] = mapper(value);
+        }
+        return obj;
+    },
 });
 Object.defineImmutableProperties(Function, {
     compose(...funcs) {

@@ -25,6 +25,10 @@ declare interface Object {
     // _ is b/c there are other objects with slightly different clone methods
     _clone<T>(this: T): T;
     
+    mapFields<T, U, KT extends keyof T, KU extends keyof U>(this: T, mapper: (field: T[KT]) => U[KU]): U;
+    
+    mapFields<T, U>(this: {[field: string]: T}, mapper: (field: T) => U): {[field: string]: U};
+    
 }
 
 declare interface FunctionConstructor {

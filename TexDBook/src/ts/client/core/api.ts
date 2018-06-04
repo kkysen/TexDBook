@@ -1,9 +1,10 @@
 import {Isbn} from "../../share/core/Isbn";
 import {IsbnBook} from "../../share/core/IsbnBook";
+import {anyWindow} from "../util/anyWindow";
 import {fetchJson, RestResponse} from "../util/fetch/fetchJson";
 import {SHA} from "../util/hash";
-import {IsLoggedIn} from "./components/login/LoginComponent";
-import {TexDBook} from "./TexDBook";
+import {Barcode} from "./Books";
+import {IsLoggedIn, onLogin, TexDBook} from "./TexDBook";
 
 type LoginArgs = {
     username: string,
@@ -23,14 +24,14 @@ const toIsLoggedIn = function(negate: boolean, response: RestResponse<{}>) {
 
 export interface BookUpload {
     
-    readonly barcode: string;
+    readonly barcode: Barcode;
     readonly isbn: Isbn;
     
 }
 
 export interface BookUploadResponse {
     
-    readonly barcode: string;
+    readonly barcode: Barcode;
     readonly response: RestResponse<{}>;
     
 }
@@ -68,7 +69,7 @@ export interface TexDBookApi {
     
     allIsbns(): Promise<Isbn[]>;
     
-    ownBarcodes(): Promise<BookUpload[]>;
+    ownBooks(): Promise<BookUpload[]>;
     
     uploadBooks(books: BookUpload[]): Promise<BookUploadResponse[]>;
     
@@ -119,8 +120,9 @@ export const api: TexDBookApi = {
             .filter(isbn => isbn) as Isbn[]; // filter nulls, but there shouldn't be any
     },
     
-    async ownBarcodes(): Promise<BookUpload[]> {
-        const response: RestResponse<RawBookUpload[]> = await fetchJson<undefined, RawBookUpload[]>("/ownBarcodes",
+    async ownBooks(): Promise<BookUpload[]> {
+        await onLogin;
+        const response: RestResponse<RawBookUpload[]> = await fetchJson<undefined, RawBookUpload[]>("/ownBooks",
             undefined, {
                 cache: "reload",
             });
@@ -179,8 +181,8 @@ export const api: TexDBookApi = {
             language,
             previewLink,
             infoLink,
-            link,
-        } = volumeInfo;
+            canonicalVolumeLink,
+        } = volumeInfo as IsbnBook & {canonicalVolumeLink: string};
         return {
             isbn: isbn.isbn13,
             title: title,
@@ -196,8 +198,10 @@ export const api: TexDBookApi = {
             language: language,
             previewLink: previewLink,
             infoLink: infoLink,
-            link: link,
+            link: canonicalVolumeLink,
         };
     },
     
 };
+
+anyWindow.api = api;

@@ -22,7 +22,7 @@ class InputBooksComponent extends InputLists_1.InputLists {
                             before: "Invalid ISBN",
                         };
                     }
-                    Books_1.AllBooks.addIsbn(isbn.isbn13);
+                    Books_1.allBooks.addIsbn(isbn.isbn13);
                     return (async () => {
                         try {
                             const book = await isbn.fetchBook();
@@ -45,6 +45,12 @@ class InputBooksComponent extends InputLists_1.InputLists {
                 name: "Barcode",
                 onInput() {
                     utils_1.onlyDigitsInput(this);
+                    if (Books_1.allBooks.hasBarcode(this.value)) {
+                        return {
+                            before: "Barcode Exists",
+                        };
+                    }
+                    // TODO need to access parent input here
                 },
             },
         ]);
@@ -58,7 +64,23 @@ class InputBooksComponent extends InputLists_1.InputLists {
             })),
         }));
     }
-    onSubmit(input) {
+    convertToCsvRows(inputs) {
+        const rows = [];
+        for (const { department, books } of inputs) {
+            for (const { isbn, barcodes } of books) {
+                for (const barcode of barcodes) {
+                    rows.push({
+                        department: department,
+                        isbn: isbn,
+                        barcode: barcode,
+                    });
+                }
+            }
+        }
+        return rows;
+    }
+    submitInput(inputs) {
+        this.invalidate(true);
     }
 }
 exports.InputBooksComponent = InputBooksComponent;

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const api_1 = require("../../client/core/api");
+const anyWindow_1 = require("../../client/util/anyWindow");
 const GROUPS = {
     "0": {
         code: "0",
@@ -1400,4 +1401,5 @@ exports.Isbn = (() => {
         },
     }.freeze();
 })();
+anyWindow_1.anyWindow.Isbn = exports.Isbn;
 //# sourceMappingURL=Isbn.js.map

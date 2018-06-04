@@ -1,4 +1,5 @@
 import {api} from "../../client/core/api";
+import {anyWindow} from "../../client/util/anyWindow";
 import {IsbnBook} from "./IsbnBook";
 
 type Range = [string, string];
@@ -1503,3 +1504,5 @@ export const Isbn: IsbnClass = (() => {
     }.freeze();
     
 })();
+
+anyWindow.Isbn = Isbn;

@@ -236,3 +236,18 @@ khyberS -- 2018-06-03 00:53:00
 Integrated Naotaka's searchISBN() as api.resolveIsbn().
 
 ============================================================
+khyberS -- 2018-06-04 02:53:00
+
+Added "Download as JSON" and "Download as CSV" buttons to InputLists.
+Having invalid inputs anywhere should disable these buttons,
+but keeping track of all the invalid inputs and
+when they invalidate or validate the buttons is not simple, so I'll do it later.
+
+Created all the extra models in models.py necessary to represent each IsbnBook
+using the data received from the Google Books API.
+
+Fixed the /allIsbns and /ownBooks APIs.
+
+Working on /uploadBooks, api.uploadBooks(), and allBooks right now.
+
+============================================================

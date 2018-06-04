@@ -70,6 +70,14 @@ Object.defineImmutableProperties(Object.prototype, {
         return Object.assign({}, this);
     },
     
+    mapFields<T, U>(this: {[field: string]: T}, mapper: (field: T) => U): {[field: string]: U} {
+        const obj: {[field: string]: U} = {};
+        for (const [key, value] of Object.entries(this)) {
+            obj[key] = mapper(value);
+        }
+        return obj;
+    },
+    
 });
 
 Object.defineImmutableProperties(Function, {

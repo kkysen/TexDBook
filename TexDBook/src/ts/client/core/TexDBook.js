@@ -1,8 +1,30 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const anyWindow_1 = require("../util/anyWindow");
+const plainTexDBook = anyWindow_1.anyWindow.TexDBook;
+let { isLoggedIn } = plainTexDBook;
+isLoggedIn.freeze();
+const { csrfToken } = plainTexDBook;
+let resolveOnLogin;
+exports.onLogin = new Promise(resolve => {
+    resolveOnLogin = resolve;
+});
+exports.TexDBook = {
+    get isLoggedIn() {
+        return isLoggedIn;
+    },
+    set isLoggedIn(_isLoggedIn) {
+        isLoggedIn = _isLoggedIn.freeze();
+        if (isLoggedIn.isLoggedIn) {
+            resolveOnLogin();
+        }
+    },
+    get csrfToken() {
+        return csrfToken;
+    },
+};
+anyWindow_1.anyWindow.TexDBook = exports.TexDBook;
 const Main_1 = require("./components/views/Main");
-exports.TexDBook = anyWindow_1.anyWindow.TexDBook;
 exports.main = function () {
     Main_1.reactMain();
 };

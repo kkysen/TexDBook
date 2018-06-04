@@ -1,4 +1,4 @@
-from flask_login import login_user, logout_user
+from flask_login import current_user, login_user, logout_user
 from typing import List, Optional
 
 from TexDBook.src.python.core.init_app import app, default_init_app
@@ -60,3 +60,9 @@ def create_account():
     if message is not None:
         return message
     return {}
+
+
+def get_user():
+    # type: () -> User
+    # noinspection PyProtectedMember
+    return current_user._get_current_object()

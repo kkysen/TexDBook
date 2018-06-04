@@ -2,8 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Isbn_1 = require("../../share/core/Isbn");
 const MultiBiMap_1 = require("../../share/util/MultiBiMap");
+const anyWindow_1 = require("../util/anyWindow");
 const api_1 = require("./api");
 const createAllBooks = function () {
+    // TODO FIXME not sure if this is the right way
     const server = MultiBiMap_1.MultiBiMap.new();
     const client = MultiBiMap_1.MultiBiMap.new();
     const transitioning = MultiBiMap_1.MultiBiMap.new();
@@ -36,9 +38,12 @@ const createAllBooks = function () {
     const assignExistingBarcode = function (book) {
         server.put(book.barcode, book.isbn);
     };
+    const hasBarcode = function (barcode) {
+        return server.hasKey(barcode) || client.hasKey(barcode);
+    };
     const assignBarcode = function (book) {
         addIsbn(book.isbn);
-        if (server.hasKey(book.barcode) || client.hasKey(book.barcode)) {
+        if (hasBarcode(book.barcode)) {
             return false;
         }
         client.put(book.barcode, book.isbn);
@@ -47,7 +52,7 @@ const createAllBooks = function () {
     let initialized = false;
     const loadInitial = async function () {
         const isbns = api_1.api.allIsbns();
-        const barcodes = api_1.api.ownBarcodes();
+        const barcodes = api_1.api.ownBooks();
         (await isbns).forEach(addExistingIsbn);
         // barcodes must be added afterwards
         (await barcodes).forEach(assignExistingBarcode);
@@ -77,9 +82,11 @@ const createAllBooks = function () {
     };
     return {
         addIsbn: addIsbnString,
+        hasBarcode: hasBarcode,
         assignBarcode: assignBarcode,
         sync: sync,
     };
 };
-exports.AllBooks = createAllBooks().freeze();
+exports.allBooks = createAllBooks().freeze();
+anyWindow_1.anyWindow.allBooks = exports.allBooks;
 //# sourceMappingURL=Books.js.map

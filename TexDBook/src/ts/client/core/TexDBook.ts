@@ -1,18 +1,52 @@
 import {anyWindow} from "../util/anyWindow";
-import {IsLoggedIn} from "./components/login/LoginComponent";
-import {reactMain} from "./components/views/Main";
+
+export interface IsLoggedIn {
+    readonly isLoggedIn: boolean;
+    message?: string;
+}
 
 
 export interface GlobalTexDBook {
     
     isLoggedIn: IsLoggedIn;
     
-    csrfToken: string;
+    readonly csrfToken: string;
     
 }
 
-export const TexDBook: GlobalTexDBook = anyWindow.TexDBook;
+const plainTexDBook: GlobalTexDBook = anyWindow.TexDBook;
 
+let {isLoggedIn} = plainTexDBook;
+isLoggedIn.freeze();
+const {csrfToken} = plainTexDBook;
+
+let resolveOnLogin: () => void;
+export const onLogin: Promise<void> = new Promise(resolve => {
+    resolveOnLogin = resolve;
+});
+
+export const TexDBook: GlobalTexDBook = {
+    
+    get isLoggedIn(): IsLoggedIn {
+        return isLoggedIn;
+    },
+    
+    set isLoggedIn(_isLoggedIn: IsLoggedIn) {
+        isLoggedIn = _isLoggedIn.freeze();
+        if (isLoggedIn.isLoggedIn) {
+            resolveOnLogin();
+        }
+    },
+    
+    get csrfToken(): string {
+        return csrfToken;
+    },
+    
+};
+
+anyWindow.TexDBook = TexDBook;
+
+import {reactMain} from "./components/views/Main";
 
 export const main = function(): void {
     reactMain();

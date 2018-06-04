@@ -1,3 +1,4 @@
+import {saveAs} from "file-saver";
 import * as React from "react";
 import {Component, ComponentClass, ReactNode} from "react";
 import {Button, Collapse, Input, InputGroup, InputGroupAddon} from "reactstrap";
@@ -6,6 +7,7 @@ import {joinWords, singletonAsArray} from "../../../share/util/utils";
 import {anyWindow} from "../anyWindow";
 import {InputRef} from "../refs/InputRef";
 import {createNotNullRef, NotNullRef} from "../refs/NotNullRef";
+import {StyleGroup} from "./StyleGroup";
 
 
 interface Inputs<T> {
@@ -391,15 +393,35 @@ const createInputListClasses = function(names: VerifiedInputArg[][]): InputListC
     return inputListClass as InputListClass;
 };
 
-export abstract class InputLists<Input> extends Component<{}, {}> {
+
+export interface ButtonRef extends NotNullRef<HTMLButtonElement> {
+
+}
+
+
+export interface InputListsSubmitButtonRefs<T> {
     
-    protected abstract convertInputs(inputs: StringInputs[]): Input;
+    readonly submit: T;
+    readonly saveAsJson: T;
+    readonly saveAsCsv: T;
     
-    protected abstract onSubmit(input: Input): void;
+}
+
+export abstract class InputLists<Input, Row> extends Component<{}, {}> {
+    
+    protected abstract convertInputs(inputs: StringInputs[]): Input[];
+    
+    protected abstract submitInput(inputs: Input[]): void;
     
     private readonly name: string;
     private readonly InputList: InputListClass;
     private readonly inputs: InputRefs[] = [];
+    
+    private readonly submitButtonsRefs: InputListsSubmitButtonRefs<ButtonRef> = {
+        submit: createNotNullRef(),
+        saveAsJson: createNotNullRef(),
+        saveAsCsv: createNotNullRef(),
+    };
     
     protected constructor(props: {}, name: string, namesOrArgs: (NameOrInputListArg | NameOrInputListArg[])[]) {
         super(props);
@@ -408,11 +430,26 @@ export abstract class InputLists<Input> extends Component<{}, {}> {
             .map(singletonAsArray)
             .map(namesOrArgs => namesOrArgs.map(toInputListArg));
         this.InputList = createInputListClasses(args);
+        
+        this.onSubmit = this.onSubmit.bind(this);
+        this.convertToCsv = this.convertToCsv.bind(this);
+        this.saveAsJson = this.saveAsJson.bind(this);
+        this.saveAsCsv = this.saveAsCsv.bind(this);
+        
         Object.defineProperties(anyWindow, {
             inputs: {
                 get: this.getInputs.bind(this),
             }
         });
+    }
+    
+    protected get submitButtons(): InputListsSubmitButtonRefs<HTMLButtonElement> {
+        return this.submitButtonsRefs.mapFields(ref => ref.current);
+    }
+    
+    protected invalidate(invalid: boolean): void {
+        this.invalidate.caller;
+        Object.values(this.submitButtons).forEach(button => button.disabled = invalid);
     }
     
     private static resolveInputs(inputs: InputRefs[]): StringInputs[] {
@@ -422,16 +459,48 @@ export abstract class InputLists<Input> extends Component<{}, {}> {
         }));
     }
     
-    private getInputs(): Input {
+    private getInputs(): Input[] {
         return this.convertInputs(InputLists.resolveInputs(this.inputs));
     }
     
-    private onClick(): void {
-        this.onSubmit(this.getInputs());
+    private onSubmit(): void {
+        this.submitInput(this.getInputs());
     }
     
-    render(): ReactNode {
+    private saveAs(converter: (inputs: Input[]) => string, mimeType: string): void {
+        saveAs(new Blob(
+            [converter(this.getInputs())],
+            {
+                type: `${mimeType};charset=utf-8`,
+            },
+        ), `uploadBook.${mimeType.split("/").last()}`);
+    }
+    
+    private saveAsJson(): void {
+        this.saveAs(JSON.stringify.bind(JSON), "application/json");
+    }
+    
+    protected abstract convertToCsvRows(inputs: Input[]): Row[];
+    
+    private convertToCsv(inputs: Input[]): string {
+        const rows: Row[] = this.convertToCsvRows(inputs);
+        return [Object.keys(rows[0]), ...rows.map(row => Object.values(row))]
+            .map(row => row.join(","))
+            .join("\n");
+    }
+    
+    private saveAsCsv(): void {
+        this.saveAs(this.convertToCsv, "application/csv");
+    }
+    
+    public render(): ReactNode {
         // TODO make name fancier
+        // TODO separate buttons horizontally with CSS
+        
+        const renderButton = function(ref: ButtonRef, on: () => void, text: string): ReactNode {
+            return <Button innerRef={ref} onClick={on} color="primary">{text}</Button>;
+        };
+        
         return (<div>
             {this.name}
             {React.createElement(this.InputList, {
@@ -439,7 +508,11 @@ export abstract class InputLists<Input> extends Component<{}, {}> {
                 remove: () => undefined,
             })}
             <br/>
-            <Button onClick={() => this.onClick()} color="primary">Submit</Button>
+            <StyleGroup style={{marginRight: 10}}>
+                {renderButton(this.submitButtonsRefs.submit, this.onSubmit, "Submit")}
+                {renderButton(this.submitButtonsRefs.saveAsJson, this.saveAsJson, "Download as JSON")}
+                {renderButton(this.submitButtonsRefs.saveAsCsv, this.saveAsCsv, "Download as CSV")}
+            </StyleGroup>
         </div>);
     }
     

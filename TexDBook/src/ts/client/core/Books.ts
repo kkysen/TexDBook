@@ -1,6 +1,7 @@
 import {Isbn} from "../../share/core/Isbn";
 import {IsbnBook} from "../../share/core/IsbnBook";
 import {MultiBiMap} from "../../share/util/MultiBiMap";
+import {anyWindow} from "../util/anyWindow";
 import {api, BookUpload, BookUploadResponse} from "./api";
 
 export type Barcode = string;
@@ -36,6 +37,8 @@ export interface Books {
     
     addIsbn(isbn: string): boolean;
     
+    hasBarcode(barcode: Barcode): boolean;
+    
     assignBarcode(book: BookUpload): boolean;
     
     sync(): Promise<Barcode[]>;
@@ -43,6 +46,8 @@ export interface Books {
 }
 
 const createAllBooks = function(): Books {
+    
+    // TODO FIXME not sure if this is the right way
     
     type Books = MultiBiMap<Barcode, Isbn>;
     
@@ -83,10 +88,14 @@ const createAllBooks = function(): Books {
         server.put(book.barcode, book.isbn);
     };
     
+    const hasBarcode = function(barcode: Barcode): boolean {
+        return server.hasKey(barcode) || client.hasKey(barcode);
+    };
+    
     const assignBarcode = function(book: BookUpload): boolean {
         addIsbn(book.isbn);
         
-        if (server.hasKey(book.barcode) || client.hasKey(book.barcode)) {
+        if (hasBarcode(book.barcode)) {
             return false;
         }
         client.put(book.barcode, book.isbn);
@@ -96,7 +105,7 @@ const createAllBooks = function(): Books {
     let initialized: boolean = false;
     const loadInitial = async function(): Promise<void> {
         const isbns: Promise<Isbn[]> = api.allIsbns();
-        const barcodes: Promise<BookUpload[]> = api.ownBarcodes();
+        const barcodes: Promise<BookUpload[]> = api.ownBooks();
         (await isbns).forEach(addExistingIsbn);
         // barcodes must be added afterwards
         (await barcodes).forEach(assignExistingBarcode);
@@ -130,10 +139,13 @@ const createAllBooks = function(): Books {
     
     return {
         addIsbn: addIsbnString,
+        hasBarcode: hasBarcode,
         assignBarcode: assignBarcode,
         sync: sync,
     };
     
 };
 
-export const AllBooks: Books = createAllBooks().freeze();
+export const allBooks: Books = createAllBooks().freeze();
+
+anyWindow.allBooks = allBooks;

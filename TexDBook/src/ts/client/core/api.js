@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Isbn_1 = require("../../share/core/Isbn");
+const anyWindow_1 = require("../util/anyWindow");
 const fetchJson_1 = require("../util/fetch/fetchJson");
 const hash_1 = require("../util/hash");
 const TexDBook_1 = require("./TexDBook");
@@ -48,8 +49,9 @@ exports.api = {
             .map(isbn => Isbn_1.Isbn.parse(isbn))
             .filter(isbn => isbn); // filter nulls, but there shouldn't be any
     },
-    async ownBarcodes() {
-        const response = await fetchJson_1.fetchJson("/ownBarcodes", undefined, {
+    async ownBooks() {
+        await TexDBook_1.onLogin;
+        const response = await fetchJson_1.fetchJson("/ownBooks", undefined, {
             cache: "reload",
         });
         return (response.response || [])
@@ -88,7 +90,7 @@ exports.api = {
         }
         const [{ volumeInfo }] = items;
         // need to copy fields b/c Google Books API sends extra fields that we want to exclude.
-        const { title, authors, publisher, publishedDate, description, pageCount, categories, averageRating, ratingsCount, imageLinks, language, previewLink, infoLink, link, } = volumeInfo;
+        const { title, authors, publisher, publishedDate, description, pageCount, categories, averageRating, ratingsCount, imageLinks, language, previewLink, infoLink, canonicalVolumeLink, } = volumeInfo;
         return {
             isbn: isbn.isbn13,
             title: title,
@@ -104,8 +106,9 @@ exports.api = {
             language: language,
             previewLink: previewLink,
             infoLink: infoLink,
-            link: link,
+            link: canonicalVolumeLink,
         };
     },
 };
+anyWindow_1.anyWindow.api = exports.api;
 //# sourceMappingURL=api.js.map

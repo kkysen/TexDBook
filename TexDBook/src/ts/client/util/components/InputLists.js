@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const file_saver_1 = require("file-saver");
 const React = require("react");
 const react_1 = require("react");
 const reactstrap_1 = require("reactstrap");
@@ -8,6 +9,7 @@ const utils_1 = require("../../../share/util/utils");
 const anyWindow_1 = require("../anyWindow");
 const InputRef_1 = require("../refs/InputRef");
 const NotNullRef_1 = require("../refs/NotNullRef");
+const StyleGroup_1 = require("./StyleGroup");
 const createInputListClass = function (args, reverseDepth, depth, subListClass) {
     const names = args.map(arg => arg.name);
     const createInputRefs = function () {
@@ -211,16 +213,32 @@ class InputLists extends react_1.Component {
     constructor(props, name, namesOrArgs) {
         super(props);
         this.inputs = [];
+        this.submitButtonsRefs = {
+            submit: NotNullRef_1.createNotNullRef(),
+            saveAsJson: NotNullRef_1.createNotNullRef(),
+            saveAsCsv: NotNullRef_1.createNotNullRef(),
+        };
         this.name = name;
         const args = namesOrArgs
             .map(utils_1.singletonAsArray)
             .map(namesOrArgs => namesOrArgs.map(toInputListArg));
         this.InputList = createInputListClasses(args);
+        this.onSubmit = this.onSubmit.bind(this);
+        this.convertToCsv = this.convertToCsv.bind(this);
+        this.saveAsJson = this.saveAsJson.bind(this);
+        this.saveAsCsv = this.saveAsCsv.bind(this);
         Object.defineProperties(anyWindow_1.anyWindow, {
             inputs: {
                 get: this.getInputs.bind(this),
             }
         });
+    }
+    get submitButtons() {
+        return this.submitButtonsRefs.mapFields(ref => ref.current);
+    }
+    invalidate(invalid) {
+        this.invalidate.caller;
+        Object.values(this.submitButtons).forEach(button => button.disabled = invalid);
     }
     static resolveInputs(inputs) {
         return inputs.map(({ inputs, subInputs }) => ({
@@ -231,11 +249,32 @@ class InputLists extends react_1.Component {
     getInputs() {
         return this.convertInputs(InputLists.resolveInputs(this.inputs));
     }
-    onClick() {
-        this.onSubmit(this.getInputs());
+    onSubmit() {
+        this.submitInput(this.getInputs());
+    }
+    saveAs(converter, mimeType) {
+        file_saver_1.saveAs(new Blob([converter(this.getInputs())], {
+            type: `${mimeType};charset=utf-8`,
+        }), `uploadBook.${mimeType.split("/").last()}`);
+    }
+    saveAsJson() {
+        this.saveAs(JSON.stringify.bind(JSON), "application/json");
+    }
+    convertToCsv(inputs) {
+        const rows = this.convertToCsvRows(inputs);
+        return [Object.keys(rows[0]), ...rows.map(row => Object.values(row))]
+            .map(row => row.join(","))
+            .join("\n");
+    }
+    saveAsCsv() {
+        this.saveAs(this.convertToCsv, "application/csv");
     }
     render() {
         // TODO make name fancier
+        // TODO separate buttons horizontally with CSS
+        const renderButton = function (ref, on, text) {
+            return React.createElement(reactstrap_1.Button, { innerRef: ref, onClick: on, color: "primary" }, text);
+        };
         return (React.createElement("div", null,
             this.name,
             React.createElement(this.InputList, {
@@ -243,7 +282,10 @@ class InputLists extends react_1.Component {
                 remove: () => undefined,
             }),
             React.createElement("br", null),
-            React.createElement(reactstrap_1.Button, { onClick: () => this.onClick(), color: "primary" }, "Submit")));
+            React.createElement(StyleGroup_1.StyleGroup, { style: { marginRight: 10 } },
+                renderButton(this.submitButtonsRefs.submit, this.onSubmit, "Submit"),
+                renderButton(this.submitButtonsRefs.saveAsJson, this.saveAsJson, "Download as JSON"),
+                renderButton(this.submitButtonsRefs.saveAsCsv, this.saveAsCsv, "Download as CSV"))));
     }
 }
 exports.InputLists = InputLists;

@@ -3,10 +3,10 @@ import {Isbn} from "../../../share/core/Isbn";
 import {IsbnBook} from "../../../share/core/IsbnBook";
 import {onlyDigitsInput} from "../../../share/util/utils";
 import {InputLists, MaybeSurroundingNodes, StringInputs} from "../../util/components/InputLists";
-import {AllBooks} from "../Books";
+import {allBooks} from "../Books";
 
 
-export interface InputBook {
+export interface InputIsbn {
     
     isbn: string,
     barcodes: string[],
@@ -16,16 +16,20 @@ export interface InputBook {
 export interface InputDepartment {
     
     department: string,
-    books: InputBook[],
+    books: InputIsbn[],
     
 }
 
-export interface InputBooks extends Array<InputDepartment> {
-
+interface InputBook {
+    
+    department: string;
+    isbn: string;
+    barcode: string;
+    
 }
 
 
-export class InputBooksComponent extends InputLists<InputBooks> {
+export class InputBooksComponent extends InputLists<InputDepartment, InputBook> {
     
     public constructor(props: {}) {
         super(props, "Upload Books", [
@@ -38,14 +42,13 @@ export class InputBooksComponent extends InputLists<InputBooks> {
                 name: "ISBN",
                 onInput(): MaybeSurroundingNodes {
                     onlyDigitsInput(this);
-                    
                     const isbn: Isbn | null = Isbn.parse(this.value);
                     if (isbn === null) {
                         return {
                             before: "Invalid ISBN",
                         };
                     }
-                    AllBooks.addIsbn(isbn.isbn13);
+                    allBooks.addIsbn(isbn.isbn13);
                     return (async () => {
                         try {
                             const book: IsbnBook = await isbn.fetchBook();
@@ -66,15 +69,20 @@ export class InputBooksComponent extends InputLists<InputBooks> {
                 },
             }, {
                 name: "Barcode",
-                onInput(): void {
+                onInput(): MaybeSurroundingNodes {
                     onlyDigitsInput(this);
-                    
+                    if (allBooks.hasBarcode(this.value)) {
+                        return {
+                            before: "Barcode Exists",
+                        };
+                    }
+                    // TODO need to access parent input here
                 },
             },
         ]);
     }
     
-    protected convertInputs(inputs: StringInputs[]): InputBooks {
+    protected convertInputs(inputs: StringInputs[]): InputDepartment[] {
         return inputs.map(({inputs, subInputs}) => ({
             department: inputs[0],
             books: subInputs.map(({inputs, subInputs}) => ({
@@ -84,8 +92,24 @@ export class InputBooksComponent extends InputLists<InputBooks> {
         }));
     }
     
-    protected onSubmit(input: InputBooks): void {
+    protected convertToCsvRows(inputs: InputDepartment[]): InputBook[] {
+        const rows: InputBook[] = [];
+        for (const {department, books} of inputs) {
+            for (const {isbn, barcodes} of books) {
+                for (const barcode of barcodes) {
+                    rows.push({
+                        department: department,
+                        isbn: isbn,
+                        barcode: barcode,
+                    });
+                }
+            }
+        }
+        return rows;
+    }
     
+    protected submitInput(inputs: InputDepartment[]): void {
+        this.invalidate(true);
     }
     
     
