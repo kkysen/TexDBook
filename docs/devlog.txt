@@ -87,7 +87,7 @@ Implemented clean function to convert ISBN 10 to ISBN 13
 ============================================================
 khyberS -- 2018-05-24 08:33:00
 
-Setup basic react router and it works.  
+Setup basic react router and it works.
 Working on logging in now.
 
 Also moved clean_isbn() to correct location, not clean_barcode().
@@ -97,6 +97,11 @@ khyberS -- 2018-05-24 13:01:00
 
 Fixed circular importing (had to put all model classes in same module).
 Now it runs correctly from Flask (through Apache not tested yet).
+
+============================================================
+leeV -- 2018-05-24 13:15:00
+
+Worked on HTML and login forms.
 
 ============================================================
 abbasA -- 2018-05-25 13:09:00
@@ -261,6 +266,10 @@ Fixed /uploadBooks, which uses @rest_api add_book() to add each book itself.
 Testing it now.
 
 ============================================================
+leeV -- 2018-06-05 19:58:00
+
+Uploaded new design doc.
+
 ============================================================
 khyberS -- 2018-06-05 20:44:00
 
