@@ -261,3 +261,19 @@ Fixed /uploadBooks, which uses @rest_api add_book() to add each book itself.
 Testing it now.
 
 ============================================================
+============================================================
+khyberS -- 2018-06-05 20:44:00
+
+Fixed api.uploadBooks() and /uploadBooks slightly.
+
+Fixed api.resolveIsbn() and IsbnBook model
+to coalesce into an optional (nullable) image field.
+
+Instead of writing `this.method.bind(this)`, in the constructor,
+I changed them to `private readonly method = (): void {};` in the class.
+Ideally, I'd do this for every method,
+but WebStorm doesn't see updates on this in those methods.
+
+Also added more object destructuring to simplify things.
+
+============================================================

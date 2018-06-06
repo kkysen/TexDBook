@@ -25,18 +25,15 @@ type InputsProps = {
 export class Inputs extends Component<InputsProps, {}> {
     
     private static argsAsObject(args: InputArgs): InputArgsObj {
-        return {
-            field: args[0],
-            type: args[1],
-            label: args[2],
-        };
+        const [field, type, label] = args;
+        return {field, type, label};
     }
     
     private argsAsObjects(): InputArgsObj[] {
         if (this.args) {
             return this.args;
         }
-        const args: InputsArgs = this.props.args;
+        const {props: {args}} = this;
         return args.length === 0 || Array.isArray(args[0])
             ? (args as InputArgs[]).map(Inputs.argsAsObject)
             : args as InputArgsObj[];
@@ -50,27 +47,28 @@ export class Inputs extends Component<InputsProps, {}> {
     }
     
     public render(): ReactNode {
-        return this.argsAsObjects().map((args, i) => (
+        return this.argsAsObjects().map(({label, type, field: {ref}}, i) => (
             <div key={i}>
                 {i === 0 ? null : <br/>}
                 <InputGroup>
                     <InputGroupAddon addonType="prepend">
-                        {args.label}
+                        {label}
                     </InputGroupAddon>
-                    <Input type={args.type} innerRef={args.field.ref}/>
+                    <Input type={type} innerRef={ref}/>
                 </InputGroup>
             </div>
         ));
     }
     
     public componentDidMount(): void {
+        const {props: {onEnter}} = this;
         this.argsAsObjects()
             .map(arg => arg.field.ref.current)
             .forEach((node: HTMLInputElement) => {
                 node.addEventListener("keyup", e => {
                     e.preventDefault();
                     if (e.key === "Enter") {
-                        this.props.onEnter();
+                        onEnter();
                     }
                 });
             });

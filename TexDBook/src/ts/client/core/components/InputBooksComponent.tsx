@@ -1,7 +1,8 @@
 import * as React from "react";
+import {ReactNode} from "react";
 import {Isbn} from "../../../share/core/Isbn";
 import {IsbnBook} from "../../../share/core/IsbnBook";
-import {onlyDigitsInput} from "../../../share/util/utils";
+import {joinWords, onlyDigitsInput} from "../../../share/util/utils";
 import {InputLists, MaybeSurroundingNodes, StringInputs} from "../../util/components/InputLists";
 import {allBooks, Barcode} from "../Books";
 
@@ -52,10 +53,18 @@ export class InputBooksComponent extends InputLists<InputDepartment, InputBook> 
                     return (async () => {
                         try {
                             const book: IsbnBook = await isbn.fetchBook();
-                            const imgUrl: string = book.imageLinks.smallThumbnail || book.imageLinks.thumbnail;
+                            const {link, image, title, authors} = book;
+                            const img: ReactNode = <img src={image}/>;
+                            const alt: ReactNode = (<div style={{margin: 10}}>
+                                {title}
+                                <br/>
+                                {`by ${joinWords(authors)}`}
+                            </div>);
                             return {
                                 before: (<div>
-                                    <img src={imgUrl}/>
+                                    <a href={link}>
+                                        {image ? img : alt}
+                                    </a>
                                 </div>),
                             };
                         } catch (e) {
@@ -84,11 +93,11 @@ export class InputBooksComponent extends InputLists<InputDepartment, InputBook> 
     }
     
     protected convertInputs(inputs: StringInputs[]): InputDepartment[] {
-        return inputs.map(({inputs, subInputs}) => ({
-            department: inputs[0],
-            books: subInputs.map(({inputs, subInputs}) => ({
-                isbn: inputs[0],
-                barcodes: subInputs.map(({inputs}) => inputs[0]),
+        return inputs.map(({inputs: [department], subInputs}) => ({
+            department,
+            books: subInputs.map(({inputs: [isbn], subInputs}) => ({
+                isbn,
+                barcodes: subInputs.map(({inputs: [barcode]}) => barcode),
             })),
         }));
     }
@@ -99,9 +108,9 @@ export class InputBooksComponent extends InputLists<InputDepartment, InputBook> 
             for (const {isbn, barcodes} of books) {
                 for (const barcode of barcodes) {
                     rows.push({
-                        department: department,
-                        isbn: isbn,
-                        barcode: barcode,
+                        department,
+                        isbn,
+                        barcode,
                     });
                 }
             }
@@ -110,8 +119,10 @@ export class InputBooksComponent extends InputLists<InputDepartment, InputBook> 
     }
     
     protected async submitInput(inputs: InputDepartment[]): Promise<void> {
-        for (const {department, isbn, barcode} of this.convertToCsvRows(inputs)) {
-            allBooks.assignBarcode({isbn: Isbn.parse(isbn) as Isbn, barcode: barcode});
+        for (const {department, isbn: isbnString, barcode} of this.convertToCsvRows(inputs)) {
+            const isbn: Isbn = Isbn.parse(isbnString) as Isbn;
+            isbn.setDepartment(department);
+            allBooks.assignBarcode({isbn, barcode});
         }
         const failedBarcodes: Barcode[] = await allBooks.sync();
         console.log(failedBarcodes);

@@ -4,16 +4,17 @@ exports.isString = function (t) {
     return Object.prototype.toString.call(t) === "[object String]";
 };
 exports.joinWords = function (words) {
-    switch (words.length) {
+    const _words = [...words];
+    switch (_words.length) {
         case 0:
             return "";
         case 1:
-            return words[0];
+            return _words[0];
         case 2:
-            return words[0] + " and " + words[1];
+            return _words[0] + " and " + _words[1];
         default:
-            const lastWord = words.pop();
-            return words.join(", ") + ", and " + lastWord;
+            const lastWord = _words.pop();
+            return _words.join(", ") + ", and " + lastWord;
     }
 };
 exports.separateClassName = function (className) {
@@ -38,6 +39,6 @@ exports.filterInput = function (input, charFilter) {
     input.value = input.value.split("").filter(charFilter).join("");
 };
 exports.onlyDigitsInput = function (input) {
-    exports.filterInput(input, c => !Number.isNaN(+c));
+    exports.filterInput(input, c => !Number.isNaN(parseInt(c)));
 };
 //# sourceMappingURL=utils.js.map

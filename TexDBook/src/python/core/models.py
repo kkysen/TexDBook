@@ -100,7 +100,7 @@ class User(flask_db.Model):
         # type: (unicode, unicode) -> Tuple[Book, bool]
         """Create a new Book owned by this User."""
         book = Book.get_or_none(barcode=barcode)
-        if book or book.isbn != isbn:
+        if book:
             return book, False
         return Book.create(barcode, isbn, self), True
 
@@ -142,8 +142,7 @@ class IsbnBook(flask_db.Model):
     categories = ManyToManyField(Category, backref="isbns")
     average_rating = FloatField()
     ratings_count = IntegerField()
-    small_thumbnail = TextField()
-    thumbnail = TextField()
+    image = TextField(null=True)
     language = ForeignKeyField(Language, backref="isbns")
     preview_link = TextField()
     info_link = TextField()
@@ -189,12 +188,12 @@ class IsbnBook(flask_db.Model):
             "categories",
             "averageRating",
             "ratingsCount",
-            "imageLinks",
+            "image",
             "language",
             "previewLink",
             "infoLink",
             "link",
-        )  # type: Tuple[unicode, unicode, unicode, List[unicode], unicode, unicode, unicode, int, List[unicode], float, int, Json, unicode, unicode, unicode, unicode]
+        )  # type: Tuple[unicode, unicode, unicode, List[unicode], unicode, unicode, unicode, int, List[unicode], float, int, unicode, unicode, unicode, unicode, unicode]
         isbn, \
         department, \
         title, \
@@ -206,7 +205,7 @@ class IsbnBook(flask_db.Model):
         categories, \
         average_rating, \
         ratings_count, \
-        image_links, \
+        image, \
         language, \
         preview_link, \
         info_link, \
@@ -219,9 +218,6 @@ class IsbnBook(flask_db.Model):
         categories = [Category.get_or_create(name=category)[0] for category in categories]  # type: List[Category]
         language = Language.get_or_create(name=language)[0]  # type: Language
         
-        small_thumbnail, thumbnail = \
-            unpack_json(image_links, "smallThumbnail", "thumbnail")  # type: Tuple[unicode, unicode]
-        
         isbn_book, created = super(IsbnBook, cls).get_or_create(
             isbn=isbn,
             department=department,
@@ -232,8 +228,7 @@ class IsbnBook(flask_db.Model):
             page_count=page_count,
             average_rating=average_rating,
             ratings_count=ratings_count,
-            small_thumbnail=small_thumbnail,
-            thumbnail=thumbnail,
+            image=image,
             language=language,
             preview_link=preview_link,
             info_link=info_link,
@@ -341,28 +336,24 @@ def setup_db():
     username = "Khyber"
     password = "Sen"  # "5e9708d50aa3cef560fa6a6d47787e44aae25d19de9bb06a9f653939df82881b"  # SHA256 of "Sen"
     user, created = User.login_or_create(username, password)
-    IsbnBook.get_or_create(
-        {
-            "isbn": "9780262033848",
-            "department": "Computer Science",
-            "title": "Introduction to Algorithms",
-            "authors": ["Thomas H. Cormen"],
-            "publisher": "MIT Press",
-            "publishedDate": "2009-07-31",
-            "description": "A new edition of the essential text and professional reference, with substantial new material on such topics as vEB trees, multithreaded algorithms, dynamic programming, and edge-based flow.",
-            "pageCount": 1292,
-            "categories": ["Computers"],
-            "averageRating": 4.5,
-            "ratingsCount": 3,
-            "imageLinks": {
-                "smallThumbnail": "http://books.google.com/books/content?id=i-bUBQAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
-                "thumbnail": "http://books.google.com/books/content?id=i-bUBQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
-            },
-            "language": "en",
-            "previewLink": "http://books.google.com/books?id=i-bUBQAAQBAJ&pg=PP1&dq=isbn:9780262033848&hl=&cd=1&source=gbs_api",
-            "infoLink": "http://books.google.com/books?id=i-bUBQAAQBAJ&dq=isbn:9780262033848&hl=&source=gbs_api",
-            "link": "https://books.google.com/books/about/Introduction_to_Algorithms.html?hl=&id=i-bUBQAAQBAJ",
-        })
+    IsbnBook.get_or_create({
+        "isbn": "9780262033848",
+        "department": "Computer Science",
+        "title": "Introduction to Algorithms",
+        "authors": ["Thomas H. Cormen"],
+        "publisher": "MIT Press",
+        "publishedDate": "2009-07-31",
+        "description": "A new edition of the essential text and professional reference, with substantial new material on such topics as vEB trees, multithreaded algorithms, dynamic programming, and edge-based flow.",
+        "pageCount": 1292,
+        "categories": ["Computers"],
+        "averageRating": 4.5,
+        "ratingsCount": 3,
+        "image": "http://books.google.com/books/content?id=i-bUBQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+        "language": "en",
+        "previewLink": "http://books.google.com/books?id=i-bUBQAAQBAJ&pg=PP1&dq=isbn:9780262033848&hl=&cd=1&source=gbs_api",
+        "infoLink": "http://books.google.com/books?id=i-bUBQAAQBAJ&dq=isbn:9780262033848&hl=&source=gbs_api",
+        "link": "https://books.google.com/books/about/Introduction_to_Algorithms.html?hl=&id=i-bUBQAAQBAJ",
+    })
     print(user.add_book("123", "9780262033848"))
     
     print(user)

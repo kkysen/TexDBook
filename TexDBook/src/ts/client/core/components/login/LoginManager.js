@@ -16,19 +16,19 @@ const ViewBooks_1 = require("../views/ViewBooks");
 class LoginManager extends react_1.Component {
     constructor(props) {
         super(props);
-        console.log(this.props);
+        this.logIn = (loggedIn) => {
+            TexDBook_1.TexDBook.isLoggedIn = loggedIn._clone();
+            this.setState(() => loggedIn);
+        };
+        this.bindLogin = (login) => {
+            const { logIn, state: { message } } = this;
+            return bindProps_1.bindProps(login, { onLogin: logIn, message });
+        };
         this.state = TexDBook_1.TexDBook.isLoggedIn._clone();
     }
-    logIn(loggedIn) {
-        TexDBook_1.TexDBook.isLoggedIn = loggedIn._clone();
-        this.setState(() => loggedIn);
-    }
     renderLogin() {
-        const logIn = this.logIn.bind(this);
-        const bindLogin = (login) => {
-            return bindProps_1.bindProps(login, { onLogin: logIn, message: this.state.message });
-        };
-        if (this.state.isLoggedIn) {
+        const { bindLogin, state: { isLoggedIn } } = this;
+        if (isLoggedIn) {
             return React.createElement(ViewRouter_1.ViewRouter, { name: "TexDBook", views: [
                     Home_1.Home, ViewBooks_1.ViewBooks, UploadBooks_1.UploadBooks, MakeTransaction_1.MakeTransaction, bindLogin(Logout_1.Logout)
                 ] });

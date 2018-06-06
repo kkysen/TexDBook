@@ -63,6 +63,10 @@ def upload_books():
             IsbnBook.get_or_create(isbn)
         
         user = get_user()
-        return {
-            "books": [add_book(user, book) for book in books],
+        response = {
+            "books": [{
+                "book": book,
+                "response": add_book(user, book)
+            } for book in books],
         }
+        return response

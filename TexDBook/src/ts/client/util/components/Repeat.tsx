@@ -8,10 +8,11 @@ export class Repeat extends Component<{
 }, {}> {
     
     public render(): ReactNode {
+        const {props: {times, render}} = this;
         return (<div>
-            {Range.new(this.props.times).map(i => (
+            {Range.new(times).map(i => (
                 <div key={i}>
-                    {this.props.render()}
+                    {render()}
                 </div>
             ))}
         </div>);

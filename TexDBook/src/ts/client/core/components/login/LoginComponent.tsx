@@ -22,29 +22,32 @@ export interface LoginState {
 export abstract class LoginComponent extends Component<LoginProps, LoginState> implements LoginComponent {
     
     private readonly name: string;
-    private readonly handleClick: () => Promise<void>;
     
     protected constructor(props: LoginProps, name?: string) {
         super(props);
         this.name = name || separateClassName(this.constructor.name);
-        this.handleClick = async () => this.props.onLogin(await this.doLogin());
     }
     
     protected abstract inputsArgs(): InputsArgs;
     
     protected abstract doLogin(): Promise<IsLoggedIn>;
     
+    private readonly handleClick = async (): Promise<void> => {
+        this.props.onLogin(await this.doLogin());
+    };
+    
     public render(): ReactNode {
         // TODO style name and message
+        const {name, props: {message}, handleClick} = this;
         return (
             <div>
-                {this.name}
+                {name}
                 <br/>
-                {this.props.message}
+                {message}
                 <br/>
-                <Inputs args={this.inputsArgs()} onEnter={this.handleClick}/>
+                <Inputs args={this.inputsArgs()} onEnter={handleClick}/>
                 <br/>
-                <Button color="primary" onClick={this.handleClick}>{this.name}</Button>
+                <Button color="primary" onClick={handleClick}>{name}</Button>
             </div>
         );
     }

@@ -14,7 +14,7 @@ const toIsLoggedIn = function (negate, response) {
 exports.api = {
     async login(username, password) {
         return toIsLoggedIn(false, await fetchJson_1.fetchJson("/login", {
-            username: username,
+            username,
             password: await hash_1.SHA._256.hash(password),
         }, {
             cache: "reload",
@@ -34,7 +34,7 @@ exports.api = {
         }
         const hashedPassword = await hash_1.SHA._256.hash(password);
         return await fetchJson_1.fetchJson("/createAccount", {
-            username: username,
+            username,
             password: hashedPassword,
             passwordConfirmation: hashedPassword,
         }, {
@@ -42,71 +42,79 @@ exports.api = {
         });
     },
     async allIsbns() {
-        const response = await fetchJson_1.fetchJson("/allIsbns", undefined, {
+        const { response } = await fetchJson_1.fetchJson("/allIsbns", undefined, {
             cache: "reload",
         });
-        return (response.response || [])
+        return (response || [])
             .map(isbn => Isbn_1.Isbn.parse(isbn))
             .filter(isbn => isbn); // filter nulls, but there shouldn't be any
     },
     async ownBooks() {
         await TexDBook_1.onLogin;
-        const response = await fetchJson_1.fetchJson("/ownBooks", undefined, {
+        const { response } = await fetchJson_1.fetchJson("/ownBooks", undefined, {
             cache: "reload",
         });
-        return (response.response || [])
-            .map(book => ({
-            barcode: book.barcode,
-            isbn: Isbn_1.Isbn.parse(book.isbn),
+        return (response || [])
+            .map(({ barcode, isbn }) => ({
+            barcode,
+            isbn: Isbn_1.Isbn.parse(isbn),
         }));
     },
     async uploadBooks(books) {
-        const response = await fetchJson_1.fetchJson("/uploadBooks", {
+        const { success, message, response } = await fetchJson_1.fetchJson("/uploadBooks", {
             csrfToken: TexDBook_1.TexDBook.csrfToken,
-            books: books.map(book => ({
-                barcode: book.barcode,
-                isbn: book.isbn.isbn13,
-            })),
+            books: books.map(({ barcode, isbn: { isbn13: isbn } }) => ({ barcode, isbn })),
             isbns: await Promise.all(Array.from(new Set(books.map(book => book.isbn)))
                 .map(async (isbn) => await isbn.fetchBook())),
         });
-        if (!response.success) {
+        if (!success) {
             return books.map(book => ({
-                barcode: book.barcode,
-                isbn: book.isbn,
+                book,
                 response: {
-                    success: false,
-                    message: response.message,
+                    success,
+                    message,
                 },
             }));
         }
-        return response.response.books;
+        return response
+            .books
+            .map(({ book: { barcode, isbn }, response }) => ({
+            book: {
+                barcode,
+                isbn: Isbn_1.Isbn.parse(isbn),
+            },
+            response,
+        }));
     },
     async resolveIsbn(isbn) {
-        const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn.isbn13}`);
+        const { isbn13, department } = isbn;
+        const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn.isbn13}`, {
+            cache: "force-cache",
+        });
         const { totalItems, items } = await response.json();
         if (totalItems === 0) {
             throw new Error("Cannot resolve ISBN: " + isbn.isbn13Hyphenated);
         }
         const [{ volumeInfo }] = items;
         // need to copy fields b/c Google Books API sends extra fields that we want to exclude.
-        const { title, authors, publisher, publishedDate, description, pageCount, categories, averageRating, ratingsCount, imageLinks, language, previewLink, infoLink, canonicalVolumeLink, } = volumeInfo;
+        const { title, authors, publisher, publishedDate, description, pageCount, categories, averageRating, ratingsCount, imageLinks: { smallThumbnail, thumbnail } = { smallThumbnail: undefined, thumbnail: undefined }, language, previewLink, infoLink, canonicalVolumeLink: link, } = volumeInfo;
         return {
-            isbn: isbn.isbn13,
-            title: title,
-            authors: authors,
-            publisher: publisher,
-            publishedDate: publishedDate,
-            description: description,
-            pageCount: pageCount,
-            categories: categories,
-            averageRating: averageRating,
-            ratingsCount: ratingsCount,
-            imageLinks: imageLinks,
-            language: language,
-            previewLink: previewLink,
-            infoLink: infoLink,
-            link: canonicalVolumeLink,
+            isbn: isbn13,
+            department,
+            title,
+            authors,
+            publisher,
+            publishedDate,
+            description,
+            pageCount,
+            categories,
+            averageRating,
+            ratingsCount,
+            image: thumbnail || smallThumbnail,
+            language,
+            previewLink,
+            infoLink,
+            link,
         };
     },
 };

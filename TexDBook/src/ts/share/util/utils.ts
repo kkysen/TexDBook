@@ -4,17 +4,18 @@ export const isString = function(t: any): t is string {
     return Object.prototype.toString.call(t) === "[object String]";
 };
 
-export const joinWords = function(words: string[]): string {
-    switch (words.length) {
+export const joinWords = function(words: ReadonlyArray<string>): string {
+    const _words: string[] = [...words];
+    switch (_words.length) {
         case 0:
             return "";
         case 1:
-            return words[0];
+            return _words[0];
         case 2:
-            return words[0] + " and " + words[1];
+            return _words[0] + " and " + _words[1];
         default:
-            const lastWord: string = words.pop() as string;
-            return words.join(", ") + ", and " + lastWord;
+            const lastWord: string = _words.pop() as string;
+            return _words.join(", ") + ", and " + lastWord;
     }
 };
 export const separateClassName = function(className: string): string {
@@ -43,5 +44,5 @@ export const filterInput = function(input: HTMLInputElement, charFilter: (c: str
 };
 
 export const onlyDigitsInput = function(input: HTMLInputElement): void {
-    filterInput(input, c => !Number.isNaN(+c));
+    filterInput(input, c => !Number.isNaN(parseInt(c)));
 };

@@ -27,10 +27,7 @@ const onLoad = function (url) {
     });
 };
 const baseCachedFetch = function (input, init) {
-    const key = serializeFetchArgs({
-        input: input,
-        init: init,
-    });
+    const key = serializeFetchArgs({ input, init });
     const cachedValue = localStorage.getItem(key);
     if (cachedValue) {
         return [key, Promise.resolve(deserializeResponse(cachedValue))];

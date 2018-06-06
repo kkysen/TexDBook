@@ -35,18 +35,18 @@ const createAllBooks = function () {
         }
         return addIsbn(isbn);
     };
-    const assignExistingBarcode = function (book) {
-        server.put(book.barcode, book.isbn);
+    const assignExistingBarcode = function ({ isbn, barcode }) {
+        server.put(barcode, isbn);
     };
     const hasBarcode = function (barcode) {
         return server.hasKey(barcode) || client.hasKey(barcode);
     };
-    const assignBarcode = function (book) {
-        addIsbn(book.isbn);
-        if (hasBarcode(book.barcode)) {
+    const assignBarcode = function ({ isbn, barcode }) {
+        addIsbn(isbn);
+        if (hasBarcode(barcode)) {
             return false;
         }
-        client.put(book.barcode, book.isbn);
+        client.put(barcode, isbn);
         return true;
     };
     let initialized = false;
@@ -63,7 +63,7 @@ const createAllBooks = function () {
     const undoFailedBooks = function (uploadResponse) {
         uploadResponse
             .filter(book => book.response.success)
-            .map(book => book.barcode)
+            .map(book => book.book.barcode)
             .forEach(transitioning.removeKey);
         client.putAllFrom(transitioning);
         const failedBarcodes = Array.from(transitioning.keys());
@@ -72,7 +72,7 @@ const createAllBooks = function () {
     };
     const sync = async function () {
         const books = Array.from(client.keyEntries())
-            .map(([barcode, isbn]) => ({ barcode: barcode, isbn: isbn }));
+            .map(([barcode, isbn]) => ({ barcode, isbn }));
         // noinspection JSIgnoredPromiseFromCall
         loadInitial();
         const uploadResponse = api_1.api.uploadBooks(books);
@@ -82,9 +82,9 @@ const createAllBooks = function () {
     };
     return {
         addIsbn: addIsbnString,
-        hasBarcode: hasBarcode,
-        assignBarcode: assignBarcode,
-        sync: sync,
+        hasBarcode,
+        assignBarcode,
+        sync,
     };
 };
 exports.allBooks = createAllBooks().freeze();

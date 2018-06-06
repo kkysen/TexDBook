@@ -79,7 +79,7 @@ export const MultiBiMap = {
                 return true;
             },
             
-            putAll: putAll,
+            putAll,
             
             putAllFrom(multiBiMap: MultiBiMap<K, V>): void {
                 for (const [value, keys] of multiBiMap.valueEntries()) {

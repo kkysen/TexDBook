@@ -11,14 +11,14 @@ def json(route):
     # type: (Route) -> Route
     @wraps(route)
     def wrapper(*args, **kwargs):
-        return jsonify(route(*args, **kwargs))
+        json = route(*args, **kwargs)
+        return jsonify(json)
     
     return wrapper
 
 
 def rest_api(route):
     # type: (InnerRestRoute) -> RestRoute
-    @json
     @wraps(route)
     def wrapper(*args, **kwargs):
         # type: () -> Json
@@ -44,7 +44,14 @@ def rest_api_route(app, url):
     # type: (Flask, str) -> Router
     def router(route):
         # type: (InnerRestRoute) -> RestRoute
-        return app.route(url, methods=["POST"])(rest_api(route))
+        @app.route(url, methods=["POST"])
+        @json
+        @rest_api
+        @wraps(route)
+        def wrapper(*args, **kwargs):
+            return route(*args, **kwargs)
+        
+        return wrapper
     
     return router
 

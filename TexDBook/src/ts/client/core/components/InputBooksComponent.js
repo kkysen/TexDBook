@@ -26,10 +26,15 @@ class InputBooksComponent extends InputLists_1.InputLists {
                     return (async () => {
                         try {
                             const book = await isbn.fetchBook();
-                            const imgUrl = book.imageLinks.smallThumbnail || book.imageLinks.thumbnail;
+                            const { link, image, title, authors } = book;
+                            const img = React.createElement("img", { src: image });
+                            const alt = (React.createElement("div", { style: { margin: 10 } },
+                                title,
+                                React.createElement("br", null),
+                                `by ${utils_1.joinWords(authors)}`));
                             return {
                                 before: (React.createElement("div", null,
-                                    React.createElement("img", { src: imgUrl }))),
+                                    React.createElement("a", { href: link }, image ? img : alt))),
                             };
                         }
                         catch (e) {
@@ -56,11 +61,11 @@ class InputBooksComponent extends InputLists_1.InputLists {
         ]);
     }
     convertInputs(inputs) {
-        return inputs.map(({ inputs, subInputs }) => ({
-            department: inputs[0],
-            books: subInputs.map(({ inputs, subInputs }) => ({
-                isbn: inputs[0],
-                barcodes: subInputs.map(({ inputs }) => inputs[0]),
+        return inputs.map(({ inputs: [department], subInputs }) => ({
+            department,
+            books: subInputs.map(({ inputs: [isbn], subInputs }) => ({
+                isbn,
+                barcodes: subInputs.map(({ inputs: [barcode] }) => barcode),
             })),
         }));
     }
@@ -70,9 +75,9 @@ class InputBooksComponent extends InputLists_1.InputLists {
             for (const { isbn, barcodes } of books) {
                 for (const barcode of barcodes) {
                     rows.push({
-                        department: department,
-                        isbn: isbn,
-                        barcode: barcode,
+                        department,
+                        isbn,
+                        barcode,
                     });
                 }
             }
@@ -80,8 +85,10 @@ class InputBooksComponent extends InputLists_1.InputLists {
         return rows;
     }
     async submitInput(inputs) {
-        for (const { department, isbn, barcode } of this.convertToCsvRows(inputs)) {
-            Books_1.allBooks.assignBarcode({ isbn: Isbn_1.Isbn.parse(isbn), barcode: barcode });
+        for (const { department, isbn: isbnString, barcode } of this.convertToCsvRows(inputs)) {
+            const isbn = Isbn_1.Isbn.parse(isbnString);
+            isbn.setDepartment(department);
+            Books_1.allBooks.assignBarcode({ isbn, barcode });
         }
         const failedBarcodes = await Books_1.allBooks.sync();
         console.log(failedBarcodes);

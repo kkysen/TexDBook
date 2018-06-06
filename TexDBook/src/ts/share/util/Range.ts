@@ -12,13 +12,13 @@ export interface Range {
 
 export type RangeClass = {
     
-    new: (from: number, to?: number) => Range;
+    readonly new: (from: number, to?: number) => Range;
     
     ofDomain(domain: number[]): Range;
     
 };
 
-export const Range: RangeClass = Object.freeze({
+export const Range: RangeClass = {
     
     new(from: number, to?: number): Range {
         const _from: number = to === undefined ? 0 : from;
@@ -56,4 +56,4 @@ export const Range: RangeClass = Object.freeze({
         return this.new(Math.min(...domain), Math.max(...domain));
     },
     
-});
+}.freeze();

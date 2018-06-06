@@ -84,21 +84,21 @@ const createAllBooks = function(): Books {
         return addIsbn(isbn);
     };
     
-    const assignExistingBarcode = function(book: BookUpload): void {
-        server.put(book.barcode, book.isbn);
+    const assignExistingBarcode = function({isbn, barcode}: BookUpload): void {
+        server.put(barcode, isbn);
     };
     
     const hasBarcode = function(barcode: Barcode): boolean {
         return server.hasKey(barcode) || client.hasKey(barcode);
     };
     
-    const assignBarcode = function(book: BookUpload): boolean {
-        addIsbn(book.isbn);
+    const assignBarcode = function({isbn, barcode}: BookUpload): boolean {
+        addIsbn(isbn);
         
-        if (hasBarcode(book.barcode)) {
+        if (hasBarcode(barcode)) {
             return false;
         }
-        client.put(book.barcode, book.isbn);
+        client.put(barcode, isbn);
         return true;
     };
     
@@ -118,7 +118,7 @@ const createAllBooks = function(): Books {
     const undoFailedBooks = function(uploadResponse: BookUploadResponse[]): Barcode[] {
         uploadResponse
             .filter(book => book.response.success)
-            .map(book => book.barcode)
+            .map(book => book.book.barcode)
             .forEach(transitioning.removeKey);
         client.putAllFrom(transitioning);
         const failedBarcodes = Array.from(transitioning.keys());
@@ -128,7 +128,7 @@ const createAllBooks = function(): Books {
     
     const sync = async function(): Promise<Barcode[]> {
         const books: BookUpload[] = Array.from(client.keyEntries())
-            .map(([barcode, isbn]) => ({barcode: barcode, isbn: isbn}));
+            .map(([barcode, isbn]) => ({barcode, isbn}));
         // noinspection JSIgnoredPromiseFromCall
         loadInitial();
         const uploadResponse: Promise<BookUploadResponse[]> = api.uploadBooks(books);
@@ -139,9 +139,9 @@ const createAllBooks = function(): Books {
     
     return {
         addIsbn: addIsbnString,
-        hasBarcode: hasBarcode,
-        assignBarcode: assignBarcode,
-        sync: sync,
+        hasBarcode,
+        assignBarcode,
+        sync,
     };
     
 };

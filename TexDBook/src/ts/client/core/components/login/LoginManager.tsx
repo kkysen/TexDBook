@@ -16,24 +16,24 @@ import {ViewBooks} from "../views/ViewBooks";
 
 export class LoginManager extends Component<{}, IsLoggedIn> {
     
-    constructor(props: {}) {
+    public constructor(props: {}) {
         super(props);
-        console.log(this.props);
         this.state = TexDBook.isLoggedIn._clone();
     }
     
-    private logIn(loggedIn: IsLoggedIn) {
+    private readonly logIn = (loggedIn: IsLoggedIn): void => {
         TexDBook.isLoggedIn = loggedIn._clone();
         this.setState(() => loggedIn);
-    }
+    };
+    
+    private readonly bindLogin = (login: ComponentClass<LoginProps>): ComponentClass => {
+        const {logIn, state: {message}} = this;
+        return bindProps(login, {onLogin: logIn, message});
+    };
     
     private renderLogin(): ReactNode {
-        const logIn = this.logIn.bind(this);
-        const bindLogin = (login: ComponentClass<LoginProps>): ComponentClass => {
-            return bindProps(login, {onLogin: logIn, message: this.state.message});
-        };
-        
-        if (this.state.isLoggedIn) {
+        const {bindLogin, state: {isLoggedIn}} = this;
+        if (isLoggedIn) {
             return <ViewRouter name="TexDBook" views={[
                 Home, ViewBooks, UploadBooks, MakeTransaction, bindLogin(Logout)
             ]}/>;
@@ -45,7 +45,7 @@ export class LoginManager extends Component<{}, IsLoggedIn> {
         }
     }
     
-    render(): ReactNode {
+    public render(): ReactNode {
         return (
             <div>
                 {this.renderLogin()}

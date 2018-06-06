@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Range = Object.freeze({
+exports.Range = {
     new(from, to) {
         const _from = to === undefined ? 0 : from;
         const _to = to === undefined ? from : to;
@@ -28,5 +28,5 @@ exports.Range = Object.freeze({
     ofDomain(domain) {
         return this.new(Math.min(...domain), Math.max(...domain));
     },
-});
+}.freeze();
 //# sourceMappingURL=Range.js.map

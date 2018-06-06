@@ -127,27 +127,29 @@ const createInputListClass = function(
                 }
             };
             
+            const {before, after} = this.state;
+            
             return (<div>
                 <InputGroup>
                     <InputGroupAddon addonType="prepend">
-                        <Button
-                            style={{backgroundColor: color}}
-                            onClick={toggleCollapse}
-                            onMouseEnter={toggleHovering(true)}
-                            onMouseLeave={toggleHovering(false)}
+                        <Button tabIndex={-1}
+                                style={{backgroundColor: color}}
+                                onClick={toggleCollapse}
+                                onMouseEnter={toggleHovering(true)}
+                                onMouseLeave={toggleHovering(false)}
                         >
                             {name}
                         </Button>
                     </InputGroupAddon>
                     <InputGroupAddon addonType="prepend">
-                        {this.state.before}
+                        {before}
                     </InputGroupAddon>
                     <Input type="text" innerRef={input.ref} onInput={ownOnInput}/>
                     <InputGroupAddon addonType="prepend">
-                        {this.state.after}
+                        {after}
                     </InputGroupAddon>
                     <InputGroupAddon addonType="append">
-                        <Button onClick={remove}>
+                        <Button onClick={remove} tabIndex={-1}>
                             ×
                         </Button>
                     </InputGroupAddon>
@@ -180,21 +182,13 @@ const createInputListClass = function(
         public constructor(props: CollapsibleInputListProps) {
             super(props);
             this.state = {collapse: false, hovering: false};
-            
-            this.toggleCollapse = this.toggleCollapse.bind(this);
-            this.toggleHovering = this.toggleHovering.bind(this);
-            
             this.subInputsNode = this.renderSubInputsNode();
         }
         
         private renderInputsNode(): ReactNode {
-            const input: InputRefs = this.props.input;
-            const {inputs} = input;
-            const {hovering} = this.state;
+            const {props: {input: {inputs}, remove}, state: {hovering}, toggleCollapse} = this;
             const color: string = hovering ? "DodgerBlue" : "Gray";
-            const toggleCollapse = () => this.toggleCollapse();
             const toggleHovering = (on: boolean) => () => this.toggleHovering(on);
-            const remove = () => this.props.remove();
             return (<div>
                 {args.map((arg, j) => {
                     return (<div key={j}>
@@ -212,10 +206,11 @@ const createInputListClass = function(
         }
         
         private renderSubInputsNode(): ReactNode {
+            const {props: {remove, input: {subInputs}}} = this;
             return (<div>
                 {subListClass && React.createElement(subListClass, {
-                    remove: () => this.props.remove,
-                    inputs: this.props.input.subInputs,
+                    remove,
+                    inputs: subInputs,
                 })}
             </div>);
         }
@@ -224,19 +219,20 @@ const createInputListClass = function(
             this.setState({...this.state, ...stateChanges});
         }
         
-        private toggleCollapse() {
+        private readonly toggleCollapse = (): void => {
             this.updateState({collapse: !this.state.collapse});
-        }
+        };
         
-        private toggleHovering(hovering: boolean) {
+        private readonly toggleHovering = (hovering: boolean): void => {
             this.updateState({hovering: hovering});
-        }
+        };
         
         public render(): ReactNode {
+            const {renderInputsNode, state: {collapse}, subInputsNode} = this;
             return (<div>
-                {this.renderInputsNode()}
-                <Collapse isOpen={!this.state.collapse}>
-                    {this.subInputsNode}
+                {renderInputsNode()}
+                <Collapse isOpen={!collapse}>
+                    {subInputsNode}
                 </Collapse>
             </div>);
         }
@@ -300,7 +296,7 @@ const createInputListClass = function(
         private createInput(input: InputRefs): IdReactNode {
             const id: number = this.id++;
             const node: ReactNode = (<CollapsibleInputList input={input} remove={() => this.removeInput(id)}/>);
-            return {...node, id: id};
+            return {...node, id};
         }
         
         private update(setState: boolean): void {
@@ -310,21 +306,23 @@ const createInputListClass = function(
         }
         
         private addInput(i: number, count: number, setState: boolean) {
+            const {inputs, nodes, addNewInputButton} = this;
+            
             if (count <= 0) {
                 return;
             }
             const toAdd: {input: InputRefs, node: IdReactNode}[] = Range.new(count).map(() => {
                 const input: InputRefs = createInputRefs();
                 return {
-                    input: input,
+                    input,
                     node: this.createInput(input),
                 };
             });
-            this.inputs.addAll(toAdd.map(e => e.input), i);
-            this.nodes.addAll(toAdd.map(e => e.node), i);
+            inputs.addAll(toAdd.map(e => e.input), i);
+            nodes.addAll(toAdd.map(e => e.node), i);
             this.update(setState);
             if (setState) {
-                this.scrollToRef(this.addNewInputButton);
+                this.scrollToRef(addNewInputButton);
             }
         }
         
@@ -356,8 +354,9 @@ const createInputListClass = function(
         }
         
         public componentDidUpdate(): void {
-            this.onUpdate.forEach(f => f());
-            this.onUpdate.clear();
+            const {onUpdate} = this;
+            onUpdate.forEach(f => f());
+            onUpdate.clear();
         }
         
     };
@@ -431,14 +430,9 @@ export abstract class InputLists<Input, Row> extends Component<{}, {}> {
             .map(namesOrArgs => namesOrArgs.map(toInputListArg));
         this.InputList = createInputListClasses(args);
         
-        this.onSubmit = this.onSubmit.bind(this);
-        this.convertToCsv = this.convertToCsv.bind(this);
-        this.saveAsJson = this.saveAsJson.bind(this);
-        this.saveAsCsv = this.saveAsCsv.bind(this);
-        
         Object.defineProperties(anyWindow, {
             inputs: {
-                get: this.getInputs.bind(this),
+                get: this.getInputs,
             }
         });
     }
@@ -448,7 +442,6 @@ export abstract class InputLists<Input, Row> extends Component<{}, {}> {
     }
     
     protected invalidate(invalid: boolean): void {
-        this.invalidate.caller;
         Object.values(this.submitButtons).forEach(button => button.disabled = invalid);
     }
     
@@ -459,13 +452,13 @@ export abstract class InputLists<Input, Row> extends Component<{}, {}> {
         }));
     }
     
-    private getInputs(): Input[] {
+    private readonly getInputs = (): Input[] => {
         return this.convertInputs(InputLists.resolveInputs(this.inputs));
-    }
+    };
     
-    private onSubmit(): void {
+    private readonly onSubmit = (): void => {
         this.submitInput(this.getInputs());
-    }
+    };
     
     private saveAs(converter: (inputs: Input[]) => string, mimeType: string): void {
         saveAs(new Blob(
@@ -476,22 +469,22 @@ export abstract class InputLists<Input, Row> extends Component<{}, {}> {
         ), `uploadBook.${mimeType.split("/").last()}`);
     }
     
-    private saveAsJson(): void {
+    private readonly saveAsJson = (): void => {
         this.saveAs(JSON.stringify.bind(JSON), "application/json");
-    }
+    };
     
     protected abstract convertToCsvRows(inputs: Input[]): Row[];
     
-    private convertToCsv(inputs: Input[]): string {
+    private readonly convertToCsv = (inputs: Input[]): string => {
         const rows: Row[] = this.convertToCsvRows(inputs);
         return [Object.keys(rows[0]), ...rows.map(row => Object.values(row))]
             .map(row => row.join(","))
             .join("\n");
-    }
+    };
     
-    private saveAsCsv(): void {
+    private readonly saveAsCsv = (): void => {
         this.saveAs(this.convertToCsv, "application/csv");
-    }
+    };
     
     public render(): ReactNode {
         // TODO make name fancier
@@ -499,17 +492,19 @@ export abstract class InputLists<Input, Row> extends Component<{}, {}> {
             return <Button innerRef={ref} onClick={on} color="primary">{text}</Button>;
         };
         
+        const {name, InputList, inputs, submitButtonsRefs: {submit, saveAsJson, saveAsCsv}} = this;
+        
         return (<div>
-            <div style={{fontSize: "large"}}>{this.name}</div>
-            {React.createElement(this.InputList, {
-                inputs: this.inputs,
+            <div style={{fontSize: "large"}}>{name}</div>
+            {React.createElement(InputList, {
+                inputs,
                 remove: () => undefined,
             })}
             <br/>
             <StyleGroup style={{marginRight: 10}}>
-                {renderButton(this.submitButtonsRefs.submit, this.onSubmit, "Submit")}
-                {renderButton(this.submitButtonsRefs.saveAsJson, this.saveAsJson, "Download as JSON")}
-                {renderButton(this.submitButtonsRefs.saveAsCsv, this.saveAsCsv, "Download as CSV")}
+                {renderButton(submit, this.onSubmit, "Submit")}
+                {renderButton(saveAsJson, this.saveAsJson, "Download as JSON")}
+                {renderButton(saveAsCsv, this.saveAsCsv, "Download as CSV")}
             </StyleGroup>
         </div>);
     }

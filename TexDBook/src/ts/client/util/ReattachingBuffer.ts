@@ -43,7 +43,7 @@ export const ReattachingBuffer = {
         
         return {
             
-            detacher: detacher,
+            detacher,
             
             get(): T {
                 return value;

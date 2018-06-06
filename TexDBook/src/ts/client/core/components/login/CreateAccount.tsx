@@ -1,6 +1,5 @@
 import * as React from "react";
 import {InputsArgs} from "../../../util/components/Inputs";
-import {RestResponse} from "../../../util/fetch/fetchJson";
 import {InputRef} from "../../../util/refs/InputRef";
 import {api} from "../../api";
 import {IsLoggedIn} from "../../TexDBook";
@@ -32,13 +31,13 @@ export class CreateAccount extends LoginComponent {
     protected async doLogin(): Promise<IsLoggedIn> {
         const username: string = this.username();
         const password: string = this.password();
-        const response: RestResponse<{}> = await api.createAccount(username, password, this.passwordConfirmation());
-        if (response.success) {
+        const {success, message} = await api.createAccount(username, password, this.passwordConfirmation());
+        if (success) {
             return await loginUser(username, password);
         } else {
             return {
                 isLoggedIn: false,
-                message: response.message,
+                message,
             };
         }
     }

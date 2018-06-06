@@ -22,14 +22,14 @@ class CreateAccount extends LoginComponent_1.LoginComponent {
     async doLogin() {
         const username = this.username();
         const password = this.password();
-        const response = await api_1.api.createAccount(username, password, this.passwordConfirmation());
-        if (response.success) {
+        const { success, message } = await api_1.api.createAccount(username, password, this.passwordConfirmation());
+        if (success) {
             return await LoginComponent_1.loginUser(username, password);
         }
         else {
             return {
                 isLoggedIn: false,
-                message: response.message,
+                message,
             };
         }
     }

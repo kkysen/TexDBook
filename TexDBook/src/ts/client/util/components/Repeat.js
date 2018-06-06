@@ -5,7 +5,8 @@ const react_1 = require("react");
 const Range_1 = require("../../../share/util/Range");
 class Repeat extends react_1.Component {
     render() {
-        return (React.createElement("div", null, Range_1.Range.new(this.props.times).map(i => (React.createElement("div", { key: i }, this.props.render())))));
+        const { props: { times, render } } = this;
+        return (React.createElement("div", null, Range_1.Range.new(times).map(i => (React.createElement("div", { key: i }, render())))));
     }
 }
 exports.Repeat = Repeat;

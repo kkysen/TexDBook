@@ -1238,13 +1238,12 @@ exports.Isbn = (() => {
         if (!isbn) {
             return null;
         }
-        if (!isbn.group) {
+        const isbn10Prefix = "978";
+        const { group, prefix = "978", publisher, article } = isbn;
+        if (!group) {
             return null;
         }
-        const group = isbn.group;
-        const isbn10Prefix = "978";
-        const prefix = isbn.prefix || isbn10Prefix;
-        const parts = [group.code, isbn.publisher, isbn.article];
+        const parts = [group.code, publisher, article];
         const isbnString = parts.join("");
         const check10 = calcCheckDigit(isbnString);
         if (!check10) {
@@ -1258,10 +1257,10 @@ exports.Isbn = (() => {
         const isbn13 = parts13.join("");
         const isbn13Hyphenated = parts13.join("-");
         merge(isbn, {
-            isbn13: isbn13,
-            isbn13Hyphenated: isbn13Hyphenated,
-            check10: check10,
-            check13: check13,
+            isbn13,
+            isbn13Hyphenated,
+            check10,
+            check13,
             asIsbn10() {
                 return null;
             },
@@ -1274,8 +1273,8 @@ exports.Isbn = (() => {
             const isbn10 = parts10.join("");
             const isbn10Hyphenated = parts10.join("-");
             merge(isbn, {
-                isbn10: isbn10,
-                isbn10Hyphenated: isbn13,
+                isbn10,
+                isbn10Hyphenated,
                 asIsbn10(hyphenate = false) {
                     return hyphenate ? isbn10Hyphenated : isbn10;
                 },
@@ -1295,6 +1294,18 @@ exports.Isbn = (() => {
                 throw e;
             }
         };
+        let _department = "General";
+        merge(isbn, {
+            get department() {
+                return _department;
+            },
+            setDepartment(department) {
+                _department = department;
+                if (bookPromise) {
+                    (async () => (await bookPromise).department = department)();
+                }
+            },
+        });
         _isbn.freeze();
         return _isbn;
     };
@@ -1319,7 +1330,7 @@ exports.Isbn = (() => {
                 for (const group of groups) {
                     if (isbn10.match(`^${group.code}(.+)`)) {
                         return {
-                            group: group,
+                            group,
                             rest: RegExp.$1,
                         };
                     }
@@ -1338,7 +1349,7 @@ exports.Isbn = (() => {
                     if (start <= key && end >= key) {
                         const _rest = rest.substring(key.length);
                         return {
-                            group: group,
+                            group,
                             publisher: key,
                             article: _rest.substring(0, _rest.length - 1),
                             check: _rest[_rest.length - 1],
@@ -1362,8 +1373,8 @@ exports.Isbn = (() => {
                 const isbn = val.match(/^\d{9}[\dX]$/)
                     ? buildRemainingFields(merge({
                         source: val,
-                        isIsbn10: true,
-                        isIsbn13: false,
+                        isIsbn10: () => true,
+                        isIsbn13: () => false,
                     }, splitAndBuild(val)))
                     : val.length === 13 && val.match(/^(\d+)-(\d+)-(\d+)-([\dX])$/)
                         ? buildRemainingFields({
@@ -1395,7 +1406,7 @@ exports.Isbn = (() => {
                                 })
                                 : null;
                 // check is like a hashsum
-                if (!isbn || isbn.check !== (isbn.isbn13 ? isbn.check13 : isbn.check10)) {
+                if (!isbn || isbn.check !== (isbn.isIsbn13() ? isbn.check13 : isbn.check10)) {
                     return null;
                 }
                 return isbn;

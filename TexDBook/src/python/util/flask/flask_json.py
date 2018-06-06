@@ -4,8 +4,8 @@ from flask import Flask, sessions
 from flask.json import JSONDecoder, JSONEncoder
 from typing import Any, Callable, Dict, NamedTuple, Union
 
-from util.namedtuple_factory import all_namedtuples
-from util.oop import override
+from TexDBook.src.python.util.namedtuple_factory import all_namedtuples
+from TexDBook.src.python.util.oop import override
 
 
 @override(sessions)
@@ -18,6 +18,7 @@ def _tag(_super, o):
         else:
             as_tuple = named_tuple
         print(as_tuple)
+        # noinspection PyProtectedMember
         return {
             '_type': repr(type(named_tuple)),
             'fields': tuple(sessions._tag(o) for o in as_tuple)
@@ -36,7 +37,7 @@ class NamedTupleJsonEncoder(JSONEncoder):
         # type: (Any) -> Dict[str, Any] | Any
         if not hasattr(o, '_asdict'):
             return o
-        return o  #serialize_named_tuple(o)
+        return o  # serialize_named_tuple(o)
     
     def default(self, o):
         # type: (Any) -> Dict[str, Any]

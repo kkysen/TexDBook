@@ -10,21 +10,23 @@ const RouterNavLink_1 = require("./RouterNavLink");
 class ViewRouter extends react_1.Component {
     static toStrictView(view) {
         const strictView = (() => {
+            const { name } = view;
             if ("render" in view) {
-                if (!view.path) {
-                    view.path = "/" + view.name;
+                const { render } = view;
+                let { path } = view;
+                if (!path) {
+                    path = "/" + name;
                 }
-                if (view.path[0] !== "/") {
-                    view.path = "/" + view.path;
+                if (path[0] !== "/") {
+                    path = "/" + path;
                 }
-                return view;
+                return { render, name, path };
             }
             const node = React.createElement(view);
-            console.log(node);
             return {
                 render: () => node,
-                name: view.name,
-                path: "/" + view.name,
+                name,
+                path: "/" + name,
             };
         })();
         strictView.name = utils_1.separateClassName(strictView.name);
@@ -34,21 +36,17 @@ class ViewRouter extends react_1.Component {
         return this.props.views.map(ViewRouter.toStrictView);
     }
     render() {
-        console.log("rendering ViewRouter");
         const views = this.strictViews();
-        const makeLink = function (view) {
-            return (React.createElement(reactstrap_1.NavItem, { key: view.name },
-                React.createElement(RouterNavLink_1.RouterNavLink, { to: view.path }, view.name)));
-        };
-        const links = views.map(view => makeLink(view));
-        const routes = views.map((view, i) => {
-            console.log("creating Routes");
-            return (React.createElement(react_router_1.Route, { key: view.name, path: view.path, render: view.render }));
+        const links = views.map(({ name, path }) => (React.createElement(reactstrap_1.NavItem, { key: name },
+            React.createElement(RouterNavLink_1.RouterNavLink, { to: path }, name))));
+        const routes = views.map(({ name, path, render }) => {
+            return (React.createElement(react_router_1.Route, { key: name, path: path, render: render }));
         });
+        const { props: { name } } = this;
         return (React.createElement(react_router_dom_1.HashRouter, null,
             React.createElement("div", null,
                 React.createElement(reactstrap_1.Navbar, { color: "light", light: true, expand: "md" },
-                    React.createElement(reactstrap_1.NavbarBrand, { href: "/" }, this.props.name),
+                    React.createElement(reactstrap_1.NavbarBrand, { href: "/" }, name),
                     React.createElement(reactstrap_1.Nav, { navbar: true, justified: true, className: "ml-auto" }, links)),
                 React.createElement("div", null, routes))));
     }

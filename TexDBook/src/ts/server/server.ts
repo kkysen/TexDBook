@@ -5,7 +5,7 @@ import {Express, Request, Response} from "express";
 const app: Express = express();
 
 const root: string = __dirname + "../../../../";
-const rootOptions = {root: root};
+const rootOptions = {root};
 
 app.use(express.static(root + "dist"));
 

@@ -53,10 +53,7 @@ const onLoad = function(url: string | FetchArgs,): Promise<void> {
 };
 
 const baseCachedFetch = function(input?: string | Request, init?: RequestInit): [string, Promise<Response>] {
-    const key: string = serializeFetchArgs({
-        input: input,
-        init: init,
-    });
+    const key: string = serializeFetchArgs({input, init});
     const cachedValue: string | null = localStorage.getItem(key);
     if (cachedValue) {
         return [key, Promise.resolve(deserializeResponse(cachedValue))];

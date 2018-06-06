@@ -36,7 +36,7 @@ exports.MultiBiMap = {
                 }
                 return true;
             },
-            putAll: putAll,
+            putAll,
             putAllFrom(multiBiMap) {
                 for (const [value, keys] of multiBiMap.valueEntries()) {
                     putAll(keys, value);

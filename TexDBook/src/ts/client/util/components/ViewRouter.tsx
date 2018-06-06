@@ -28,21 +28,23 @@ export class ViewRouter extends Component<ViewRouterProps, {}> {
     
     private static toStrictView(view: View): StrictView {
         const strictView: StrictView = (() => {
+            const {name} = view;
             if ("render" in view) {
-                if (!view.path) {
-                    view.path = "/" + view.name;
+                const {render} = view;
+                let {path} = view;
+                if (!path) {
+                    path = "/" + name;
                 }
-                if (view.path[0] !== "/") {
-                    view.path = "/" + view.path;
+                if (path[0] !== "/") {
+                    path = "/" + path;
                 }
-                return view as StrictView;
+                return {render, name, path};
             }
             const node: ReactNode = React.createElement(view);
-            console.log(node);
             return {
                 render: () => node,
-                name: view.name,
-                path: "/" + view.name,
+                name,
+                path: "/" + name,
             };
         })();
         strictView.name = separateClassName(strictView.name);
@@ -54,37 +56,32 @@ export class ViewRouter extends Component<ViewRouterProps, {}> {
     }
     
     public render(): ReactNode {
-        console.log("rendering ViewRouter");
         const views: StrictView[] = this.strictViews();
         
-        const makeLink = function(view: StrictView): ReactNode {
-            return (
-                <NavItem key={view.name}>
-                    <RouterNavLink to={view.path}>
-                        {view.name}
-                    </RouterNavLink>
-                </NavItem>
-            );
-        };
+        const links: ReactNode[] = views.map(({name, path}) => (
+            <NavItem key={name}>
+                <RouterNavLink to={path}>
+                    {name}
+                </RouterNavLink>
+            </NavItem>
+        ));
         
-        const links: ReactNode[] = views.map(view => makeLink(view));
-        
-        const routes: ReactNode[] = views.map(
-            (view, i) => {
-                console.log("creating Routes");
+        const routes: ReactNode[] = views.map(({name, path, render}) => {
                 return (<Route
-                    key={view.name}
-                    path={view.path}
-                    render={view.render}
+                    key={name}
+                    path={path}
+                    render={render}
                 />);
             }
         );
+        
+        const {props: {name}} = this;
         
         return (<HashRouter>
             <div>
                 <Navbar color="light" light expand="md">
                     <NavbarBrand href="/">
-                        {this.props.name}
+                        {name}
                     </NavbarBrand>
                     <Nav navbar justified className="ml-auto">
                         {links}

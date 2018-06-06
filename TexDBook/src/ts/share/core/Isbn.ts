@@ -1233,6 +1233,10 @@ const GROUPS: {[code: string]: IsbnGroup} = {
 
 interface MutableIsbn {
     
+    department: string;
+    
+    setDepartment(department: string): void;
+    
     source: string;
     
     prefix: string;
@@ -1319,16 +1323,13 @@ export const Isbn: IsbnClass = (() => {
         if (!isbn) {
             return null;
         }
-        
-        if (!isbn.group) {
+        const isbn10Prefix: string = "978";
+        const {group, prefix = "978", publisher, article} = isbn;
+        if (!group) {
             return null;
         }
-        const group: IsbnGroup = isbn.group;
         
-        const isbn10Prefix: string = "978";
-        const prefix: string = isbn.prefix || isbn10Prefix;
-        
-        const parts: string[] = <string[]> [group.code, isbn.publisher, isbn.article];
+        const parts: string[] = <string[]> [group.code, publisher, article];
         const isbnString: string = parts.join("");
         const check10: string | null = calcCheckDigit(isbnString);
         if (!check10) {
@@ -1344,10 +1345,10 @@ export const Isbn: IsbnClass = (() => {
         const isbn13: string = parts13.join("");
         const isbn13Hyphenated: string = parts13.join("-");
         merge(isbn, {
-            isbn13: isbn13,
-            isbn13Hyphenated: isbn13Hyphenated,
-            check10: check10,
-            check13: check13,
+            isbn13,
+            isbn13Hyphenated,
+            check10,
+            check13,
             asIsbn10(): null {
                 return null;
             },
@@ -1361,8 +1362,8 @@ export const Isbn: IsbnClass = (() => {
             const isbn10: string = parts10.join("");
             const isbn10Hyphenated: string = parts10.join("-");
             merge(isbn, {
-                isbn10: isbn10,
-                isbn10Hyphenated: isbn13,
+                isbn10,
+                isbn10Hyphenated,
                 asIsbn10(hyphenate: boolean = false): string {
                     return hyphenate ? isbn10Hyphenated : isbn10;
                 },
@@ -1383,6 +1384,23 @@ export const Isbn: IsbnClass = (() => {
                 throw e;
             }
         };
+        
+        let _department: string = "General";
+        
+        merge(isbn, {
+            
+            get department(): string {
+                return _department;
+            },
+            
+            setDepartment(department: string): void {
+                _department = department;
+                if (bookPromise) {
+                    (async () => (await bookPromise as any).department = department)();
+                }
+            },
+            
+        });
         
         _isbn.freeze();
         return _isbn;
@@ -1415,7 +1433,7 @@ export const Isbn: IsbnClass = (() => {
                 for (const group of groups) {
                     if (isbn10.match(`^${group.code}(.+)`)) {
                         return {
-                            group: group,
+                            group,
                             rest: RegExp.$1,
                         };
                     }
@@ -1435,7 +1453,7 @@ export const Isbn: IsbnClass = (() => {
                     if (start <= key && end >= key) {
                         const _rest: string = rest.substring(key.length);
                         return {
-                            group: group,
+                            group,
                             publisher: key,
                             article: _rest.substring(0, _rest.length - 1),
                             check: _rest[_rest.length - 1],
@@ -1461,8 +1479,8 @@ export const Isbn: IsbnClass = (() => {
                 const isbn: Isbn | null = val.match(/^\d{9}[\dX]$/)
                     ? buildRemainingFields(merge({
                         source: val,
-                        isIsbn10: true,
-                        isIsbn13: false,
+                        isIsbn10: () => true,
+                        isIsbn13: () => false,
                     }, splitAndBuild(val)))
                     : val.length === 13 && val.match(/^(\d+)-(\d+)-(\d+)-([\dX])$/)
                         ? buildRemainingFields({
@@ -1494,7 +1512,7 @@ export const Isbn: IsbnClass = (() => {
                                 })
                                 : null;
                 // check is like a hashsum
-                if (!isbn || isbn.check !== (isbn.isbn13 ? isbn.check13 : isbn.check10)) {
+                if (!isbn || isbn.check !== (isbn.isIsbn13() ? isbn.check13 : isbn.check10)) {
                     return null;
                 }
                 return isbn;

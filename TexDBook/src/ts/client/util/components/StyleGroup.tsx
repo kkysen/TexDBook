@@ -12,9 +12,10 @@ export interface StyleGroupProps {
 export class StyleGroup extends Component<StyleGroupProps, {}> {
     
     public render(): ReactNode {
+        const {props: {children, style}} = this;
         return (<div>
-            {Children.map(this.props.children, (child, i) => (
-                <span key={i} style={this.props.style}>
+            {Children.map(children, (child, i) => (
+                <span key={i} style={style}>
                     {child}
                 </span>
             ))}

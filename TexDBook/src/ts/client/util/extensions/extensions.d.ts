@@ -73,6 +73,8 @@ declare interface Array<T> {
     
     callOn<T, U>(this: T[], func: (...args: T[]) => U): U;
     
+    toObject<T, K extends keyof T>(this: [K, T[K][]]): T;
+    
     toObject<T>(this: [string, T][]): {[property: string]: T};
     
     toObject(this: [string, any][]): any;

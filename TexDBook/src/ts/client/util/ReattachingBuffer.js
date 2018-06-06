@@ -20,7 +20,7 @@ exports.ReattachingBuffer = {
             value = supplier();
         });
         return {
-            detacher: detacher,
+            detacher,
             get() {
                 return value;
             },

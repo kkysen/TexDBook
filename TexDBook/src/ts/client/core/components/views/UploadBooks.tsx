@@ -7,11 +7,9 @@ export class UploadBooks extends Component<{}, {}> {
     
     public constructor(props: {}) {
         super(props);
-        console.log("constructing UploadBooks");
     }
     
     render(): ReactNode {
-        console.log("rendering UploadBooks");
         return (<div>
             <InputBooksComponent/>
         </div>);

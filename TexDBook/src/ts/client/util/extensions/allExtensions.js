@@ -7,16 +7,13 @@ const immutableDescriptor = Object.freeze({
 });
 const defineSharedProperties = function (obj, sharedDescriptor, propertyValues) {
     const properties = Object.getOwnPropertyDescriptors(propertyValues);
-    for (const propertyName in properties) {
-        if (properties.hasOwnProperty(propertyName)) {
-            let property = properties[propertyName];
-            property = { ...property, ...sharedDescriptor };
-            if (property.get || property.set) {
-                delete property.writable;
-            }
-            properties[propertyName] = property;
+    Object.entries(properties).forEach(([propertyName, property]) => {
+        property = { ...property, ...sharedDescriptor };
+        if (property.get || property.set) {
+            delete property.writable;
         }
-    }
+        properties[propertyName] = property;
+    });
     Object.defineProperties(obj, properties);
 };
 const defineImmutableProperties = function (obj, propertyValues) {
@@ -71,13 +68,14 @@ Object.defineImmutableProperties(Function, {
         if (numFuncs === 0) {
             return () => undefined;
         }
+        const [firstFunc, ...restFunc] = funcs;
         if (numFuncs === 1) {
-            return funcs[0];
+            return firstFunc();
         }
         return function (...args) {
-            let result = funcs[0](...args);
-            for (let i = 1; i < numFuncs; i++) {
-                result = funcs[i](result);
+            let result = firstFunc();
+            for (const func of funcs) {
+                result = func(result);
             }
             return result;
         };
@@ -101,13 +99,13 @@ Object.defineImmutableProperties(Function.prototype, {
     },
     timed() {
         const timer = (...args) => {
-            console.time(this.name);
+            const { name } = this;
+            console.time(name);
             const returnValue = this(...args);
-            console.timeEnd(this.name);
+            console.timeEnd(name);
             return returnValue;
         };
-        timer.name = "timing_" + this.name;
-        return timer;
+        return timer.named("timing_" + this.name);
     },
     setName(name) {
         Object.defineProperties(this, {
@@ -179,11 +177,13 @@ Object.defineImmutableProperties(Number, {
 });
 Object.defineImmutableProperties(Node.prototype, {
     appendBefore(node) {
-        this.parentNode && this.parentNode.insertBefore(node, this);
+        const { parentNode } = this;
+        parentNode && parentNode.insertBefore(node, this);
         return node;
     },
     appendAfter(node) {
-        this.nextSibling && this.nextSibling.appendBefore(node);
+        const { nextSibling } = this;
+        nextSibling && nextSibling.appendBefore(node);
         return node;
     },
 });
@@ -192,9 +192,9 @@ Object.defineImmutableProperties(Element.prototype, {
         this.innerHTML = "";
     },
     setAttributes(attributes) {
-        for (const attribute in attributes) {
-            if (attributes.hasOwnProperty(attribute) && attributes[attribute]) {
-                this.setAttribute(attribute, attributes[attribute].toString());
+        for (const [attribute, value] of Object.entries(attributes)) {
+            if (value) {
+                this.setAttribute(attribute, value.toString());
             }
         }
     },
