@@ -85,6 +85,9 @@ export class ViewBooks extends Component<{}, ViewBooksState> {
                 {this.bookStates.map(bookState => (
                     <div key={bookState}>
                         {this.renderBooks(bookState)}
+                        <br/>
+                        <hr/>
+                        <br/>
                     </div>
                 ))}
             </div>

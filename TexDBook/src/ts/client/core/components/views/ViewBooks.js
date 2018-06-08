@@ -52,7 +52,11 @@ class ViewBooks extends react_1.Component {
     render() {
         return (React.createElement("div", null,
             "View Books",
-            this.bookStates.map(bookState => (React.createElement("div", { key: bookState }, this.renderBooks(bookState))))));
+            this.bookStates.map(bookState => (React.createElement("div", { key: bookState },
+                this.renderBooks(bookState),
+                React.createElement("br", null),
+                React.createElement("hr", null),
+                React.createElement("br", null))))));
     }
 }
 exports.ViewBooks = ViewBooks;

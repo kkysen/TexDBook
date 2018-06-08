@@ -1,14 +1,17 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CleanWebpackPlugin = require("clean-webpack-plugin");
+const WebpackCleanupPlugin = require("webpack-cleanup-plugin")
 
 const production = false;
 
 module.exports = {
+    target: "web",
     entry: {
-        client: "./src/ts/client/client.js",
+        client: "./src/ts/client/client.ts",
     },
     output: {
-        filename: "[name].js",
+        filename: "[name].[chunkhash].js",
         path: path.resolve(__dirname, "dist"),
     },
     resolve: {
@@ -20,24 +23,21 @@ module.exports = {
                 test: /\.tsx?$/,
                 loader: "ts-loader",
             },
-            {
-                test: /\.css$/,
-                loader: "css-loader",
-            }
-        ]
+        ],
     },
-    // externals: {
-    //     // TODO check names
-    //     "react": "React",
-    //     "react-dom": "ReactDOM",
-    //     "react-router": true,
-    //     "react-router-dom": true,
-    // },
+    cache: true,
+    optimization: {
+        splitChunks: {
+            chunks: "all",
+        },
+    },
     plugins: [
+        new CleanWebpackPlugin(["dist"]),
+        new WebpackCleanupPlugin(),
         new HtmlWebpackPlugin({
             filename: "index.html",
             template: "./src/html/index.html",
-            hash: true,
+            hash: false,
             cache: true,
             favicon: "./src/data/favicon.ico",
             showErrors: !production,

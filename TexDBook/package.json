@@ -19,40 +19,38 @@
     "url": "https://github.com/kkysen/TexDBook/issues"
   },
   "devDependencies": {
-    "typescript": "^2.8.3",
-    "webpack": "^4.8.1",
-    "webpack-cli": "^2.1.3",
-    "webpack-dev-server": "^3.1.4",
-    "ts-loader": "^4.3.0",
-    "css-loader": "^0.28.11",
-    "html-webpack-plugin": "^3.2.0",
-    "html-minifier": "^3.5.15",
-    "@types/express": "^4.11.1",
+    "@types/clean-webpack-plugin": "^0.1.2",
+    "@types/file-saver": "^1.3.0",
+    "@types/html-webpack-plugin": "^2.30.3",
+    "@types/node": "^10.0.6",
     "@types/react": "^16.3.14",
     "@types/react-dom": "^16.0.5",
     "@types/react-router": "^4.0.25",
     "@types/react-router-dom": "^4.2.6",
     "@types/reactstrap": "^5.0.26",
-    "@types/file-saver": "^1.3.0",
-    "@types/node": "^10.0.6"
+    "@types/webpack": "^4.4.0",
+    "clean-webpack-plugin": "^0.1.19",
+    "html-webpack-plugin": "^3.2.0",
+    "ts-loader": "^4.3.0",
+    "typescript": "^2.8.3",
+    "webpack": "^4.11.1",
+    "webpack-cleanup-plugin": "^0.5.1",
+    "webpack-cli": "^2.1.3",
+    "webpack-dev-server": "^3.1.4"
   },
   "dependencies": {
-    "express": "^4.16.3",
+    "file-saver": "^1.3.8",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
-    "jquery": "^3.3.1",
-    "bootstrap": "^4.1.1",
-    "reactstrap": "^6.0.1",
-    "file-saver": "^1.3.8"
+    "reactstrap": "^6.0.1"
   },
-  "main": "dist/TexDBook.js",
+  "main": "dist/client.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
     "watch": "webpack --watch",
-    "start": "webpack-dev-server --hot --inline --no-info",
-    "server": "node src/ts/server/server.js"
+    "start": "webpack-dev-server --hot --inline --no-info"
   }
 }
