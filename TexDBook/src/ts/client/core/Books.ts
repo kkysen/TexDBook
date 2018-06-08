@@ -1,10 +1,9 @@
+import {Barcode, Book} from "../../share/core/Book";
 import {Isbn} from "../../share/core/Isbn";
 import {IsbnBook} from "../../share/core/IsbnBook";
 import {MultiBiMap} from "../../share/util/MultiBiMap";
 import {anyWindow} from "../util/anyWindow";
 import {api, BookUpload, BookUploadResponse} from "./api";
-
-export type Barcode = string;
 
 /**
  * Keeps tracks of two sets of Isbns:
@@ -84,7 +83,8 @@ const createAllBooks = function(): Books {
         return addIsbn(isbn);
     };
     
-    const assignExistingBarcode = function({isbn, barcode}: BookUpload): void {
+    const assignExistingBarcode = function({isbn, barcode}: Book): void {
+        // TODO use entire book, not just {isbn, barcode}
         server.put(barcode, isbn);
     };
     
@@ -105,7 +105,7 @@ const createAllBooks = function(): Books {
     let initialized: boolean = false;
     const loadInitial = async function(): Promise<void> {
         const isbns: Promise<Isbn[]> = api.allIsbns();
-        const barcodes: Promise<BookUpload[]> = api.ownBooks();
+        const barcodes: Promise<Book[]> = api.ownBooks();
         (await isbns).forEach(addExistingIsbn);
         // barcodes must be added afterwards
         (await barcodes).forEach(assignExistingBarcode);

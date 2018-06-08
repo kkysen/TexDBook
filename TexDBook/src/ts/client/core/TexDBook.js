@@ -10,6 +10,9 @@ exports.onLogin = new Promise(resolve => {
     resolveOnLogin = resolve;
 });
 exports.TexDBook = {
+    get onLogin() {
+        return exports.onLogin;
+    },
     get isLoggedIn() {
         return isLoggedIn;
     },
@@ -23,6 +26,7 @@ exports.TexDBook = {
         return csrfToken;
     },
 };
+exports.TexDBook.isLoggedIn = isLoggedIn;
 anyWindow_1.anyWindow.TexDBook = exports.TexDBook;
 const Main_1 = require("./components/views/Main");
 exports.main = function () {

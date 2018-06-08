@@ -29,6 +29,8 @@ declare interface Object {
     
     mapFields<T, U>(this: {[field: string]: T}, mapper: (field: T) => U): {[field: string]: U};
     
+    freezeFields<T>(this: T): T;
+    
 }
 
 declare interface FunctionConstructor {
@@ -52,6 +54,8 @@ declare interface Function {
     setName(name: string): void;
     
     named<T>(this: T, name: string): T;
+    
+    negate<T extends (...args: any[]) => boolean>(this: T): T;
     
 }
 

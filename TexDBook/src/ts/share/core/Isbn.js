@@ -1215,7 +1215,9 @@ const GROUPS = {
     },
 };
 exports.Isbn = (() => {
-    const merge = Object.assign;
+    const merge = function (t, u) {
+        return Object.defineProperties(t, Object.getOwnPropertyDescriptors(u));
+    };
     const calcCheckDigit = function (isbn) {
         if (isbn.match(/^\d{9}[\dX]?$/)) {
             let c = 0;
@@ -1284,16 +1286,28 @@ exports.Isbn = (() => {
             });
         }
         const _isbn = isbn;
+        let _book = null;
         let bookPromise = null;
         isbn.fetchBook = async function () {
             try {
-                return await (bookPromise || (bookPromise = api_1.api.resolveIsbn(_isbn)));
+                return _isbn.book || _isbn.setBook(await api_1.api.resolveIsbn(_isbn));
             }
             catch (e) {
                 bookPromise = null; // retry next time if error first time
                 throw e;
             }
         };
+        isbn.setBook = (book) => {
+            // would cancel fetch call if possible, but impossible
+            _book = book;
+            bookPromise = Promise.resolve(book);
+            return book;
+        };
+        merge(isbn, {
+            get book() {
+                return _book;
+            },
+        });
         let _department = "General";
         merge(isbn, {
             get department() {

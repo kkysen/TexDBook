@@ -1,7 +1,14 @@
 import {ReactNode} from "react";
+import {CharMapper, isDigit} from "./CharMapper";
 
 export const isString = function(t: any): t is string {
     return Object.prototype.toString.call(t) === "[object String]";
+};
+
+export const capitalize = function(word: string): string {
+    return word.length === 0
+        ? ""
+        : word[0].toUpperCase() + word.slice(1);
 };
 
 export const joinWords = function(words: ReadonlyArray<string>): string {
@@ -18,6 +25,7 @@ export const joinWords = function(words: ReadonlyArray<string>): string {
             return _words.join(", ") + ", and " + lastWord;
     }
 };
+
 export const separateClassName = function(className: string): string {
     return className.replace(/([A-Z])/g, " $1").trim();
 };
@@ -44,5 +52,16 @@ export const filterInput = function(input: HTMLInputElement, charFilter: (c: str
 };
 
 export const onlyDigitsInput = function(input: HTMLInputElement): void {
-    filterInput(input, c => !Number.isNaN(parseInt(c)));
+    filterInput(input, isDigit);
+};
+
+export const mapInput = function(input: HTMLInputElement, charMappers: CharMapper[]): void {
+    input.value = input.value.split("").map(c => {
+        for (const charMapper of charMappers) {
+            if (charMapper.test(c)) {
+                return charMapper.map(c);
+            }
+        }
+        return "";
+    }).join("");
 };

@@ -1259,6 +1259,10 @@ interface MutableIsbn {
     isbn13: string;
     isbn13Hyphenated: string;
     
+    book: IsbnBook;
+    
+    setBook(book: IsbnBook): IsbnBook;
+    
     fetchBook(): Promise<IsbnBook>;
     
 }
@@ -1297,7 +1301,9 @@ export interface IsbnClass {
 
 export const Isbn: IsbnClass = (() => {
     
-    const merge = Object.assign;
+    const merge = function<T, U>(t: T, u: U): T & U {
+        return Object.defineProperties(t, Object.getOwnPropertyDescriptors(u));
+    };
     
     const calcCheckDigit = function(isbn: string): string | null {
         if (isbn.match(/^\d{9}[\dX]?$/)) {
@@ -1374,16 +1380,32 @@ export const Isbn: IsbnClass = (() => {
         }
         
         const _isbn: Isbn = isbn as Isbn;
+        let _book: IsbnBook | null = null;
         
         let bookPromise: Promise<IsbnBook> | null = null;
         isbn.fetchBook = async function(): Promise<IsbnBook> {
             try {
-                return await (bookPromise || (bookPromise = api.resolveIsbn(_isbn)));
+                return _isbn.book || _isbn.setBook(await api.resolveIsbn(_isbn));
             } catch (e) {
                 bookPromise = null; // retry next time if error first time
                 throw e;
             }
         };
+        
+        isbn.setBook = (book: IsbnBook): IsbnBook => {
+            // would cancel fetch call if possible, but impossible
+            _book = book;
+            bookPromise = Promise.resolve(book);
+            return book;
+        };
+        
+        merge(isbn, {
+            
+            get book(): IsbnBook {
+                return _book as IsbnBook;
+            },
+            
+        });
         
         let _department: string = "General";
         

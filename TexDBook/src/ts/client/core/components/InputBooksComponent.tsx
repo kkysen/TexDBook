@@ -1,10 +1,11 @@
 import * as React from "react";
 import {ReactNode} from "react";
+import {Barcode} from "../../../share/core/Book";
 import {Isbn} from "../../../share/core/Isbn";
 import {IsbnBook} from "../../../share/core/IsbnBook";
 import {joinWords, onlyDigitsInput} from "../../../share/util/utils";
 import {InputLists, MaybeSurroundingNodes, StringInputs} from "../../util/components/InputLists";
-import {allBooks, Barcode} from "../Books";
+import {allBooks} from "../Books";
 
 
 export interface InputIsbn {

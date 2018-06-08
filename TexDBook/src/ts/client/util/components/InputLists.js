@@ -101,9 +101,9 @@ const createInputListClass = function (args, reverseDepth, depth, subListClass) 
             this.setState({ ...this.state, ...stateChanges });
         }
         render() {
-            const { renderInputsNode, state: { collapse }, subInputsNode } = this;
+            const { state: { collapse }, subInputsNode } = this;
             return (React.createElement("div", null,
-                renderInputsNode(),
+                this.renderInputsNode(),
                 React.createElement(reactstrap_1.Collapse, { isOpen: !collapse }, subInputsNode)));
         }
     }

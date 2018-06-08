@@ -1,13 +1,15 @@
 import {Isbn} from "./Isbn";
 import {User} from "./User";
 
+export type Barcode = string;
+
+
 export interface Book {
     
-    readonly barcode: string;
+    readonly barcode: Barcode;
     readonly isbn: Isbn;
-    
-    readonly price: number;
-    
-    owner: User;
+    readonly owner: User;
+    readonly lender: User;
+    readonly borrower: User;
     
 }

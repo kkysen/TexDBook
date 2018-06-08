@@ -1,7 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const CharMapper_1 = require("./CharMapper");
 exports.isString = function (t) {
     return Object.prototype.toString.call(t) === "[object String]";
+};
+exports.capitalize = function (word) {
+    return word.length === 0
+        ? ""
+        : word[0].toUpperCase() + word.slice(1);
 };
 exports.joinWords = function (words) {
     const _words = [...words];
@@ -39,6 +45,16 @@ exports.filterInput = function (input, charFilter) {
     input.value = input.value.split("").filter(charFilter).join("");
 };
 exports.onlyDigitsInput = function (input) {
-    exports.filterInput(input, c => !Number.isNaN(parseInt(c)));
+    exports.filterInput(input, CharMapper_1.isDigit);
+};
+exports.mapInput = function (input, charMappers) {
+    input.value = input.value.split("").map(c => {
+        for (const charMapper of charMappers) {
+            if (charMapper.test(c)) {
+                return charMapper.map(c);
+            }
+        }
+        return "";
+    }).join("");
 };
 //# sourceMappingURL=utils.js.map

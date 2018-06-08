@@ -61,6 +61,12 @@ Object.defineImmutableProperties(Object.prototype, {
         }
         return obj;
     },
+    freezeFields() {
+        for (const value of Object.values(this)) {
+            value.freeze();
+        }
+        return this;
+    }
 });
 Object.defineImmutableProperties(Function, {
     compose(...funcs) {
@@ -117,6 +123,9 @@ Object.defineImmutableProperties(Function.prototype, {
     named(name) {
         this.setName(name);
         return this;
+    },
+    negate() {
+        return ((...args) => !this(...args));
     },
 });
 Object.defineImmutableProperties(Array.prototype, {

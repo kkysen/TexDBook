@@ -228,9 +228,9 @@ const createInputListClass = function(
         };
         
         public render(): ReactNode {
-            const {renderInputsNode, state: {collapse}, subInputsNode} = this;
+            const {state: {collapse}, subInputsNode} = this;
             return (<div>
-                {renderInputsNode()}
+                {this.renderInputsNode()}
                 <Collapse isOpen={!collapse}>
                     {subInputsNode}
                 </Collapse>

@@ -1,9 +1,9 @@
+import {Barcode, Book} from "../../share/core/Book";
 import {Isbn} from "../../share/core/Isbn";
 import {IsbnBook} from "../../share/core/IsbnBook";
 import {anyWindow} from "../util/anyWindow";
 import {fetchJson, RestResponse} from "../util/fetch/fetchJson";
 import {SHA} from "../util/hash";
-import {Barcode} from "./Books";
 import {IsLoggedIn, onLogin, TexDBook} from "./TexDBook";
 
 type LoginArgs = {
@@ -66,6 +66,14 @@ interface GoogleBooksResponse {
     
 }
 
+type ServerBook = Book & {
+    
+    readonly isbnBook: IsbnBook;
+    
+};
+
+export type BookState = "own" | "lent" | "borrowed";
+
 export interface TexDBookApi {
     
     login(username: string, password: string): Promise<IsLoggedIn>;
@@ -76,13 +84,33 @@ export interface TexDBookApi {
     
     allIsbns(): Promise<Isbn[]>;
     
-    ownBooks(): Promise<BookUpload[]>;
+    userBooks(field: BookState): Promise<Book[]>;
+    
+    ownBooks(): Promise<Book[]>;
+    
+    lentBooks(): Promise<Book[]>;
+    
+    borrowedBooks(): Promise<Book[]>;
     
     uploadBooks(books: BookUpload[]): Promise<BookUploadResponse[]>;
     
     resolveIsbn(isbn: Isbn): Promise<IsbnBook>;
     
 }
+
+const userBooks = async function(field: BookState): Promise<Book[]> {
+    await onLogin;
+    const {response} = await fetchJson<undefined, ServerBook[]>(`/${field}Books`,
+        undefined, {
+            cache: "reload",
+        });
+    return (response || [])
+        .map(({barcode, isbnBook, owner, lender, borrower}) => {
+            const isbn: Isbn = Isbn.parse(isbnBook.isbn) as Isbn;
+            isbn.setBook(isbnBook);
+            return {barcode, isbn, owner, lender, borrower};
+        });
+};
 
 export const api: TexDBookApi = {
     
@@ -127,18 +155,13 @@ export const api: TexDBookApi = {
             .filter(isbn => isbn) as Isbn[]; // filter nulls, but there shouldn't be any
     },
     
-    async ownBooks(): Promise<BookUpload[]> {
-        await onLogin;
-        const {response} = await fetchJson<undefined, RawBookUpload[]>("/ownBooks",
-            undefined, {
-                cache: "reload",
-            });
-        return (response || [])
-            .map(({barcode, isbn}) => ({
-                barcode,
-                isbn: Isbn.parse(isbn) as Isbn,
-            }));
-    },
+    userBooks: userBooks,
+    
+    ownBooks: () => userBooks("own"),
+    
+    lentBooks: () => userBooks("lent"),
+    
+    borrowedBooks: () => userBooks("borrowed"),
     
     async uploadBooks(books: BookUpload[]): Promise<BookUploadResponse[]> {
         type BookUploadResponses = {books: RawBookUploadResponse[]};

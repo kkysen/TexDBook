@@ -1,10 +1,12 @@
+from flask import Flask
 from typing import List, Tuple
 
 from TexDBook.src.python.core.init_app import app, default_init_app
 from TexDBook.src.python.core.login_manager import paranoid
 from TexDBook.src.python.core.models import IsbnBook, User, db
 from TexDBook.src.python.core.views.login import get_user
-from TexDBook.src.python.util.flask.flask_utils_types import JsonOrMessage
+from TexDBook.src.python.util.decorators import named
+from TexDBook.src.python.util.flask.flask_utils_types import JsonOrMessage, Route
 from TexDBook.src.python.util.flask.rest_api import rest_api, rest_api_route, unpack_json, unpack_json_request
 from TexDBook.src.python.util.types import Json
 
@@ -17,15 +19,34 @@ def all_isbns():
     return list(IsbnBook.all_isbns())
 
 
-@rest_api_route(app, "/ownBooks")
-def own_books():
-    # type: () -> List[Json]
-    # TODO check if this causes N + 1 query
-    user = get_user()
-    return [{
-        "barcode": book.barcode,
-        "isbn": book.isbn_book.isbn,
-    } for book in user.owned_books]
+def user_books_route(app, field):
+    # type: (Flask, str) -> Route
+    route_name = field + "Books"
+    field_name = field + "_books"
+    
+    @rest_api_route(app, "/" + route_name)
+    @named(field_name)
+    def user_books():
+        # type: () -> List[Json]
+        user = get_user()
+        return [book.to_dict() for book in getattr(user, field_name)]
+    
+    return user_books
+
+
+own_books, lent_books, borrowed_books = \
+    [user_books_route(app, field) for field in ["own", "lent", "borrowed"]]  # type: Route
+
+
+# @rest_api_route(app, "/ownBooks")
+# def own_books():
+#     # type: () -> List[Json]
+#     # TODO check if this causes N + 1 query
+#     user = get_user()
+#     return [{
+#         "barcode": book.barcode,
+#         "isbn": book.isbn_book.isbn,
+#     } for book in user.owned_books]
 
 
 @rest_api

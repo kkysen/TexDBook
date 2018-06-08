@@ -36,6 +36,7 @@ const createAllBooks = function () {
         return addIsbn(isbn);
     };
     const assignExistingBarcode = function ({ isbn, barcode }) {
+        // TODO use entire book, not just {isbn, barcode}
         server.put(barcode, isbn);
     };
     const hasBarcode = function (barcode) {

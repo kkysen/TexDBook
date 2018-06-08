@@ -8,6 +8,8 @@ export interface IsLoggedIn {
 
 export interface GlobalTexDBook {
     
+    onLogin: Promise<void>;
+    
     isLoggedIn: IsLoggedIn;
     
     readonly csrfToken: string;
@@ -27,6 +29,10 @@ export const onLogin: Promise<void> = new Promise(resolve => {
 
 export const TexDBook: GlobalTexDBook = {
     
+    get onLogin(): Promise<void> {
+        return onLogin;
+    },
+    
     get isLoggedIn(): IsLoggedIn {
         return isLoggedIn;
     },
@@ -43,6 +49,8 @@ export const TexDBook: GlobalTexDBook = {
     },
     
 };
+
+TexDBook.isLoggedIn = isLoggedIn;
 
 anyWindow.TexDBook = TexDBook;
 

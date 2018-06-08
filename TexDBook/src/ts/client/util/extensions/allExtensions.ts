@@ -75,6 +75,13 @@ Object.defineImmutableProperties(Object.prototype, {
         return obj;
     },
     
+    freezeFields<T>(this: T): T {
+        for (const value of Object.values(this)) {
+            value.freeze();
+        }
+        return this;
+    }
+    
 });
 
 Object.defineImmutableProperties(Function, {
@@ -142,6 +149,10 @@ Object.defineImmutableProperties(Function.prototype, {
     named<T extends Function>(this: T, name: string): T {
         this.setName(name);
         return this;
+    },
+    
+    negate<T extends (...args: any[]) => boolean>(this: T): T {
+        return <T> ((...args: any[]) => !this(...args));
     },
     
 });

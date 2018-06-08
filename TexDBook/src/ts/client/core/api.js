@@ -11,6 +11,18 @@ const toIsLoggedIn = function (negate, response) {
         message: response.message,
     };
 };
+const userBooks = async function (field) {
+    await TexDBook_1.onLogin;
+    const { response } = await fetchJson_1.fetchJson(`/${field}Books`, undefined, {
+        cache: "reload",
+    });
+    return (response || [])
+        .map(({ barcode, isbnBook, owner, lender, borrower }) => {
+        const isbn = Isbn_1.Isbn.parse(isbnBook.isbn);
+        isbn.setBook(isbnBook);
+        return { barcode, isbn, owner, lender, borrower };
+    });
+};
 exports.api = {
     async login(username, password) {
         return toIsLoggedIn(false, await fetchJson_1.fetchJson("/login", {
@@ -49,17 +61,10 @@ exports.api = {
             .map(isbn => Isbn_1.Isbn.parse(isbn))
             .filter(isbn => isbn); // filter nulls, but there shouldn't be any
     },
-    async ownBooks() {
-        await TexDBook_1.onLogin;
-        const { response } = await fetchJson_1.fetchJson("/ownBooks", undefined, {
-            cache: "reload",
-        });
-        return (response || [])
-            .map(({ barcode, isbn }) => ({
-            barcode,
-            isbn: Isbn_1.Isbn.parse(isbn),
-        }));
-    },
+    userBooks: userBooks,
+    ownBooks: () => userBooks("own"),
+    lentBooks: () => userBooks("lent"),
+    borrowedBooks: () => userBooks("borrowed"),
     async uploadBooks(books) {
         const { success, message, response } = await fetchJson_1.fetchJson("/uploadBooks", {
             csrfToken: TexDBook_1.TexDBook.csrfToken,
