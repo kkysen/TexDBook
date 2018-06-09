@@ -17,7 +17,10 @@ def rest_logged_in(route):
     @wraps(route)
     def wrapper(*args, **kwargs):
         # type: (Args, Kwargs) -> JsonOrMessage
-        if not get_user().is_authenticated:
+        user = get_user()
+        print(user)
+        if not user.is_authenticated:
+            print("Not logged in")
             return "Not logged in"
         return route(*args, **kwargs)
     
