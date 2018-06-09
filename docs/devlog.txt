@@ -342,8 +342,16 @@ if they exist, with the right encoding (in static_gzip.py).
 This will further dramatically decrease the load time.
 
 ============================================================
-khyberS -- 2018-06-09 16:11:00
+khyberS -- 2018-06-09 16:36:00
 
 Deleted unnecessary Jinja templates that aren't being used.
+
+============================================================
+khyberS -- 2018-06-09 17:25:00
+
+Using Node crypto API browser polyfill
+when subtle.crypto is not available b/c of using HTTP.
+This way, all passwords sent are pre-hashed and still mostly secure
+even though HTTPS is not being used.
 
 ============================================================

@@ -1,8 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const CharMapper_1 = require("./CharMapper");
-exports.isString = function (t) {
-    return Object.prototype.toString.call(t) === "[object String]";
+exports.isString = function (o) {
+    return Object.prototype.toString.call(o) === "[object String]";
+};
+exports.isDataView = function (o) {
+    return o.constructor === DataView;
+};
+exports.isArrayBuffer = function (o) {
+    return o.constructor === ArrayBuffer;
 };
 exports.capitalize = function (word) {
     return word.length === 0

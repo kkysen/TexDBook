@@ -1,31 +1,34 @@
 from functools import wraps
 
-from flask import Flask, jsonify, request
-from typing import Any, List, Optional, Union
+from flask import Flask, Response, jsonify, request
+from typing import Any, Callable, List, Optional
 
-from TexDBook.src.python.util.flask.flask_utils_types import InnerRestRoute, RestRoute, Route, Router
-from TexDBook.src.python.util.types import Json
+from TexDBook.src.python.util.flask.flask_utils_types import JsonOrMessage, RestRoute, Route, Router
+from TexDBook.src.python.util.types import Args, Json, Kwargs
+
+RestApi = Callable[[Args, Kwargs], JsonOrMessage]
 
 
 def json(route):
     # type: (Route) -> Route
     @wraps(route)
     def wrapper(*args, **kwargs):
-        json = route(*args, **kwargs)
-        return jsonify(json)
+        # type: (Args, Kwargs) -> Response
+        json_obj = route(*args, **kwargs)  # type: Json
+        json_response = jsonify(json_obj)  # type: Response
+        print(json_response)
+        return json_response
     
     return wrapper
 
 
 def rest_api(route):
-    # type: (InnerRestRoute) -> RestRoute
+    # type: (RestApi) -> RestRoute
     @wraps(route)
     def wrapper(*args, **kwargs):
-        # type: () -> Json
-        # noinspection PyArgumentList
+        # type: (Args, Kwargs) -> Json
         print("API")
-        # print(request.__dict__)
-        response_or_message = route(*args, **kwargs)  # type: Union[Json, str]
+        response_or_message = route(*args, **kwargs)  # type: JsonOrMessage
         if isinstance(response_or_message, str):
             return {
                 "success": False,
@@ -43,12 +46,13 @@ def rest_api(route):
 def rest_api_route(app, url):
     # type: (Flask, str) -> Router
     def router(route):
-        # type: (InnerRestRoute) -> RestRoute
+        # type: (RestApi) -> RestRoute
         @app.route(url, methods=["POST"])
         @json
         @rest_api
         @wraps(route)
         def wrapper(*args, **kwargs):
+            # type: (Args, Kwargs) -> JsonOrMessage
             return route(*args, **kwargs)
         
         return wrapper

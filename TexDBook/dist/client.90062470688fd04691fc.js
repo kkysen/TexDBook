@@ -474,7 +474,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst 
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst utils_1 = __webpack_require__(/*! ../../share/util/utils */ \"./src/ts/share/util/utils.ts\");\n// FIXME temp set to false always\nexports.hasCrypto = !\"hello\".includes(\"h\") && !!crypto.subtle;\nif (!exports.hasCrypto) {\n    console.error(\"crypto.subtle not available b/c using HTTP, SHA not being used\");\n}\nconst makeSha = function (numBits) {\n    const toBuffer = function (data) {\n        if (utils_1.isString(data)) {\n            return new TextEncoder().encode(data);\n        }\n        return data;\n    };\n    const toString = function (data) {\n        if (utils_1.isString(data)) {\n            return data;\n        }\n        return new TextDecoder().decode(data);\n    };\n    const digest = exports.hasCrypto && crypto.subtle.digest.bind(crypto.subtle, { name: \"SHA-\" + numBits });\n    return {\n        async hash(data) {\n            if (!exports.hasCrypto) {\n                return toString(data);\n            }\n            const buffer = toBuffer(data);\n            const hashBuffer = await digest(buffer);\n            const hashArray = [...new Uint8Array(hashBuffer)];\n            return hashArray.map(b => (\"00\" + b.toString(16)).slice(-2)).join(\"\");\n        },\n    }.freeze();\n};\nexports.SHA = [1, 256, 384, 512]\n    .reduce((obj, numBits) => ({ ...obj, [\"_\" + numBits]: makeSha(numBits) }), {})\n    .freeze();\n\n\n//# sourceURL=webpack:///./src/ts/client/util/hash.ts?");
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst crypto_1 = __webpack_require__(/*! crypto */ \"../../../../node_modules/crypto-browserify/index.js\");\nconst utils_1 = __webpack_require__(/*! ../../share/util/utils */ \"./src/ts/share/util/utils.ts\");\nconst webCrypto = window.crypto.subtle;\nexports.hasCrypto = !!webCrypto;\nif (!exports.hasCrypto) {\n    console.info(\"crypto.subtle not available b/c using HTTP, Node crypto polyfill being used\");\n}\nconst toBuffer = function (data) {\n    if (utils_1.isString(data)) {\n        return new TextEncoder().encode(data);\n    }\n    return data;\n};\nconst toString = function (data) {\n    if (utils_1.isString(data)) {\n        return data;\n    }\n    return new TextDecoder().decode(data);\n};\nconst makeShaWebCrypto = function (numBits) {\n    const digest = exports.hasCrypto && webCrypto.digest.bind(webCrypto, { name: \"SHA-\" + numBits });\n    return {\n        async hash(data) {\n            if (!exports.hasCrypto) {\n                return toString(data);\n            }\n            const buffer = toBuffer(data);\n            const hashBuffer = await digest(buffer);\n            const hashArray = [...new Uint8Array(hashBuffer)];\n            return hashArray.map(b => (\"00\" + b.toString(16)).slice(-2)).join(\"\");\n        },\n    }.freeze();\n};\nconst makeShaNodeCrypto = function (numBits) {\n    return {\n        hash(data) {\n            const hash = crypto_1.createHash(`sha${numBits}`);\n            const dataViewOrString = utils_1.isString(data)\n                ? data\n                : utils_1.isDataView(data)\n                    ? data\n                    : new DataView(utils_1.isArrayBuffer(data) ? data : data.buffer);\n            hash.update(dataViewOrString);\n            return Promise.resolve(hash.digest(\"hex\"));\n        }\n    }.freeze();\n};\nconst makeSha = exports.hasCrypto ? makeShaWebCrypto : makeShaNodeCrypto;\nexports.SHA = [1, 256, 384, 512]\n    .reduce((obj, numBits) => ({ ...obj, [\"_\" + numBits]: makeSha(numBits) }), {})\n    .freeze();\n\n\n//# sourceURL=webpack:///./src/ts/client/util/hash.ts?");
 
 /***/ }),
 
@@ -570,7 +570,51 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nexport
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst CharMapper_1 = __webpack_require__(/*! ./CharMapper */ \"./src/ts/share/util/CharMapper.ts\");\nexports.isString = function (t) {\n    return Object.prototype.toString.call(t) === \"[object String]\";\n};\nexports.capitalize = function (word) {\n    return word.length === 0\n        ? \"\"\n        : word[0].toUpperCase() + word.slice(1);\n};\nexports.joinWords = function (words) {\n    const _words = [...words];\n    switch (_words.length) {\n        case 0:\n            return \"\";\n        case 1:\n            return _words[0];\n        case 2:\n            return _words[0] + \" and \" + _words[1];\n        default:\n            const lastWord = _words.pop();\n            return _words.join(\", \") + \", and \" + lastWord;\n    }\n};\nexports.separateClassName = function (className) {\n    return className.replace(/([A-Z])/g, \" $1\").trim();\n};\nexports.joinNodes = function (nodes, node) {\n    if (nodes.length < 2) {\n        return nodes;\n    }\n    const joinedNodes = [];\n    for (let i = 0, j = 0; i < nodes.length; i++) {\n        joinedNodes.push(nodes[i]);\n        joinedNodes.push(node && node._clone());\n    }\n    joinedNodes.pop();\n    return joinedNodes;\n};\nexports.singletonAsArray = function (singletonOrArray) {\n    return Array.isArray(singletonOrArray) ? singletonOrArray : [singletonOrArray];\n};\nexports.filterInput = function (input, charFilter) {\n    input.value = input.value.split(\"\").filter(charFilter).join(\"\");\n};\nexports.onlyDigitsInput = function (input) {\n    exports.filterInput(input, CharMapper_1.isDigit);\n};\nexports.mapInput = function (input, charMappers) {\n    input.value = input.value.split(\"\").map(c => {\n        for (const charMapper of charMappers) {\n            if (charMapper.test(c)) {\n                return charMapper.map(c);\n            }\n        }\n        return \"\";\n    }).join(\"\");\n};\n\n\n//# sourceURL=webpack:///./src/ts/share/util/utils.ts?");
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst CharMapper_1 = __webpack_require__(/*! ./CharMapper */ \"./src/ts/share/util/CharMapper.ts\");\nexports.isString = function (o) {\n    return Object.prototype.toString.call(o) === \"[object String]\";\n};\nexports.isDataView = function (o) {\n    return o.constructor === DataView;\n};\nexports.isArrayBuffer = function (o) {\n    return o.constructor === ArrayBuffer;\n};\nexports.capitalize = function (word) {\n    return word.length === 0\n        ? \"\"\n        : word[0].toUpperCase() + word.slice(1);\n};\nexports.joinWords = function (words) {\n    const _words = [...words];\n    switch (_words.length) {\n        case 0:\n            return \"\";\n        case 1:\n            return _words[0];\n        case 2:\n            return _words[0] + \" and \" + _words[1];\n        default:\n            const lastWord = _words.pop();\n            return _words.join(\", \") + \", and \" + lastWord;\n    }\n};\nexports.separateClassName = function (className) {\n    return className.replace(/([A-Z])/g, \" $1\").trim();\n};\nexports.joinNodes = function (nodes, node) {\n    if (nodes.length < 2) {\n        return nodes;\n    }\n    const joinedNodes = [];\n    for (let i = 0, j = 0; i < nodes.length; i++) {\n        joinedNodes.push(nodes[i]);\n        joinedNodes.push(node && node._clone());\n    }\n    joinedNodes.pop();\n    return joinedNodes;\n};\nexports.singletonAsArray = function (singletonOrArray) {\n    return Array.isArray(singletonOrArray) ? singletonOrArray : [singletonOrArray];\n};\nexports.filterInput = function (input, charFilter) {\n    input.value = input.value.split(\"\").filter(charFilter).join(\"\");\n};\nexports.onlyDigitsInput = function (input) {\n    exports.filterInput(input, CharMapper_1.isDigit);\n};\nexports.mapInput = function (input, charMappers) {\n    input.value = input.value.split(\"\").map(c => {\n        for (const charMapper of charMappers) {\n            if (charMapper.test(c)) {\n                return charMapper.map(c);\n            }\n        }\n        return \"\";\n    }).join(\"\");\n};\n\n\n//# sourceURL=webpack:///./src/ts/share/util/utils.ts?");
+
+/***/ }),
+
+/***/ 0:
+/*!**********************!*\
+  !*** util (ignored) ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("/* (ignored) */\n\n//# sourceURL=webpack:///util_(ignored)?");
+
+/***/ }),
+
+/***/ 1:
+/*!**********************!*\
+  !*** util (ignored) ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("/* (ignored) */\n\n//# sourceURL=webpack:///util_(ignored)?");
+
+/***/ }),
+
+/***/ 2:
+/*!************************!*\
+  !*** buffer (ignored) ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("/* (ignored) */\n\n//# sourceURL=webpack:///buffer_(ignored)?");
+
+/***/ }),
+
+/***/ 3:
+/*!************************!*\
+  !*** crypto (ignored) ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("/* (ignored) */\n\n//# sourceURL=webpack:///crypto_(ignored)?");
 
 /***/ })
 

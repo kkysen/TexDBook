@@ -1,25 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const crypto_1 = require("crypto");
 const utils_1 = require("../../share/util/utils");
-// FIXME temp set to false always
-exports.hasCrypto = !"hello".includes("h") && !!crypto.subtle;
+const webCrypto = window.crypto.subtle;
+exports.hasCrypto = !!webCrypto;
 if (!exports.hasCrypto) {
-    console.error("crypto.subtle not available b/c using HTTP, SHA not being used");
+    console.info("crypto.subtle not available b/c using HTTP, Node crypto polyfill being used");
 }
-const makeSha = function (numBits) {
-    const toBuffer = function (data) {
-        if (utils_1.isString(data)) {
-            return new TextEncoder().encode(data);
-        }
+const toBuffer = function (data) {
+    if (utils_1.isString(data)) {
+        return new TextEncoder().encode(data);
+    }
+    return data;
+};
+const toString = function (data) {
+    if (utils_1.isString(data)) {
         return data;
-    };
-    const toString = function (data) {
-        if (utils_1.isString(data)) {
-            return data;
-        }
-        return new TextDecoder().decode(data);
-    };
-    const digest = exports.hasCrypto && crypto.subtle.digest.bind(crypto.subtle, { name: "SHA-" + numBits });
+    }
+    return new TextDecoder().decode(data);
+};
+const makeShaWebCrypto = function (numBits) {
+    const digest = exports.hasCrypto && webCrypto.digest.bind(webCrypto, { name: "SHA-" + numBits });
     return {
         async hash(data) {
             if (!exports.hasCrypto) {
@@ -32,6 +33,21 @@ const makeSha = function (numBits) {
         },
     }.freeze();
 };
+const makeShaNodeCrypto = function (numBits) {
+    return {
+        hash(data) {
+            const hash = crypto_1.createHash(`sha${numBits}`);
+            const dataViewOrString = utils_1.isString(data)
+                ? data
+                : utils_1.isDataView(data)
+                    ? data
+                    : new DataView(utils_1.isArrayBuffer(data) ? data : data.buffer);
+            hash.update(dataViewOrString);
+            return Promise.resolve(hash.digest("hex"));
+        }
+    }.freeze();
+};
+const makeSha = exports.hasCrypto ? makeShaWebCrypto : makeShaNodeCrypto;
 exports.SHA = [1, 256, 384, 512]
     .reduce((obj, numBits) => ({ ...obj, ["_" + numBits]: makeSha(numBits) }), {})
     .freeze();

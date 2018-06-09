@@ -1,8 +1,16 @@
 import {ReactNode} from "react";
 import {CharMapper, isDigit} from "./CharMapper";
 
-export const isString = function(t: any): t is string {
-    return Object.prototype.toString.call(t) === "[object String]";
+export const isString = function(o: any): o is string {
+    return Object.prototype.toString.call(o) === "[object String]";
+};
+
+export const isDataView = function(o: any): o is DataView {
+    return o.constructor === DataView;
+};
+
+export const isArrayBuffer = function(o: any): o is ArrayBuffer {
+    return o.constructor === ArrayBuffer;
 };
 
 export const capitalize = function(word: string): string {

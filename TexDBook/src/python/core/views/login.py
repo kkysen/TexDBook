@@ -1,19 +1,15 @@
 from functools import wraps
 
 from flask_login import current_user, login_user, logout_user
-from typing import Any, Callable, Dict, List, Optional
+from typing import List, Optional
 
 from TexDBook.src.python.core.init_app import app, default_init_app
 from TexDBook.src.python.core.models import User
 from TexDBook.src.python.util.flask.flask_utils_types import JsonOrMessage
-from TexDBook.src.python.util.flask.rest_api import rest_api_route, unpack_json_request
-from TexDBook.src.python.util.types import Json
+from TexDBook.src.python.util.flask.rest_api import RestApi, rest_api_route, unpack_json_request
+from TexDBook.src.python.util.types import Args, Json, Kwargs
 
 init_app = default_init_app
-
-Args = List[Any]
-Kwargs = Dict[str, Any]
-RestApi = Callable[[Args, Kwargs], JsonOrMessage]
 
 
 def rest_logged_in(route):

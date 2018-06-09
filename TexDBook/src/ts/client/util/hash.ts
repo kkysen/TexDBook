@@ -1,4 +1,5 @@
-import {isString} from "../../share/util/utils";
+import {createHash} from "crypto";
+import {isArrayBuffer, isDataView, isString} from "../../share/util/utils";
 
 export type TypedArray =
     Int8Array
@@ -11,31 +12,38 @@ export type TypedArray =
     | Float32Array
     | Float64Array;
 
-// FIXME temp set to false always
-export const hasCrypto: boolean = !"hello".includes("h") && !!crypto.subtle;
+const webCrypto: SubtleCrypto = window.crypto.subtle;
+
+export const hasCrypto: boolean = !!webCrypto;
 if (!hasCrypto) {
-    console.error("crypto.subtle not available b/c using HTTP, SHA not being used");
+    console.info("crypto.subtle not available b/c using HTTP, Node crypto polyfill being used");
 }
 
 export type Buffer = TypedArray | ArrayBuffer | DataView;
 
-const makeSha = function(numBits: number): Hash {
-    const toBuffer = function(data: string | Buffer): Buffer {
-        if (isString(data)) {
-            return new TextEncoder().encode(data);
-        }
+const toBuffer = function(data: string | Buffer): Buffer {
+    if (isString(data)) {
+        return new TextEncoder().encode(data);
+    }
+    return data;
+};
+
+const toString = function(data: string | Buffer): string {
+    if (isString(data)) {
         return data;
-    };
+    }
+    return new TextDecoder().decode(data);
+};
+
+interface MakeSha {
     
-    const toString = function(data: string | Buffer): string {
-        if (isString(data)) {
-            return data;
-        }
-        return new TextDecoder().decode(data);
-    };
+    (numBits: number): Hash;
     
+}
+
+const makeShaWebCrypto: MakeSha = function(numBits: number): Hash {
     const digest: (buffer: Buffer) => Promise<ArrayBuffer> =
-        hasCrypto && crypto.subtle.digest.bind(crypto.subtle, {name: "SHA-" + numBits});
+        hasCrypto && webCrypto.digest.bind(webCrypto, {name: "SHA-" + numBits});
     
     return {
         async hash(data: string | Buffer): Promise<string> {
@@ -49,6 +57,27 @@ const makeSha = function(numBits: number): Hash {
         },
     }.freeze();
 };
+
+const makeShaNodeCrypto: MakeSha = function(numBits: number): Hash {
+    
+    return {
+        
+        hash(data: string | Buffer): Promise<string> {
+            const hash = createHash(`sha${numBits}`);
+            const dataViewOrString = isString(data)
+                ? data
+                : isDataView(data)
+                    ? data
+                    : new DataView(isArrayBuffer(data) ? data : data.buffer as ArrayBuffer);
+            hash.update(dataViewOrString);
+            return Promise.resolve(hash.digest("hex"));
+        }
+        
+    }.freeze();
+    
+};
+
+const makeSha: MakeSha = hasCrypto ? makeShaWebCrypto : makeShaNodeCrypto;
 
 export interface Hash {
     

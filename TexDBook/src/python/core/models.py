@@ -488,7 +488,7 @@ def setup_db():
     print(db)
     
     username = "Khyber"
-    password = "Sen"  # "5e9708d50aa3cef560fa6a6d47787e44aae25d19de9bb06a9f653939df82881b"  # SHA256 of "Sen"
+    password = "5e9708d50aa3cef560fa6a6d47787e44aae25d19de9bb06a9f653939df82881b"  # SHA256 of "Sen"
     user, created = User.login_or_create(username, password)
     IsbnBook.get_or_create({
         "isbn": "9780262033848",
