@@ -342,3 +342,8 @@ if they exist, with the right encoding (in static_gzip.py).
 This will further dramatically decrease the load time.
 
 ============================================================
+khyberS -- 2018-06-09 16:11:00
+
+Deleted unnecessary Jinja templates that aren't being used.
+
+============================================================
