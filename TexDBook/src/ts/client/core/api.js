@@ -61,6 +61,12 @@ exports.api = {
             .map(isbn => Isbn_1.Isbn.parse(isbn))
             .filter(isbn => isbn); // filter nulls, but there shouldn't be any
     },
+    async allUsers() {
+        const { response: { users = [] } = { users: [] } } = await fetchJson_1.fetchJson("/allUsers", undefined, {
+            cache: "reload",
+        });
+        return users;
+    },
     userBooks: userBooks,
     ownBooks: () => userBooks("own"),
     lentBooks: () => userBooks("lent"),

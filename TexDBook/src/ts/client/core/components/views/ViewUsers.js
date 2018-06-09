@@ -9,23 +9,27 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const react_1 = require("react");
 const named_1 = require("../../../../share/util/decorators/named");
 const api_1 = require("../../api");
-const LoginComponent_1 = require("./LoginComponent");
-let Logout = class Logout extends LoginComponent_1.LoginComponent {
+let ViewUsers = class ViewUsers extends react_1.Component {
     constructor(props) {
-        super(props, "Logout");
+        super(props);
+        this.state = { users: [] };
+        (async () => {
+            this.setState({ users: await api_1.api.allUsers() });
+        })();
     }
-    inputsArgs() {
-        return [];
-    }
-    async doLogin() {
-        return api_1.api.logout();
+    render() {
+        return (React.createElement("div", { style: { margin: 100 } },
+            React.createElement("div", { style: { fontSize: 30 } }, "All Users"),
+            this.state.users.map(({ username }) => (React.createElement("div", { key: username }, username)))));
     }
 };
-Logout = __decorate([
-    named_1.named("Logout"),
+ViewUsers = __decorate([
+    named_1.named("ViewUsers"),
     __metadata("design:paramtypes", [Object])
-], Logout);
-exports.Logout = Logout;
-//# sourceMappingURL=Logout.js.map
+], ViewUsers);
+exports.ViewUsers = ViewUsers;
+//# sourceMappingURL=ViewUsers.js.map

@@ -2,6 +2,7 @@ import * as React from "react";
 import {Component, ReactNode} from "react";
 import {Book} from "../../../../share/core/Book";
 import {capitalize, joinWords} from "../../../../share/util/utils";
+import {named} from "../../../../share/util/decorators/named";
 import {api, BookState} from "../../api";
 
 interface ViewBooksState {
@@ -14,6 +15,7 @@ interface ViewBooksState {
     
 }
 
+@named("ViewBooks")
 export class ViewBooks extends Component<{}, ViewBooksState> {
     
     private readonly bookStates: BookState[];
@@ -32,20 +34,19 @@ export class ViewBooks extends Component<{}, ViewBooksState> {
     }
     
     private readonly fetchBooks = async (bookState: BookState): Promise<void> => {
-        const books = {
-            ...this.state.books,
-            [bookState]: await api.userBooks(bookState),
-        };
-        console.log("fetchBooks", bookState, books);
+        const newBooks = await api.userBooks(bookState); // DO NOT inline this variable
         this.setState({
-            books: books,
+            books: {
+                ...this.state.books,
+                [bookState]: newBooks,
+            },
         });
     };
     
     private readonly renderBooks = (bookState: BookState): ReactNode => {
-        console.log(bookState, this.state.books[bookState]);
         return (<div>
-            <div style={{fontSize: "large"}}>{capitalize(bookState)}</div>
+            <div style={{fontSize: 20, textAlign: "center"}}>{capitalize(bookState) + " Books"}</div>
+            <br/>
             {this.state.books[bookState].map((book, i) => {
                 const {
                     isbn: {
@@ -66,13 +67,16 @@ export class ViewBooks extends Component<{}, ViewBooksState> {
                     lender,
                 } = book;
                 return (<div key={i}>
-                    ISBN: {isbn}, Department: {department}
+                    <a href={previewLink} target="_blank"><img src={image}/></a>
                     <br/>
-                    <a href={link}>{title}</a> by {joinWords(authors)}
+                    <a href={link} target="_blank">{title}</a> by {joinWords(authors)}
+                    <br/>
+                    ISBN: {isbn}
+                    <br/>
+                    Department: {department}
+                    <br/>
                     <br/>
                     {description}
-                    <br/>
-                    <a href={previewLink}><img src={image}/></a>
                 </div>);
             })}
         </div>);
@@ -80,8 +84,14 @@ export class ViewBooks extends Component<{}, ViewBooksState> {
     
     public render(): ReactNode {
         return (
-            <div>
-                View Books
+            <div style={{margin: 100}}>
+                <br/>
+                <br/>
+                <div style={{fontSize: 40, textAlign: "center"}}>View Books</div>
+                <br/>
+                <br/>
+                <hr/>
+                <br/>
                 {this.bookStates.map(bookState => (
                     <div key={bookState}>
                         {this.renderBooks(bookState)}

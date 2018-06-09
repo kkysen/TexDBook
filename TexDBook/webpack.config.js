@@ -1,9 +1,11 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
-const WebpackCleanupPlugin = require("webpack-cleanup-plugin")
+const WebpackCleanupPlugin = require("webpack-cleanup-plugin");
+const CompressionWebpackPlugin = require("compression-webpack-plugin");
 
 const production = false;
+const mode = production ? "production" : "development";
 
 module.exports = {
     target: "web",
@@ -81,6 +83,13 @@ module.exports = {
                 useShortDoctype: true,
             },
         }),
+        new CompressionWebpackPlugin({
+            asset: "[path].gz[query]",
+            algorithm: "gzip",
+            test: /\.js$|\.css$|\.html$/,
+            threshold: 10240,
+            minRatio: 0.8,
+        }),
     ],
-    mode: production ? "production" : "development",
+    mode: mode,
 };

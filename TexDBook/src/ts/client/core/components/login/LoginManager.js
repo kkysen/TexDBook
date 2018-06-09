@@ -6,6 +6,7 @@ const bindProps_1 = require("../../../util/bindProps");
 const Repeat_1 = require("../../../util/components/Repeat");
 const ViewRouter_1 = require("../../../util/components/ViewRouter");
 const TexDBook_1 = require("../../TexDBook");
+const ViewUsers_1 = require("../views/ViewUsers");
 const CreateAccount_1 = require("./CreateAccount");
 const Home_1 = require("../views/Home");
 const Login_1 = require("./Login");
@@ -30,7 +31,7 @@ class LoginManager extends react_1.Component {
         const { bindLogin, state: { isLoggedIn } } = this;
         if (isLoggedIn) {
             return React.createElement(ViewRouter_1.ViewRouter, { name: "TexDBook", views: [
-                    Home_1.Home, ViewBooks_1.ViewBooks, UploadBooks_1.UploadBooks, MakeTransaction_1.MakeTransaction, bindLogin(Logout_1.Logout)
+                    Home_1.Home, UploadBooks_1.UploadBooks, ViewBooks_1.ViewBooks, ViewUsers_1.ViewUsers, MakeTransaction_1.MakeTransaction, bindLogin(Logout_1.Logout)
                 ] });
         }
         else {

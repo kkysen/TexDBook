@@ -4,6 +4,7 @@ import {bindProps} from "../../../util/bindProps";
 import {Repeat} from "../../../util/components/Repeat";
 import {ViewRouter} from "../../../util/components/ViewRouter";
 import {IsLoggedIn, TexDBook} from "../../TexDBook";
+import {ViewUsers} from "../views/ViewUsers";
 import {CreateAccount} from "./CreateAccount";
 import {Home} from "../views/Home";
 import {Login} from "./Login";
@@ -35,7 +36,7 @@ export class LoginManager extends Component<{}, IsLoggedIn> {
         const {bindLogin, state: {isLoggedIn}} = this;
         if (isLoggedIn) {
             return <ViewRouter name="TexDBook" views={[
-                Home, ViewBooks, UploadBooks, MakeTransaction, bindLogin(Logout)
+                Home, UploadBooks, ViewBooks, ViewUsers, MakeTransaction, bindLogin(Logout)
             ]}/>;
         } else {
             return <ViewRouter name="TexDBook" views={[

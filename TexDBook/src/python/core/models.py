@@ -1,10 +1,12 @@
 import json
 from datetime import datetime
 
+# noinspection PyProtectedMember
 from peewee import Alias, Database, DateTimeField, Field, FixedCharField, FloatField, ForeignKeyField, IntegerField, \
     ManyToManyField, TextField
 from playhouse.flask_utils import FlaskDB
 from playhouse.hybrid import hybrid_property
+# noinspection PyProtectedMember
 from playhouse.shortcuts import _clone_set
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
@@ -231,6 +233,11 @@ class User(Model):
         # keep other data safe, like the hashed password
         return super(User, self).to_dict(
             only={User.id, User.username} | kwargs.pop("only", set()), **kwargs)
+
+    @classmethod
+    def all_users(cls):
+        # type: () -> List[User]
+        return list(cls.select())
 
 
 login_manager.user_callback = User.load

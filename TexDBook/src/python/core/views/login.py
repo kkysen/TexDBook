@@ -1,5 +1,7 @@
+from functools import wraps
+
 from flask_login import current_user, login_user, logout_user
-from typing import List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 from TexDBook.src.python.core.init_app import app, default_init_app
 from TexDBook.src.python.core.models import User
@@ -8,6 +10,22 @@ from TexDBook.src.python.util.flask.rest_api import rest_api_route, unpack_json_
 from TexDBook.src.python.util.types import Json
 
 init_app = default_init_app
+
+Args = List[Any]
+Kwargs = Dict[str, Any]
+RestApi = Callable[[Args, Kwargs], JsonOrMessage]
+
+
+def rest_logged_in(route):
+    # type: (RestApi) -> RestApi
+    @wraps(route)
+    def wrapper(*args, **kwargs):
+        # type: (Args, Kwargs) -> JsonOrMessage
+        if not get_user().is_authenticated:
+            return "Not logged in"
+        return route(*args, **kwargs)
+    
+    return wrapper
 
 
 def login_user_from_request():
@@ -38,6 +56,7 @@ def login():
 
 
 @rest_api_route(app, "/logout")
+@rest_logged_in
 def logout():
     # type: () -> Json
     logged_out = logout_user()  # type: bool

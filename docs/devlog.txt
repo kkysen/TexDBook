@@ -286,3 +286,59 @@ but WebStorm doesn't see updates on this in those methods.
 Also added more object destructuring to simplify things.
 
 ============================================================
+khyberS -- 2018-06-09 16:11:00
+
+Created a simple ViewBooks View
+that shows the user's own, lent, and borrowed books.
+Right now, a book owned solely by you is represented in the DB
+as being lent and borrowed to you as well,
+so they show up under those lists as well.
+This might or might not change later, so I'll deal with it later.
+
+Created base Model class inheriting from flask_db.Model.
+This is used instead of flask_db.Model as the base Model class for all models.
+This allows me to easily override and add methods,
+instead of using oop.override(flask_db.Model), which is hacky.
+
+Added to_dict() in Model, which is copied from model_to_dict() in (playhouse.shortcuts).
+The difference is that Model.to_dict() calls itself recursively,
+but since the recursive call is a dynamically dispatched method call,
+it can be overridden by subclasses to more carefully specify what to_dict() should return.
+
+For example, User.to_dict() only returns id and username, not hashed_password,
+and IsbnBook.to_dict() flattens a few simple foreign key fields.
+
+Also added @named() decorator in Python under util.
+
+Wrote a simple Book interface in TypeScript
+to represent the books returned by the server through api.userBooks()
+and its specifications: api.ownBooks(), api.lentBooks(), and api.borrowedBooks().
+The server also has corresponding routes generated through a higher function: user_books_route().
+
+Added readonly Isbn.book: IsbnBook property,
+which is set from Isbn.fetchBook() and allows you to escape
+the asynchronicity required when using Isbn.fetchBook().
+
+Right now, user_books_route() and api.userBooks()
+send the full IsbnBook data for each book,
+even though there will be tons of repeats.
+When there are a lot of books, this will be too much data to send quickly,
+so only the isbn will be sent, which be linked to the full IsbnBook on the client.
+All the IsbnBooks will be sent separately, as well as being fetched from Google Books.
+The IsbnBooks can also be cached in localStorage as well.
+However, this is fairly complicated, so I'll save it for later.
+
+Fixed Webpack and bundling.
+
+Now all libraries are in their own vendors~client.js file,
+which will stay the same even when client.js changes,
+meaning vendors~client.js can be cached by the browser,
+while client.js will be reloaded when changed
+(due to the chunkhash in the filename).
+
+A gzipped JS file is also generated for each,
+so I'm trying to get Flask to send the gzipped files,
+if they exist, with the right encoding (in static_gzip.py).
+This will further dramatically decrease the load time.
+
+============================================================

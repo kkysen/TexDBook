@@ -1,6 +1,7 @@
 import {Barcode, Book} from "../../share/core/Book";
 import {Isbn} from "../../share/core/Isbn";
 import {IsbnBook} from "../../share/core/IsbnBook";
+import {User} from "../../share/core/User";
 import {anyWindow} from "../util/anyWindow";
 import {fetchJson, RestResponse} from "../util/fetch/fetchJson";
 import {SHA} from "../util/hash";
@@ -84,6 +85,8 @@ export interface TexDBookApi {
     
     allIsbns(): Promise<Isbn[]>;
     
+    allUsers(): Promise<User[]>;
+    
     userBooks(field: BookState): Promise<Book[]>;
     
     ownBooks(): Promise<Book[]>;
@@ -153,6 +156,14 @@ export const api: TexDBookApi = {
         return (response || [])
             .map(isbn => Isbn.parse(isbn))
             .filter(isbn => isbn) as Isbn[]; // filter nulls, but there shouldn't be any
+    },
+    
+    async allUsers(): Promise<User[]> {
+        const {response: {users = []} = {users: []}} = await fetchJson<undefined, {users: User[]}>("/allUsers",
+            undefined, {
+                cache: "reload",
+            });
+        return users;
     },
     
     userBooks: userBooks,

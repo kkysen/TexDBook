@@ -4,7 +4,7 @@ from typing import List, Tuple
 from TexDBook.src.python.core.init_app import app, default_init_app
 from TexDBook.src.python.core.login_manager import paranoid
 from TexDBook.src.python.core.models import IsbnBook, User, db
-from TexDBook.src.python.core.views.login import get_user
+from TexDBook.src.python.core.views.login import get_user, rest_logged_in
 from TexDBook.src.python.util.decorators import named
 from TexDBook.src.python.util.flask.flask_utils_types import JsonOrMessage, Route
 from TexDBook.src.python.util.flask.rest_api import rest_api, rest_api_route, unpack_json, unpack_json_request
@@ -25,6 +25,7 @@ def user_books_route(app, field):
     field_name = field + "_books"
     
     @rest_api_route(app, "/" + route_name)
+    @rest_logged_in
     @named(field_name)
     def user_books():
         # type: () -> List[Json]
@@ -36,17 +37,6 @@ def user_books_route(app, field):
 
 own_books, lent_books, borrowed_books = \
     [user_books_route(app, field) for field in ["own", "lent", "borrowed"]]  # type: Route
-
-
-# @rest_api_route(app, "/ownBooks")
-# def own_books():
-#     # type: () -> List[Json]
-#     # TODO check if this causes N + 1 query
-#     user = get_user()
-#     return [{
-#         "barcode": book.barcode,
-#         "isbn": book.isbn_book.isbn,
-#     } for book in user.owned_books]
 
 
 @rest_api
@@ -70,6 +60,7 @@ def add_book(user, book_json):
 
 
 @rest_api_route(app, "/uploadBooks")
+@rest_logged_in
 def upload_books():
     # type: () -> JsonOrMessage
     args = unpack_json_request("csrfToken", "isbns", "books")  # type: Tuple[unicode, List[Json], List[Json]]
