@@ -234,7 +234,7 @@ class User(Model):
         # keep other data safe, like the hashed password
         return super(User, self).to_dict(
             only={User.id, User.username} | kwargs.pop("only", set()), **kwargs)
-
+    
     @classmethod
     def all_users(cls):
         # type: () -> List[User]
