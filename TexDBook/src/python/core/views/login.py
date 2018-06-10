@@ -83,8 +83,5 @@ def create_account():
 
 def get_user():
     # type: () -> User
-    print(request.headers)
-    print(request.cookies)
-    print(session)
     # noinspection PyProtectedMember
     return current_user._get_current_object()

@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, session
 from typing import List, Tuple
 
 from TexDBook.src.python.core.init_app import app, default_init_app
@@ -30,6 +30,9 @@ def user_books_route(app, field):
     def user_books():
         # type: () -> List[Json]
         user = get_user()
+        print(request.headers)
+        print(request.cookies)
+        print(session)
         return [book.to_dict() for book in getattr(user, field_name)]
     
     return user_books
