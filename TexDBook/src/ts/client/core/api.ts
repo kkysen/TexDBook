@@ -150,9 +150,12 @@ export const api: TexDBookApi = {
     },
     
     async allIsbns(): Promise<Isbn[]> {
-        const {response} = await fetchJson<undefined, string[]>("/allIsbns", undefined, {
+        const {response, success} = await fetchJson<undefined, string[]>("/allIsbns", undefined, {
             cache: "reload",
         });
+        if (!success) {
+            location.reload(true);
+        }
         return (response || [])
             .map(isbn => Isbn.parse(isbn))
             .filter(isbn => isbn) as Isbn[]; // filter nulls, but there shouldn't be any

@@ -54,9 +54,12 @@ exports.api = {
         });
     },
     async allIsbns() {
-        const { response } = await fetchJson_1.fetchJson("/allIsbns", undefined, {
+        const { response, success } = await fetchJson_1.fetchJson("/allIsbns", undefined, {
             cache: "reload",
         });
+        if (!success) {
+            location.reload(true);
+        }
         return (response || [])
             .map(isbn => Isbn_1.Isbn.parse(isbn))
             .filter(isbn => isbn); // filter nulls, but there shouldn't be any
