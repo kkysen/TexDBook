@@ -243,6 +243,7 @@ class InputLists extends react_1.Component {
         Object.defineProperties(anyWindow_1.anyWindow, {
             inputs: {
                 get: this.getInputs,
+                configurable: true,
             }
         });
     }

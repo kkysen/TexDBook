@@ -433,6 +433,7 @@ export abstract class InputLists<Input, Row> extends Component<{}, {}> {
         Object.defineProperties(anyWindow, {
             inputs: {
                 get: this.getInputs,
+                configurable: true,
             }
         });
     }
