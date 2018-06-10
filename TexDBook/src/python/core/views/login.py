@@ -1,6 +1,6 @@
 from functools import wraps
 
-from flask import session
+from flask import session, request
 from flask_login import current_user, login_user, logout_user
 from typing import List, Optional
 
@@ -83,6 +83,8 @@ def create_account():
 
 def get_user():
     # type: () -> User
+    print(request.headers)
+    print(request.cookies)
     print(session)
     # noinspection PyProtectedMember
     return current_user._get_current_object()
