@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from flask import Response, render_template, request
 from flask_login import LoginManager
 from flask_paranoid import Paranoid
@@ -44,5 +46,7 @@ def rest_api_on_invalid_session():
 def index():
     # type: () -> Response
     print("INDEX")
+    # noinspection PyProtectedMember
+    print("remote address: {}".format(paranoid._get_remote_addr()))
     # print(request.__dict__)
     return render_template("index.html", debug=app.debug, csrf_token=paranoid.create_token())
