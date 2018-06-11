@@ -1,6 +1,8 @@
+from __future__ import print_function
+
 from functools import wraps
 
-from flask import Flask, Response, jsonify, request
+from flask import Flask, Response, jsonify, request, session
 from typing import Any, Callable, List, Optional
 
 from TexDBook.src.python.util.flask.flask_utils_types import JsonOrMessage, RestRoute, Route, Router
@@ -28,6 +30,10 @@ def rest_api(route):
     def wrapper(*args, **kwargs):
         # type: (Args, Kwargs) -> Json
         print("\n\n{}: {}\n\n".format("BEGIN", request.path))
+        print(request.headers)
+        print(request.cookies)
+        print(session)
+        print()
         response_or_message = route(*args, **kwargs)  # type: JsonOrMessage
         print("\n\n{}: {}\n\n".format("END", request.path))
         if isinstance(response_or_message, str):
