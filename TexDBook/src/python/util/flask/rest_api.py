@@ -27,8 +27,9 @@ def rest_api(route):
     @wraps(route)
     def wrapper(*args, **kwargs):
         # type: (Args, Kwargs) -> Json
-        print("API")
+        print("BEGIN: " + request.path)
         response_or_message = route(*args, **kwargs)  # type: JsonOrMessage
+        print("END: " + request.path)
         if isinstance(response_or_message, str):
             return {
                 "success": False,
