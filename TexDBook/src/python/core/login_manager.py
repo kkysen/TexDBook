@@ -18,6 +18,10 @@ paranoid.init_app(app)
 @paranoid.on_invalid_session
 def on_invalid_session():
     # type: () -> Response
+    print("Invalid Session")
+    print("create token: {}".format(paranoid.create_token()))
+    print("session token: {}".format(paranoid.get_token_from_session()))
+    
     if request.path == "/":
         return index()
     else:
