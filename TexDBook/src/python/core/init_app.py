@@ -1,7 +1,9 @@
 import os
-from flask import Flask
+from multiprocessing import Manager
+from multiprocessing.managers import Namespace, SyncManager
 
-from typing import List, Tuple
+from flask import Flask
+from typing import List, Tuple, Union
 
 NAME = "TexDBook"
 
@@ -29,7 +31,14 @@ app = Flask(
     static_url_path="",
 )  # type: Flask
 
-app.secret_key = os.urandom(32)
+proxy_manager = Manager()  # type: SyncManager
+proxy_namespace = proxy_manager.Namespace()  # type: Union[Namespace, {}]
+
+if not hasattr(proxy_namespace, "secret_key"):
+    proxy_namespace.secret_key = os.urandom(32)
+
+# FIXME must generate a random key that is the same for multiple processes
+app.secret_key = proxy_namespace.secret_key
 print("setting app.secret_key: {}".format(app.secret_key))
 
 app.debug = True
