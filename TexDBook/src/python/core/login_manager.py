@@ -57,7 +57,7 @@ def index():
 
 
 @override(itsdangerous)
-def constant_time_compare(_super, expected, actual):
+def constant_time_compare(_super, actual, expected):
     # type: (Callable[[str, str], bool], str, str) -> bool
     print("expected: {}\n"
           "  actual: {}\n".format(expected, actual))
@@ -68,6 +68,7 @@ def constant_time_compare(_super, expected, actual):
 def derive_key(_super, self):
     # type: (Callable[[Signer], str], Signer) -> str
     key = _super(self)
+    print("hash(app): {}".format(hash(app)))
     print("app.secret_key: {}".format(app.secret_key))
     print("derive_key: {}".format(key))
     print("key_derivation: {}".format(self.key_derivation))
