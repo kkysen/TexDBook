@@ -106,7 +106,7 @@ def constant_time_compare(_super, expected, actual):
 
 @override(Signer)
 def derive_key(_super, self):
-    # type: (Callable[[], str], Signer) -> str
-    key = _super()
+    # type: (Callable[[Signer], str], Signer) -> str
+    key = _super(self)
     print("derive_key: {}".format(key))
     return key
