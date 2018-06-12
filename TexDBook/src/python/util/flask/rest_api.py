@@ -109,4 +109,7 @@ def derive_key(_super, self):
     # type: (Callable[[Signer], str], Signer) -> str
     key = _super(self)
     print("derive_key: {}".format(key))
+    print("key_derivation: {}".format(self.key_derivation))
+    print("secret_key: {}".format(self.secret_key))
+    print("digest_method: {}".format(self.digest_method))
     return key
