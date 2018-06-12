@@ -6,3 +6,4 @@ peewee
 flask-login
 flask-paranoid
 passlib
+pprint

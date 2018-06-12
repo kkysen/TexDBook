@@ -1,11 +1,16 @@
 from __future__ import print_function
 
 from functools import wraps
+from pprint import pformat
 
+import itsdangerous
 from flask import Flask, Response, jsonify, request, session
+# noinspection PyProtectedMember
+from flask.globals import _request_ctx_stack
 from typing import Any, Callable, List, Optional
 
 from TexDBook.src.python.util.flask.flask_utils_types import JsonOrMessage, RestRoute, Route, Router
+from TexDBook.src.python.util.oop import override
 from TexDBook.src.python.util.types import Args, Json, Kwargs
 
 RestApi = Callable[[Args, Kwargs], JsonOrMessage]
@@ -30,10 +35,14 @@ def rest_api(route):
     def wrapper(*args, **kwargs):
         # type: (Args, Kwargs) -> Json
         print("\n\n{}: {}\n\n".format("BEGIN", request.path))
-        print(request.headers)
-        print(request.cookies)
-        print(session)
-        print()
+        for name, value in {
+            "request.environ": request.environ,
+            "request.headers": str(request.headers),
+            "request.cookies": request.cookies,
+            "session": session,
+            "_request_ctx_stack.top.session": _request_ctx_stack.top.session,
+        }.viewitems():
+            print("\n\n{}:\n\n{}\n\n".format(name, value if isinstance(value, str) else pformat(value)))
         response_or_message = route(*args, **kwargs)  # type: JsonOrMessage
         print("\n\n{}: {}\n\n".format("END", request.path))
         if isinstance(response_or_message, str):
@@ -84,3 +93,10 @@ def unpack_json(json, *fields):
 def unpack_json_request(*fields):
     # type: (List[str]) -> Optional[List[Any]]
     return unpack_json(request.get_json(), *fields)
+
+
+@override(itsdangerous)
+def constant_time_compare(_super, expected, actual):
+    # type: (Callable[[str, str], bool], str, str) -> bool
+    print("expected: {}\nactual: {}\n".format(expected, actual))
+    return _super(expected, actual)
