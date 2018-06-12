@@ -3,15 +3,12 @@ from __future__ import print_function
 from functools import wraps
 from pprint import pformat
 
-import itsdangerous
 from flask import Flask, Response, jsonify, request, session
 # noinspection PyProtectedMember
 from flask.globals import _request_ctx_stack
-from itsdangerous import Signer
 from typing import Any, Callable, List, Optional
 
 from TexDBook.src.python.util.flask.flask_utils_types import JsonOrMessage, RestRoute, Route, Router
-from TexDBook.src.python.util.oop import override
 from TexDBook.src.python.util.types import Args, Json, Kwargs
 
 RestApi = Callable[[Args, Kwargs], JsonOrMessage]
@@ -94,22 +91,3 @@ def unpack_json(json, *fields):
 def unpack_json_request(*fields):
     # type: (List[str]) -> Optional[List[Any]]
     return unpack_json(request.get_json(), *fields)
-
-
-@override(itsdangerous)
-def constant_time_compare(_super, expected, actual):
-    # type: (Callable[[str, str], bool], str, str) -> bool
-    print("expected: {}\n"
-          "  actual: {}\n".format(expected, actual))
-    return _super(expected, actual)
-
-
-@override(Signer)
-def derive_key(_super, self):
-    # type: (Callable[[Signer], str], Signer) -> str
-    key = _super(self)
-    print("derive_key: {}".format(key))
-    print("key_derivation: {}".format(self.key_derivation))
-    print("secret_key: {}".format(self.secret_key))
-    print("digest_method: {}".format(self.digest_method))
-    return key
