@@ -7,6 +7,7 @@ import itsdangerous
 from flask import Flask, Response, jsonify, request, session
 # noinspection PyProtectedMember
 from flask.globals import _request_ctx_stack
+from itsdangerous import Signer
 from typing import Any, Callable, List, Optional
 
 from TexDBook.src.python.util.flask.flask_utils_types import JsonOrMessage, RestRoute, Route, Router
@@ -98,5 +99,14 @@ def unpack_json_request(*fields):
 @override(itsdangerous)
 def constant_time_compare(_super, expected, actual):
     # type: (Callable[[str, str], bool], str, str) -> bool
-    print("expected: {}\nactual: {}\n".format(expected, actual))
+    print("expected: {}\n"
+          "  actual: {}\n".format(expected, actual))
     return _super(expected, actual)
+
+
+@override(Signer)
+def derive_key(_super, self):
+    # type: (Callable[[], str], Signer) -> str
+    key = _super()
+    print("derive_key: {}".format(key))
+    return key
