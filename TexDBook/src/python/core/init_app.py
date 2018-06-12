@@ -30,6 +30,7 @@ app = Flask(
 )  # type: Flask
 
 app.secret_key = os.urandom(32)
+print("setting app.secret_key: {}".format(app.secret_key))
 
 app.debug = True
 
