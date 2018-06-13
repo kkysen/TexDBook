@@ -1,6 +1,7 @@
 # TexDBook
 
-### By Khyber Sen, Adam Abbas, Naotaka Kinoshita, and Vivien Lee
+### By Team Mr. Brown I Don't Feel So Good:
+### Khyber Sen, Adam Abbas, Naotaka Kinoshita, and Vivien Lee
 
 [Click here to go to TexDBook](http://206.189.226.167/)
 
