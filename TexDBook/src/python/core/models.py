@@ -201,7 +201,6 @@ class User(Model):
         # type: (unicode) -> User
         user = cls.get_or_none(id=int(user_id))
         user.is_authenticated = True
-        user.hashed_password = None  # make sure to not leak this
         # print("load user", user)
         return user
     
