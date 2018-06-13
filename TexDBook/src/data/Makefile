@@ -7,4 +7,5 @@ database:
 	chmod 0664 TexDBook.db
 
 secret_key:
+	chmod 0664 .
 	rm -f secret_key.txt
