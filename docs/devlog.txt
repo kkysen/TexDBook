@@ -355,3 +355,32 @@ This way, all passwords sent are pre-hashed and still mostly secure
 even though HTTPS is not being used.
 
 ============================================================
+khyberS -- 2018-06-12 03:25:00
+
+I finally fixed the stupid random logout bug.
+It only took me like 10+ hours to find and fix.
+
+The problem is that Apache and mod_wsgi run multiple processes of the Python program,
+processes that are completely separate and share no memory.
+One of the processes randomly responds to a request,
+and when there are many concurrent requests,
+it's more likely that multiple processes will be used.
+
+Since multiple processes are running, all the memory in each are completely separate.
+Only things saved to disk or explicitly shared using IPC or shared memory are shared.
+This means that app.secret_key = os.urandom(32)
+generated different secret keys for different processes.
+
+This caused Flask to generate different keys and signatures when decoding the cookie.
+Even though the same session cookie was sent on different requests,
+some of the requests were received by a different process with a different secret key,
+causing the signature verification to fail and the session cookie erased.
+
+I tried using Manager and Namespace in multiprocessing, but it didn't work out well,
+so I'm just storing the secret_key in a file.
+If the secret_key file doesn't exist yet, a secret_key is generated and written to the file.
+If the file already exists, it's read and used as the secret_key.
+This way all processes use the same random secret_key
+and finally the bug goes away.
+
+============================================================

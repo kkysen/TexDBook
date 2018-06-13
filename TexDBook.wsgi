@@ -11,4 +11,4 @@ from TexDBook import create_app
 
 application, name = create_app()
 application.debug = False
-print("application.debug: {}".format(application.debug))
+# print("application.debug: {}".format(application.debug))
