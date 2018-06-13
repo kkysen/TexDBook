@@ -73,6 +73,8 @@ export class ViewBooks extends Component<{}, ViewBooksState> {
                     <br/>
                     ISBN: {isbn}
                     <br/>
+                    Barcode: {barcode}
+                    <br/>
                     Department: {department}
                     <br/>
                     <br/>

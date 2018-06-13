@@ -25,9 +25,13 @@ export class ViewUsers extends Component<{}, ViewUsersState> {
     public render(): ReactNode {
         return (<div style={{margin: 100}}>
             <div style={{fontSize: 30}}>All Users</div>
-            {this.state.users.map(({username}) => (
-                <div key={username}>
-                    {username}
+            {this.state.users.map(({id, username}) => (
+                <div key={id}>
+                    Username: {username}
+                    <br/>
+                    Id: {id}
+                    <br/>
+                    <br/>
                 </div>
             ))}
         </div>);

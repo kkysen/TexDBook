@@ -2,8 +2,8 @@ import json
 from datetime import datetime
 
 # noinspection PyProtectedMember
-from peewee import Alias, Database, DateTimeField, Field, FixedCharField, FloatField, ForeignKeyField, IntegerField, \
-    ManyToManyField, TextField
+from peewee import Alias, BooleanField, Database, DateTimeField, Field, FixedCharField, FloatField, ForeignKeyField, \
+    IntegerField, ManyToManyField, TextField
 from playhouse.flask_utils import FlaskDB
 from playhouse.hybrid import hybrid_property
 # noinspection PyProtectedMember
@@ -16,7 +16,7 @@ from TexDBook.src.python.core.login_manager import login_manager
 from TexDBook.src.python.util.annotations import override as mark_override
 from TexDBook.src.python.util.flask.rest_api import unpack_json
 from TexDBook.src.python.util.oop import override
-from TexDBook.src.python.util.password import hash_password, verify_password
+from TexDBook.src.python.util.password import hash_password, sha256, verify_password
 from TexDBook.src.python.util.types import Json
 
 init_app = default_init_app
@@ -178,11 +178,12 @@ class User(Model):
     username = TextField()
     hashed_password = TextField()
     balance = IntegerField(default=0)
+    is_admin = BooleanField(default=False)
     
     @classmethod
-    def create(cls, username, password):
+    def create(cls, username, password, is_admin=False):
         # type: (unicode, unicode) -> User
-        return super(User, cls).create(username=username, hashed_password=hash_password(password))
+        return super(User, cls).create(username=username, hashed_password=hash_password(password), is_admin=is_admin)
     
     def __init__(self, **kwargs):
         # type: (Dict[str, Any]) -> None
@@ -201,7 +202,7 @@ class User(Model):
         user = cls.get_or_none(id=int(user_id))
         user.is_authenticated = True
         user.hashed_password = None  # make sure to not leak this
-        print("load user", user)
+        # print("load user", user)
         return user
     
     @classmethod
@@ -213,12 +214,12 @@ class User(Model):
         return None
     
     @classmethod
-    def login_or_create(cls, username, password):
+    def login_or_create(cls, username, password, is_admin=False):
         # type: (unicode, unicode) -> Tuple[User, bool]
         user = cls.login(username, password)
         if user is not None:
             return user, False
-        return cls.create(username, password), True
+        return cls.create(username, password, is_admin), True
     
     def add_book(self, barcode, isbn):
         # type: (unicode, unicode) -> Tuple[Book, bool]
@@ -233,7 +234,7 @@ class User(Model):
         # type: () -> Json
         # keep other data safe, like the hashed password
         return super(User, self).to_dict(
-            only={User.id, User.username} | kwargs.pop("only", set()), **kwargs)
+            only={User.id, User.username, User.is_admin} | kwargs.pop("only", set()), **kwargs)
     
     @classmethod
     def all_users(cls):
@@ -444,7 +445,7 @@ class Transaction(Model):
     payment = IntegerField()
     
     @classmethod
-    def create(cls, book, borrower, payment):
+    def create(cls, book, borrower, payment=0):
         # type: (Book, User, int) -> Transaction
         """Make a transaction."""
         with db.atomic():
@@ -488,9 +489,7 @@ def setup_db():
     ])
     print(db)
     
-    username = "Khyber"
-    password = "5e9708d50aa3cef560fa6a6d47787e44aae25d19de9bb06a9f653939df82881b"  # SHA256 of "Sen"
-    user, created = User.login_or_create(username, password)
+    user, created = User.login_or_create("Khyber", sha256("Sen"), is_admin=True)
     IsbnBook.get_or_create({
         "isbn": "9780262033848",
         "department": "Computer Science",
@@ -512,6 +511,9 @@ def setup_db():
     print(user.add_book("123", "9780262033848"))
     
     print(user)
+    
+    User.login_or_create("Sen", sha256("Khyber"))
+    
     print("Done")
 
 

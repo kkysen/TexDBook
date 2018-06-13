@@ -4,7 +4,7 @@ from flask import Flask
 
 from TexDBook.src.python.core import login_manager, models, static_gzip
 from TexDBook.src.python.core.init_app import NAME, app, resolve_path
-from TexDBook.src.python.core.views import books, data, login, users
+from TexDBook.src.python.core.views import books, data, login, users, transactions
 from TexDBook.src.python.util.flask.template_context import add_template_context
 
 
@@ -21,7 +21,7 @@ def create_app():
     
     app.debug = True
     
-    for module in [models, login_manager, static_gzip, data, login, books, users]:
+    for module in [models, login_manager, static_gzip, data, login, books, users, transactions]:
         module.init_app(app)
     
     add_template_context(app)

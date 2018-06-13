@@ -132,6 +132,16 @@ exports.api = {
             link,
         };
     },
+    async makeTransaction(borrowing, otherUserId, barcode) {
+        const { success, message, response } = await fetchJson_1.fetchJson("/makeTransaction", {
+            borrowing,
+            otherUserId,
+            barcode,
+        });
+        if (!success) {
+            alert(message);
+        }
+    },
 };
 anyWindow_1.anyWindow.api = exports.api;
 //# sourceMappingURL=api.js.map

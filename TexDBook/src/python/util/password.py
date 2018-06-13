@@ -1,3 +1,5 @@
+import hashlib
+
 from passlib.handlers.pbkdf2 import pbkdf2_sha256
 from typing import AnyStr
 
@@ -14,3 +16,10 @@ def verify_password(plain_password, hashed_password):
     # type: (AnyStr) -> bool
     """Verify if plain password matches the hashed password."""
     return password_hasher.verify(plain_password, hashed_password)
+
+
+def sha256(s):
+    # type: (str) -> str
+    sha = hashlib.sha256()
+    sha.update(s)
+    return sha.hexdigest()

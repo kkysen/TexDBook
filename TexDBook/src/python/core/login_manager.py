@@ -1,7 +1,5 @@
 from __future__ import print_function
 
-from hashlib import sha256
-
 from flask import Response, render_template, request
 from flask_login import LoginManager
 from flask_paranoid import Paranoid
@@ -11,6 +9,7 @@ from TexDBook.src.python.core.init_app import app, default_init_app
 from TexDBook.src.python.util.flask.flask_utils_types import JsonOrMessage
 from TexDBook.src.python.util.flask.rest_api import json, rest_api
 from TexDBook.src.python.util.oop import override
+from TexDBook.src.python.util.password import sha256
 
 init_app = default_init_app
 
@@ -36,9 +35,7 @@ paranoid.init_app(app)
 def create_token(_super, self):
     # type: (Callable[[], str], Paranoid) -> str
     """Need to override this b/c IP addresses keep changing and invalidating sessions."""
-    hash = sha256()
-    hash.update(request.headers.get("User-Agent", ""))
-    return hash.hexdigest()
+    return sha256(request.headers.get("User-Agent", ""))
 
 
 @paranoid.on_invalid_session

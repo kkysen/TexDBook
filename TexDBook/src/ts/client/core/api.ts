@@ -2,7 +2,6 @@ import {Barcode, Book} from "../../share/core/Book";
 import {Isbn} from "../../share/core/Isbn";
 import {IsbnBook} from "../../share/core/IsbnBook";
 import {User} from "../../share/core/User";
-import {sleep} from "../../share/util/utils";
 import {anyWindow} from "../util/anyWindow";
 import {fetchJson, RestResponse} from "../util/fetch/fetchJson";
 import {SHA} from "../util/hash";
@@ -99,6 +98,8 @@ export interface TexDBookApi {
     uploadBooks(books: BookUpload[]): Promise<BookUploadResponse[]>;
     
     resolveIsbn(isbn: Isbn): Promise<IsbnBook>;
+    
+    makeTransaction(borrowing: boolean, otherUserId: number, barcode: string): Promise<void>;
     
 }
 
@@ -263,6 +264,17 @@ export const api: TexDBookApi = {
             infoLink,
             link,
         };
+    },
+    
+    async makeTransaction(borrowing: boolean, otherUserId: number, barcode: string): Promise<void> {
+        const {success, message, response} = await fetchJson("/makeTransaction", {
+            borrowing,
+            otherUserId,
+            barcode,
+        });
+        if (!success) {
+            alert(message);
+        }
     },
     
 };

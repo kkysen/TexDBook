@@ -384,3 +384,34 @@ This way all processes use the same random secret_key
 and finally the bug goes away.
 
 ============================================================
+khyberS -- 2018-06-13 06:33:00
+
+Fixed the invalid session bug, which wasn't really a bug.
+It turns out my IP address kept changing,
+so the csrfToken kept changing b/c it's calculated partially from the client's IP address,
+and this caused the invalidated session.
+I just changed the csrfToken generator function to not use the client's IP address.
+It's not nearly as secure, but it works for now,
+and I don't see how to get around a changing IP address.
+
+I got account creation and basic transactions to work.
+For now, admin accounts can only be created through Python,
+not through the website, so not anyone can create an admin account.
+
+To make a transaction, i.e. exchange/trade a textbook,
+you select if you're lending or borrowing, enter the other user's ID,
+which you can get from viewing All Users (not ideal, but I don't have time),
+and the barcode of the book.
+The server then checks everything and makes the transaction if it's valid.
+
+Only admin's are allowed to make transactions for now.
+Ideally, anyone will be able to propose a transaction,
+and it will only go through if the other user confirms it (admin doesn't matter),
+but I don't have time to do that.
+
+After making a transaction, you can view the moved books under View Books.
+For example, if you own a book (so it'll show up under owned, lent, and borrowed),
+and then lend it to another user, it'll now no longer show up under borrowed,
+but it'll only show up under borrowed of the user you lent it to.
+
+============================================================

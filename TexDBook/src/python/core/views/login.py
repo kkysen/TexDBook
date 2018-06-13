@@ -72,7 +72,7 @@ def create_account():
     message = None  # type: Optional[str]
     if password != password_confirmation:
         message = "Passwords don't match"
-    user, created = User.get_or_create(username=username, password=password)  # type: User, bool
+    user, created = User.login_or_create(username=username, password=password)  # type: User, bool
     if not created:
         message = "Username \"{}\" already taken".format(username)
     if message is not None:

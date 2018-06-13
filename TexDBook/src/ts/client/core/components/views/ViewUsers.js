@@ -24,7 +24,14 @@ let ViewUsers = class ViewUsers extends react_1.Component {
     render() {
         return (React.createElement("div", { style: { margin: 100 } },
             React.createElement("div", { style: { fontSize: 30 } }, "All Users"),
-            this.state.users.map(({ username }) => (React.createElement("div", { key: username }, username)))));
+            this.state.users.map(({ id, username }) => (React.createElement("div", { key: id },
+                "Username: ",
+                username,
+                React.createElement("br", null),
+                "Id: ",
+                id,
+                React.createElement("br", null),
+                React.createElement("br", null))))));
     }
 };
 ViewUsers = __decorate([
