@@ -14,5 +14,5 @@ __pycache__/
 
 # generated
 #TexDBook.conf
-src/data/favicon.ico
-src/data/secret_key.txt
+TexDBook/src/data/favicon.ico
+TexDBook/data/secret_key.txt
