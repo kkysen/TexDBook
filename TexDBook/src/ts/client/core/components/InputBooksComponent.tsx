@@ -63,7 +63,7 @@ export class InputBooksComponent extends InputLists<InputDepartment, InputBook> 
                             </div>);
                             return {
                                 before: (<div>
-                                    <a href={link}>
+                                    <a href={link} target="_blank">
                                         {image ? img : alt}
                                     </a>
                                 </div>),

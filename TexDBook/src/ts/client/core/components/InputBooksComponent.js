@@ -34,7 +34,7 @@ class InputBooksComponent extends InputLists_1.InputLists {
                                 `by ${utils_1.joinWords(authors)}`));
                             return {
                                 before: (React.createElement("div", null,
-                                    React.createElement("a", { href: link }, image ? img : alt))),
+                                    React.createElement("a", { href: link, target: "_blank" }, image ? img : alt))),
                             };
                         }
                         catch (e) {
