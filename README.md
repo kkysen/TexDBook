@@ -8,12 +8,13 @@
 
 ### For Deployment
 Run `wget -qO- https://raw.githubusercontent.com/kkysen/TexDBook/master/scripts/install.sh | bash`.
-This script installs the necessary dependencies,
-clones or pulls this repo into `/var/www/TexDBook`,
-runs `make install`,
-generates the conf file `TexDBook.conf` and copies it to `/etc/apache2/sites-available/`,
-enables the site with `a2ensite`,
-and reloads Apache with `service apache2 reload`.
+This script:
+    - installs the necessary dependencies,
+    - clones or pulls this repo into `/var/www/TexDBook`,
+    - runs `make install`, which installs more dependencies and sets up some data files,
+    - generates the conf file `TexDBook.conf` and copies it to `/etc/apache2/sites-available/`,
+    - enables the site with `a2ensite`,
+    - and reloads Apache with `service apache2 reload`.
 
 ### For Development
 
