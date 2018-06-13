@@ -33,6 +33,17 @@ export class Home extends Component {
                 so ask an admin to make the transaction for you.
                 {br(2)}
                 Click <b>Logout</b>, where you can click a Logout button to log out.
+                {br(3)}
+                <iframe
+                    width="560"
+                    height="315"
+                    src="https://www.youtube.com/embed/2NNeKi9yK8Y"
+                    frameBorder="0"
+                    {...{allow: "autoplay; encrypted-media"}}
+                    allowFullScreen
+                >
+                
+                </iframe>
             </div>
         );
     }

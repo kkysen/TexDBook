@@ -39,7 +39,9 @@ let Home = class Home extends react_1.Component {
             br(2),
             "Click ",
             React.createElement("b", null, "Logout"),
-            ", where you can click a Logout button to log out."));
+            ", where you can click a Logout button to log out.",
+            br(3),
+            React.createElement("iframe", Object.assign({ width: "560", height: "315", src: "https://www.youtube.com/embed/2NNeKi9yK8Y", frameBorder: "0" }, { allow: "autoplay; encrypted-media" }, { allowFullScreen: true }))));
     }
 };
 Home = __decorate([

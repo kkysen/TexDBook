@@ -5,6 +5,8 @@
 
 [Click here to go to TexDBook](http://206.189.226.167/)
 
+Watch a [demo](https://www.youtube.com/watch?v=2NNeKi9yK8Y) of TexDBook (also on the website itself).
+
 ## How To Run
 
 ### For Deployment
