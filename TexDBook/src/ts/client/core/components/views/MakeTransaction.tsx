@@ -6,9 +6,14 @@ import {named} from "../../../../share/util/decorators/named";
 @named("MakeTransaction")
 export class MakeTransaction extends Component {
     
-    render(): ReactNode {
+    
+    
+    public render(): ReactNode {
         return (
-            <div>Make Transaction</div>
+            <div>
+                Make Transaction
+            
+            </div>
         );
     }
     

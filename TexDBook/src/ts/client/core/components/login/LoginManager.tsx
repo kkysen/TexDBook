@@ -51,9 +51,6 @@ export class LoginManager extends Component<{}, IsLoggedIn> {
             <div>
                 {this.renderLogin()}
                 <Repeat times={5} render={() => <br/>}/>
-                <div style={{alignContent: "center", alignItems: "center", textAlign: "center"}}>
-                    © Khyber Sen 2018
-                </div>
             </div>
         );
     }

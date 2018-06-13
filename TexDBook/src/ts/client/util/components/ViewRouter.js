@@ -48,7 +48,7 @@ class ViewRouter extends react_1.Component {
                 React.createElement(reactstrap_1.Navbar, { color: "light", light: true, expand: "md" },
                     React.createElement(reactstrap_1.NavbarBrand, { href: "/" }, name),
                     React.createElement(reactstrap_1.Nav, { navbar: true, justified: true, className: "ml-auto" }, links)),
-                React.createElement("div", null, routes))));
+                React.createElement("div", { style: { margin: 50 } }, routes))));
     }
 }
 exports.ViewRouter = ViewRouter;

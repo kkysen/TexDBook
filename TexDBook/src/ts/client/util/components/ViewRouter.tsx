@@ -87,7 +87,7 @@ export class ViewRouter extends Component<ViewRouterProps, {}> {
                         {links}
                     </Nav>
                 </Navbar>
-                <div>
+                <div style={{margin: 50}}>
                     {routes}
                 </div>
             </div>

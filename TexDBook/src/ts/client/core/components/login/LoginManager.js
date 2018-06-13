@@ -44,8 +44,7 @@ class LoginManager extends react_1.Component {
     render() {
         return (React.createElement("div", null,
             this.renderLogin(),
-            React.createElement(Repeat_1.Repeat, { times: 5, render: () => React.createElement("br", null) }),
-            React.createElement("div", { style: { alignContent: "center", alignItems: "center", textAlign: "center" } }, "\u00A9 Khyber Sen 2018")));
+            React.createElement(Repeat_1.Repeat, { times: 5, render: () => React.createElement("br", null) })));
     }
 }
 exports.LoginManager = LoginManager;
