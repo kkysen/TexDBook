@@ -23,6 +23,9 @@ def on_invalid_session():
     print("Invalid Session")
     print(paranoid.create_token())
     print(paranoid.get_token_from_session())
+    print(request.headers.get("User-Agent"))
+    print(request.headers.get("X-Forwarded-For"))
+    print(request.remote_addr)
     # print()
     # noinspection PyProtectedMember
     # print("remote address: {}".format(paranoid._get_remote_addr()))
