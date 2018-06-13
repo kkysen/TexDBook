@@ -21,6 +21,11 @@ paranoid.init_app(app)
 @override(Paranoid)
 def write_token_to_session(_super, self, token):
     print("writing token: " + token)
+    print(paranoid.create_token())
+    print(paranoid.get_token_from_session())
+    print(request.headers.get("User-Agent"))
+    print(request.headers.get("X-Forwarded-For"))
+    print(request.remote_addr)
     return _super(self, token)
 
 
