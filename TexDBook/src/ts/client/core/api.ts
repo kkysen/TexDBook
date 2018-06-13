@@ -156,7 +156,7 @@ export const api: TexDBookApi = {
         });
         if (!success) {
             await sleep(10);
-            location.reload(true);
+            // location.reload(true);
         }
         return (response || [])
             .map(isbn => Isbn.parse(isbn))

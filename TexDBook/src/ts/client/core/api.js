@@ -60,7 +60,7 @@ exports.api = {
         });
         if (!success) {
             await utils_1.sleep(10);
-            location.reload(true);
+            // location.reload(true);
         }
         return (response || [])
             .map(isbn => Isbn_1.Isbn.parse(isbn))

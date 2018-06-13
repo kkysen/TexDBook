@@ -21,6 +21,8 @@ paranoid.init_app(app)
 def on_invalid_session():
     # type: () -> Response
     print("Invalid Session")
+    print(paranoid.create_token())
+    print(paranoid.get_token_from_session())
     # print()
     # noinspection PyProtectedMember
     # print("remote address: {}".format(paranoid._get_remote_addr()))
