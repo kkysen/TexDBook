@@ -2,6 +2,7 @@ import {Barcode, Book} from "../../share/core/Book";
 import {Isbn} from "../../share/core/Isbn";
 import {IsbnBook} from "../../share/core/IsbnBook";
 import {User} from "../../share/core/User";
+import {sleep} from "../../share/util/utils";
 import {anyWindow} from "../util/anyWindow";
 import {fetchJson, RestResponse} from "../util/fetch/fetchJson";
 import {SHA} from "../util/hash";
@@ -154,6 +155,7 @@ export const api: TexDBookApi = {
             cache: "reload",
         });
         if (!success) {
+            await sleep(10);
             location.reload(true);
         }
         return (response || [])

@@ -73,3 +73,7 @@ export const mapInput = function(input: HTMLInputElement, charMappers: CharMappe
         return "";
     }).join("");
 };
+
+export const sleep = function(seconds: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, seconds * 1000));
+};
