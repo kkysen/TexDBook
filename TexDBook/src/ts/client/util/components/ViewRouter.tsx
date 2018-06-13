@@ -60,7 +60,7 @@ export class ViewRouter extends Component<ViewRouterProps, {}> {
         
         const links: ReactNode[] = views.map(({name, path}) => (
             <NavItem key={name}>
-                <RouterNavLink to={path}>
+                <RouterNavLink to={path} exact>
                     {name}
                 </RouterNavLink>
             </NavItem>

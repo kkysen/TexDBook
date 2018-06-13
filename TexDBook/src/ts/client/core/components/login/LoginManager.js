@@ -11,6 +11,7 @@ const MakeTransaction_1 = require("../views/MakeTransaction");
 const UploadBooks_1 = require("../views/UploadBooks");
 const ViewBooks_1 = require("../views/ViewBooks");
 const ViewUsers_1 = require("../views/ViewUsers");
+const Welcome_1 = require("../views/Welcome");
 const CreateAccount_1 = require("./CreateAccount");
 const Login_1 = require("./Login");
 const Logout_1 = require("./Logout");
@@ -31,11 +32,25 @@ class LoginManager extends react_1.Component {
         const { bindLogin, state: { isLoggedIn } } = this;
         if (isLoggedIn) {
             return React.createElement(ViewRouter_1.ViewRouter, { name: "TexDBook", views: [
-                    Home_1.Home, UploadBooks_1.UploadBooks, ViewBooks_1.ViewBooks, ViewUsers_1.ViewUsers, MakeTransaction_1.MakeTransaction, bindLogin(Logout_1.Logout)
+                    {
+                        path: "/",
+                        render: () => location.hash.endsWith("/") && React.createElement(Home_1.Home, null),
+                        name: Home_1.Home.name,
+                    },
+                    UploadBooks_1.UploadBooks,
+                    ViewBooks_1.ViewBooks,
+                    ViewUsers_1.ViewUsers,
+                    MakeTransaction_1.MakeTransaction,
+                    bindLogin(Logout_1.Logout),
                 ] });
         }
         else {
             return React.createElement(ViewRouter_1.ViewRouter, { name: "TexDBook", views: [
+                    {
+                        path: "/",
+                        render: () => location.hash.endsWith("/") && React.createElement(Welcome_1.Welcome, null),
+                        name: Welcome_1.Welcome.name,
+                    },
                     bindLogin(Login_1.Login),
                     bindLogin(CreateAccount_1.CreateAccount),
                 ] });

@@ -415,3 +415,10 @@ and then lend it to another user, it'll now no longer show up under borrowed,
 but it'll only show up under borrowed of the user you lent it to.
 
 ============================================================
+khyberS -- 2018-06-13 06:33:00
+
+Added instructions on Welcome and Home pages.
+
+Making demo video now.
+
+============================================================

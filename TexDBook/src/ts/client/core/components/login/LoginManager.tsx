@@ -9,6 +9,7 @@ import {MakeTransaction} from "../views/MakeTransaction";
 import {UploadBooks} from "../views/UploadBooks";
 import {ViewBooks} from "../views/ViewBooks";
 import {ViewUsers} from "../views/ViewUsers";
+import {Welcome} from "../views/Welcome";
 import {CreateAccount} from "./CreateAccount";
 import {Login} from "./Login";
 import {LoginProps} from "./LoginComponent";
@@ -36,10 +37,24 @@ export class LoginManager extends Component<{}, IsLoggedIn> {
         const {bindLogin, state: {isLoggedIn}} = this;
         if (isLoggedIn) {
             return <ViewRouter name="TexDBook" views={[
-                Home, UploadBooks, ViewBooks, ViewUsers, MakeTransaction, bindLogin(Logout)
+                {
+                    path: "/",
+                    render: () => location.hash.endsWith("/") && <Home/>,
+                    name: Home.name,
+                },
+                UploadBooks,
+                ViewBooks,
+                ViewUsers,
+                MakeTransaction,
+                bindLogin(Logout),
             ]}/>;
         } else {
             return <ViewRouter name="TexDBook" views={[
+                {
+                    path: "/",
+                    render: () => location.hash.endsWith("/") && <Welcome/>,
+                    name: Welcome.name,
+                },
                 bindLogin(Login),
                 bindLogin(CreateAccount),
             ]}/>;

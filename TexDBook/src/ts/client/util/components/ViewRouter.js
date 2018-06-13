@@ -38,7 +38,7 @@ class ViewRouter extends react_1.Component {
     render() {
         const views = this.strictViews();
         const links = views.map(({ name, path }) => (React.createElement(reactstrap_1.NavItem, { key: name },
-            React.createElement(RouterNavLink_1.RouterNavLink, { to: path }, name))));
+            React.createElement(RouterNavLink_1.RouterNavLink, { to: path, exact: true }, name))));
         const routes = views.map(({ name, path, render }) => {
             return (React.createElement(react_router_1.Route, { key: name, path: path, render: render }));
         });
