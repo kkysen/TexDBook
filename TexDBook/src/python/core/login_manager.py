@@ -66,7 +66,10 @@ def index():
     # noinspection PyProtectedMember
     # print("remote address: {}".format(paranoid._get_remote_addr()))
     # print(request.__dict__)
-    return render_template("index.html", debug=app.debug, csrf_token=paranoid.create_token())
+    print("\n{}: {}\n".format("BEGIN", request.path))
+    response = render_template("index.html", debug=app.debug, csrf_token=paranoid.create_token())
+    print("\n{}: {}\n".format("END", request.path))
+    return response
 
 # @override(itsdangerous)
 # def constant_time_compare(_super, actual, expected):

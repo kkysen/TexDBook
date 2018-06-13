@@ -1,6 +1,5 @@
 from functools import wraps
 
-from flask import session, request
 from flask_login import current_user, login_user, logout_user
 from typing import List, Optional
 
