@@ -4,7 +4,7 @@ const CleanWebpackPlugin = require("clean-webpack-plugin");
 const WebpackCleanupPlugin = require("webpack-cleanup-plugin");
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
 
-const production = false;
+const production = true;
 const mode = production ? "production" : "development";
 
 module.exports = {
