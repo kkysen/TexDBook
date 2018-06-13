@@ -5,3 +5,4 @@ favicon:
 
 database:
 	chmod 0666 TexDBook.db
+	chmod o+w .
