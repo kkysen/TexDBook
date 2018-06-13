@@ -24,5 +24,5 @@ Run `wget -qO- https://raw.githubusercontent.com/kkysen/TexDBook/master/scripts/
 To compile and bundle (using Webpack) the TypeScript and any other JavaScript,
 you need [```node```](https://nodejs.org/en/download/current/) and ```npm```.<br>
 Once ```npm``` is installed, run ```make compile-install``` to install ```npm``` dependencies.<br>
-Then run ```make js``` or ```npm run watch```,
+Then run ```make js```,
 which makes Webpack watch all the files and recompile them if anything changes.

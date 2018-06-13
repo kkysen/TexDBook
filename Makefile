@@ -11,3 +11,11 @@ install:
 	make setup
 	cd TexDBook/src/data; make all
 
+install-compile:
+	cd TexDBook; make install-compile
+
+js:
+	cd TexDBook; make js
+
+run:
+	python TexDBook.py
