@@ -1,14 +1,8 @@
 {
   "name": "TexDBook",
   "version": "1.0.0",
-  "description": "Buying and Selling Textbooks",
+  "description": "Managing and Trading Textbooks",
   "author": "Khyber Sen",
-  "contributors": [
-    "Khyber Sen",
-    "Adam Abbas",
-    "Naotaka Kinoshita",
-    "Vivien Lee"
-  ],
   "license": "MIT",
   "repository": {
     "type": "git",

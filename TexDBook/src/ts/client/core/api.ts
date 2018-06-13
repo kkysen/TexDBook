@@ -155,8 +155,8 @@ export const api: TexDBookApi = {
             cache: "reload",
         });
         if (!success) {
-            await sleep(10);
             // location.reload(true);
+            // shouldn't need to reload anymore, "fixed" invalid session bug on backend
         }
         return (response || [])
             .map(isbn => Isbn.parse(isbn))

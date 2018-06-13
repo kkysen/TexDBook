@@ -13,6 +13,6 @@ __pycache__/
 **/node_modules/
 
 # generated
-TexDBook.conf
+#TexDBook.conf
 src/data/favicon.ico
 src/data/secret_key.txt

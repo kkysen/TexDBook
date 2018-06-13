@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Isbn_1 = require("../../share/core/Isbn");
-const utils_1 = require("../../share/util/utils");
 const anyWindow_1 = require("../util/anyWindow");
 const fetchJson_1 = require("../util/fetch/fetchJson");
 const hash_1 = require("../util/hash");
@@ -59,8 +58,8 @@ exports.api = {
             cache: "reload",
         });
         if (!success) {
-            await utils_1.sleep(10);
             // location.reload(true);
+            // shouldn't need to reload anymore, "fixed" invalid session bug on backend
         }
         return (response || [])
             .map(isbn => Isbn_1.Isbn.parse(isbn))

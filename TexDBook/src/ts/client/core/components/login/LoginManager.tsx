@@ -4,15 +4,15 @@ import {bindProps} from "../../../util/bindProps";
 import {Repeat} from "../../../util/components/Repeat";
 import {ViewRouter} from "../../../util/components/ViewRouter";
 import {IsLoggedIn, TexDBook} from "../../TexDBook";
-import {ViewUsers} from "../views/ViewUsers";
-import {CreateAccount} from "./CreateAccount";
 import {Home} from "../views/Home";
-import {Login} from "./Login";
-import {LoginProps} from "./LoginComponent";
-import {Logout} from "./Logout";
 import {MakeTransaction} from "../views/MakeTransaction";
 import {UploadBooks} from "../views/UploadBooks";
 import {ViewBooks} from "../views/ViewBooks";
+import {ViewUsers} from "../views/ViewUsers";
+import {CreateAccount} from "./CreateAccount";
+import {Login} from "./Login";
+import {LoginProps} from "./LoginComponent";
+import {Logout} from "./Logout";
 
 
 export class LoginManager extends Component<{}, IsLoggedIn> {
@@ -51,6 +51,9 @@ export class LoginManager extends Component<{}, IsLoggedIn> {
             <div>
                 {this.renderLogin()}
                 <Repeat times={5} render={() => <br/>}/>
+                <div style={{alignContent: "center", alignItems: "center", textAlign: "center"}}>
+                    © Khyber Sen 2018
+                </div>
             </div>
         );
     }

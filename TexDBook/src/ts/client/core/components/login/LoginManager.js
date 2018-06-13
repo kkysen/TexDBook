@@ -6,14 +6,14 @@ const bindProps_1 = require("../../../util/bindProps");
 const Repeat_1 = require("../../../util/components/Repeat");
 const ViewRouter_1 = require("../../../util/components/ViewRouter");
 const TexDBook_1 = require("../../TexDBook");
-const ViewUsers_1 = require("../views/ViewUsers");
-const CreateAccount_1 = require("./CreateAccount");
 const Home_1 = require("../views/Home");
-const Login_1 = require("./Login");
-const Logout_1 = require("./Logout");
 const MakeTransaction_1 = require("../views/MakeTransaction");
 const UploadBooks_1 = require("../views/UploadBooks");
 const ViewBooks_1 = require("../views/ViewBooks");
+const ViewUsers_1 = require("../views/ViewUsers");
+const CreateAccount_1 = require("./CreateAccount");
+const Login_1 = require("./Login");
+const Logout_1 = require("./Logout");
 class LoginManager extends react_1.Component {
     constructor(props) {
         super(props);
@@ -44,7 +44,8 @@ class LoginManager extends react_1.Component {
     render() {
         return (React.createElement("div", null,
             this.renderLogin(),
-            React.createElement(Repeat_1.Repeat, { times: 5, render: () => React.createElement("br", null) })));
+            React.createElement(Repeat_1.Repeat, { times: 5, render: () => React.createElement("br", null) }),
+            React.createElement("div", { style: { alignContent: "center", alignItems: "center", textAlign: "center" } }, "\u00A9 Khyber Sen 2018")));
     }
 }
 exports.LoginManager = LoginManager;
