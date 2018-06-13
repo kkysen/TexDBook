@@ -1,4 +1,4 @@
-all: favicon database secret_key
+all: favicon database
 
 favicon:
 	cp CLRS.jpg favicon.ico
