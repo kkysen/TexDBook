@@ -28,17 +28,6 @@ app = Flask(
     static_url_path="",
 )  # type: Flask
 
-secret_key_path = resolve_path("data", "secret_key.txt")
-if os.path.exists(secret_key_path):
-    with open(secret_key_path) as secret_key:
-        app.secret_key = secret_key.read()
-else:
-    app.secret_key = os.urandom(32)
-    with open(secret_key_path, "w") as secret_key:
-        secret_key.write(app.secret_key)
-
-app.debug = True
-
 
 def default_init_app(app):
     # type: (Flask) -> None
