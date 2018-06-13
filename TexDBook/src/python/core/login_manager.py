@@ -1,8 +1,11 @@
 from __future__ import print_function
 
+from hashlib import sha256
+
 from flask import Response, render_template, request
 from flask_login import LoginManager
 from flask_paranoid import Paranoid
+from typing import Callable
 
 from TexDBook.src.python.core.init_app import app, default_init_app
 from TexDBook.src.python.util.flask.flask_utils_types import JsonOrMessage
@@ -18,15 +21,24 @@ paranoid = Paranoid()  # type: Paranoid
 paranoid.init_app(app)
 
 
+# @override(Paranoid)
+# def write_token_to_session(_super, self, token):
+#     print("writing token: " + token)
+#     print(paranoid.create_token())
+#     print(paranoid.get_token_from_session())
+#     print(request.headers.get("User-Agent"))
+#     print(request.headers.get("X-Forwarded-For"))
+#     print(request.remote_addr)
+#     return _super(self, token)
+
+
 @override(Paranoid)
-def write_token_to_session(_super, self, token):
-    print("writing token: " + token)
-    print(paranoid.create_token())
-    print(paranoid.get_token_from_session())
-    print(request.headers.get("User-Agent"))
-    print(request.headers.get("X-Forwarded-For"))
-    print(request.remote_addr)
-    return _super(self, token)
+def create_token(_super, self):
+    # type: (Callable[[], str], Paranoid) -> str
+    """Need to override this b/c IP addresses keep changing and invalidating sessions."""
+    hash = sha256()
+    hash.update(request.headers.get("User-Agent", ""))
+    return hash.hexdigest()
 
 
 @paranoid.on_invalid_session
