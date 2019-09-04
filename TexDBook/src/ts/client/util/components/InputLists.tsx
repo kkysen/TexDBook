@@ -224,7 +224,7 @@ const createInputListClass = function(
         };
         
         private readonly toggleHovering = (hovering: boolean): void => {
-            this.updateState({hovering: hovering});
+            this.updateState({hovering});
         };
         
         public render(): ReactNode {
